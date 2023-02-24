@@ -1,0 +1,26 @@
+name: Politik
+version: '${project.version}'
+main: goose.politik.Politik
+api-version: 1.19
+commands:
+  addmoney:
+    description: Adds money to player, negative numbers subtract money
+    aliases:
+      - addm
+    usage: /addmoney {player} {amount}
+  setmoney:
+    description: Sets the money of a player
+    aliases:
+      - setm
+    usage: /setmoney {player} {amount}
+  balance:
+    description: Returns the value of your balance {$}
+    aliases:
+      - bal
+    usage: /<command> [player]
+  jobset:
+    desription: Set which job you want to be
+    aliases:
+      - js
+    usage: /<command> [job]
+
