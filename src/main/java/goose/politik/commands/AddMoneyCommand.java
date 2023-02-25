@@ -1,6 +1,7 @@
 package goose.politik.commands;
 
 import goose.politik.Politik;
+import goose.politik.util.MoneyHandler;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
@@ -12,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.math.BigDecimal;
 import java.util.logging.Level;
 
 public class AddMoneyCommand implements CommandExecutor {
@@ -28,9 +30,9 @@ public class AddMoneyCommand implements CommandExecutor {
             } else {
                 if (args.length == 1) {
 
-                    double amount;
+                    BigDecimal amount;
                     try {
-                        amount = Double.parseDouble(args[0]);
+                        amount = new BigDecimal(args[0]);
                     } catch (NumberFormatException e) {
                         Politik.errorMessage("Error in command, value wasn't a number.");
                         return false;
@@ -39,6 +41,8 @@ public class AddMoneyCommand implements CommandExecutor {
                     //also make sure you aren't the console
                     if (sender instanceof Player) {
                         //add money to themselves
+                        amount = MoneyHandler.moneyRound(amount);
+
                         sender.sendMessage(Politik.successMessage("Successfully gave yourself $" + amount + "."));
                         Politik.moneyHandler.changeMoney(amount, (Player) sender);
                     } else{
@@ -46,9 +50,9 @@ public class AddMoneyCommand implements CommandExecutor {
                         sender.sendMessage(Politik.errorMessage("Server can't own money!"));
                     }
                 } else {
-                    double amount;
+                    BigDecimal amount;
                     try {
-                        amount = Double.parseDouble(args[1]);
+                        amount = new BigDecimal(args[1]);
                     } catch (NumberFormatException e) {
                         sender.sendMessage(Politik.errorMessage("Error in command, value wasn't a number."));
                         return false;
@@ -56,6 +60,8 @@ public class AddMoneyCommand implements CommandExecutor {
                     //apply to another person
                     String player = args[0];
                     Player receivingPlayer = Politik.getInstance().getServer().getPlayer(player);
+                    amount = MoneyHandler.moneyRound(amount);
+
                     if (receivingPlayer == null) {
                         sender.sendMessage(Politik.errorMessage("Player " + player + " does not exist, or is not online!"));
                     } else {

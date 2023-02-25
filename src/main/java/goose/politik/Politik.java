@@ -6,13 +6,15 @@ import goose.politik.commands.SetJobCommand;
 import goose.politik.commands.SetMoneyCommand;
 import goose.politik.events.JobEvent;
 import goose.politik.events.JoinLeaveHandler;
-import goose.politik.events.MoneyHandler;
+import goose.politik.util.MoneyHandler;
 import goose.politik.util.MongoDBHandler;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.player.PlayerHarvestBlockEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
@@ -66,6 +68,18 @@ public final class Politik extends JavaPlugin implements Listener {
     public void shearEntityEvent(PlayerShearEntityEvent event) {
         JobEvent.shearEntityEvent(event);
     }
+
+    @EventHandler
+    public void blockBreakEvent(BlockBreakEvent event) {
+        //do stuff eventually
+        
+    }
+
+    @EventHandler
+    public void harvestEvent(PlayerHarvestBlockEvent event) {
+        JobEvent.harvestCropEvent(event);
+    }
+
 
     @Override
     public void onDisable() {

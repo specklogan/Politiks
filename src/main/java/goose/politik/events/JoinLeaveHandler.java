@@ -31,7 +31,6 @@ public class JoinLeaveHandler {
         } else {
             //normal join
             //add if people don't have it already
-            Politik.getInstance().logger.log(Level.INFO, player.getName() + " has rejoined, they have a money value of: " + Politik.mongoDB.getPlayerMoney(player));
             final TextComponent component = Component.text("Welcome back " + event.getPlayer().getName() + " !").color(TextColor.color(255, 255, 85));
             event.joinMessage(component);
         }

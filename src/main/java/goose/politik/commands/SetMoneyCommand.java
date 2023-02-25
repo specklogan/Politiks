@@ -1,11 +1,13 @@
 package goose.politik.commands;
 
 import goose.politik.Politik;
+import goose.politik.util.MoneyHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.math.BigDecimal;
 import java.util.logging.Level;
 
 public class SetMoneyCommand implements CommandExecutor {
@@ -20,7 +22,7 @@ public class SetMoneyCommand implements CommandExecutor {
             } else if (args.length < 1) {
                 sender.sendMessage(Politik.errorMessage("Too few arguments!"));
             } else {
-                double value;
+                BigDecimal value;
 
                 //between 1 and two
                 if (args.length == 1) {
@@ -33,7 +35,8 @@ public class SetMoneyCommand implements CommandExecutor {
                     //player who is setting their own money
                     String amount = args[0];
                     try {
-                        value = Double.parseDouble(amount);
+                        value = new BigDecimal(amount);
+                        value = MoneyHandler.moneyRound(value);
                     } catch (Exception e) {
                         sender.sendMessage(Politik.errorMessage("First argument was not a number!"));
                         return true;
@@ -51,7 +54,8 @@ public class SetMoneyCommand implements CommandExecutor {
                     String player = args[0];
                     String amount = args[1];
                     try {
-                        value = Double.parseDouble(amount);
+                        value = new BigDecimal(amount);
+                        value = MoneyHandler.moneyRound(value);
                     } catch (Exception e) {
                         sender.sendMessage(Politik.errorMessage("Second argument was not a number!"));
                         return true;

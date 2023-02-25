@@ -10,6 +10,9 @@ import goose.politik.Politik;
 import org.bson.Document;
 import org.bukkit.entity.Player;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -42,21 +45,7 @@ public class MongoDBHandler {
         return playerObject.get("job").toString();
     }
 
-    public double getPlayerMoney(Player player) {
-        UUID playerID = player.getUniqueId();
-        Document playerObject = playerCollection.find(eq("playerID", playerID.toString())).first();
-
-        if (playerObject == null) {
-            Politik.getInstance().logger.log(Level.WARNING, "Error finding player " + player.getName() + " in database");
-            return -1;
-        }
-
-        double moneyVal = Double.parseDouble(playerObject.get("money").toString());
-
-        return moneyVal;
-    }
-
-    public void setPlayerMoney(Player player, double money) {
+    public void setPlayerJob(Player player, String job) {
         UUID playerID = player.getUniqueId();
         Document playerObject = playerCollection.find(eq("playerID", playerID.toString())).first();
 
@@ -65,7 +54,31 @@ public class MongoDBHandler {
             return;
         }
 
-        playerCollection.updateOne(playerObject, new Document("$set", new Document("money", money)));
+        playerCollection.updateOne(playerObject, new Document("$set", new Document("job", job)));
+    }
+
+    public BigDecimal getPlayerMoney(Player player) {
+        UUID playerID = player.getUniqueId();
+        Document playerObject = playerCollection.find(eq("playerID", playerID.toString())).first();
+
+        if (playerObject == null) {
+            Politik.getInstance().logger.log(Level.WARNING, "Error finding player " + player.getName() + " in database");
+            return new BigDecimal("-1");
+        }
+
+        return new BigDecimal(playerObject.get("money").toString());
+    }
+
+    public void setPlayerMoney(Player player, BigDecimal money) {
+        UUID playerID = player.getUniqueId();
+        Document playerObject = playerCollection.find(eq("playerID", playerID.toString())).first();
+
+        if (playerObject == null) {
+            Politik.getInstance().logger.log(Level.WARNING, "Error finding player " + player.getName() + " in database");
+            return;
+        }
+
+        playerCollection.updateOne(playerObject, new Document("$set", new Document("money", MoneyHandler.moneyRound(money).toString())));
     }
 
     public void setLogOutTime(Player player) {
