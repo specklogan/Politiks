@@ -1,9 +1,7 @@
 package goose.politik;
 
-import goose.politik.commands.AddMoneyCommand;
-import goose.politik.commands.BalCommand;
-import goose.politik.commands.SetJobCommand;
-import goose.politik.commands.SetMoneyCommand;
+import goose.politik.commands.*;
+import goose.politik.events.InteractEvent;
 import goose.politik.events.JobEvent;
 import goose.politik.events.JoinLeaveHandler;
 import goose.politik.util.MoneyHandler;
@@ -14,10 +12,7 @@ import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.player.PlayerHarvestBlockEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerShearEntityEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Level;
@@ -51,12 +46,18 @@ public final class Politik extends JavaPlugin implements Listener {
         getCommand("balance").setExecutor(new BalCommand());
         getCommand("setmoney").setExecutor(new SetMoneyCommand());
         getCommand("jobset").setExecutor(new SetJobCommand());
+        getCommand("claimtool").setExecutor(new ClaimToolCommand());
     }
 
     @EventHandler
     public void playerJoinEvent(PlayerJoinEvent event){
         //send it to the other things
         JoinLeaveHandler.playerJoin(event);
+    }
+
+    @EventHandler
+    public void playerInteractEvent(PlayerInteractEvent event) {
+        InteractEvent.playerInteract(event);
     }
 
     @EventHandler

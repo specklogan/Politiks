@@ -46,7 +46,7 @@ public class MoneyHandler {
 
     }
 
-    public final boolean canPurchase(double cost, double amount) {
-        return amount - cost >= 0;
+    public final boolean canPurchase(BigDecimal cost, BigDecimal amount) {
+        return amount.subtract(cost).compareTo(BigDecimal.ZERO) >= 0;
     }
 }

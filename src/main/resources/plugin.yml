@@ -23,4 +23,9 @@ commands:
     aliases:
       - js
     usage: /<command> [job]
+  claimtool:
+    description: Gives the player the tool to claim land
+    aliases:
+      -ct
+    usage: /<command>
 

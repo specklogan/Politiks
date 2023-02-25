@@ -77,7 +77,6 @@ public class MongoDBHandler {
             Politik.getInstance().logger.log(Level.WARNING, "Error finding player " + player.getName() + " in database");
             return;
         }
-
         playerCollection.updateOne(playerObject, new Document("$set", new Document("money", MoneyHandler.moneyRound(money).toString())));
     }
 
