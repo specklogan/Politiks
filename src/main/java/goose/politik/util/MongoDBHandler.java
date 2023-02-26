@@ -2,25 +2,20 @@ package goose.politik.util;
 
 import com.mongodb.MongoClient;
 import static com.mongodb.client.model.Filters.*;
-
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import goose.politik.Politik;
+import goose.politik.util.government.PolitikPlayer;
 import org.bson.Document;
-import org.bukkit.entity.Player;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.UUID;
 import java.util.logging.Level;
 
 public class MongoDBHandler {
-    private MongoClient mongoClient;
-    private MongoDatabase serverDB;
-    private MongoCollection<Document> playerCollection;
+    public static MongoClient mongoClient;
+    public static MongoDatabase serverDB;
+    public static MongoCollection<Document> playerCollection;
 
     public MongoDBHandler() {
         try {
@@ -33,86 +28,46 @@ public class MongoDBHandler {
         playerCollection = serverDB.getCollection("players");
     }
 
-    public String getPlayerJob(Player player) {
-        UUID playerID = player.getUniqueId();
-        Document playerObject = playerCollection.find(eq("playerID", playerID.toString())).first();
-
-        if (playerObject == null) {
-            Politik.getInstance().logger.log(Level.WARNING, "Error finding player " + player.getName() + " in database");
+    public static String loadValueFromDatabase(String key, UUID id) {
+        Document playerDocument = playerCollection.find(eq("playerID", id.toString())).first();
+        if (playerDocument == null) {
+            Politik.getInstance().logger.log(Level.WARNING, "Error loading " + key + " from database");
             return "error";
         }
-
-        return playerObject.get("job").toString();
+        return playerDocument.get(key).toString();
     }
 
-    public void setPlayerJob(Player player, String job) {
-        UUID playerID = player.getUniqueId();
-        Document playerObject = playerCollection.find(eq("playerID", playerID.toString())).first();
-
+    public static void savePlayerToDatabase(PolitikPlayer player) {
+        Document playerObject = playerCollection.find(eq("playerID", player.getUUID().toString())).first();
         if (playerObject == null) {
-            Politik.getInstance().logger.log(Level.WARNING, "Error finding player " + player.getName() + " in database");
-            return;
+            //if a player is new, and has left or is being saved
+            Politik.getInstance().logger.log(Level.INFO, "New player is being saved to database: " + player.getDisplayName());
+
+            //create blank document
+            Document updatedDocument = new Document();
+            updatedDocument.put("playerID", player.getUUID().toString());
+            updatedDocument.put("playerName", player.getDisplayName());
+            updatedDocument.put("joinDate", player.getJoinDate().toString());
+            updatedDocument.put("lastOnline", Instant.now().getEpochSecond());
+            updatedDocument.put("job", player.getJob());
+            updatedDocument.put("money", player.getMoney().toString());
+            updatedDocument.put("infamy", player.getInfamy());
+            updatedDocument.put("nation", "none");
+            updatedDocument.put("town", "none");
+            playerCollection.insertOne(updatedDocument);
+
+        } else {
+            Document updatedDocument = new Document();
+            updatedDocument.put("playerID", player.getUUID().toString());
+            updatedDocument.put("playerName", player.getDisplayName());
+            updatedDocument.put("joinDate", player.getJoinDate().toString());
+            updatedDocument.put("lastOnline", Instant.now().getEpochSecond());
+            updatedDocument.put("job", player.getJob());
+            updatedDocument.put("money", player.getMoney().toString());
+            updatedDocument.put("infamy", player.getInfamy());
+            updatedDocument.put("nation", "none");
+            updatedDocument.put("town", "none");
+            playerCollection.replaceOne(playerObject, updatedDocument);
         }
-
-        playerCollection.updateOne(playerObject, new Document("$set", new Document("job", job)));
-    }
-
-    public BigDecimal getPlayerMoney(Player player) {
-        UUID playerID = player.getUniqueId();
-        Document playerObject = playerCollection.find(eq("playerID", playerID.toString())).first();
-
-        if (playerObject == null) {
-            Politik.getInstance().logger.log(Level.WARNING, "Error finding player " + player.getName() + " in database");
-            return new BigDecimal("-1");
-        }
-
-        return new BigDecimal(playerObject.get("money").toString());
-    }
-
-    public void setPlayerMoney(Player player, BigDecimal money) {
-        UUID playerID = player.getUniqueId();
-        Document playerObject = playerCollection.find(eq("playerID", playerID.toString())).first();
-
-        if (playerObject == null) {
-            Politik.getInstance().logger.log(Level.WARNING, "Error finding player " + player.getName() + " in database");
-            return;
-        }
-        playerCollection.updateOne(playerObject, new Document("$set", new Document("money", MoneyHandler.moneyRound(money).toString())));
-    }
-
-    public void setLogOutTime(Player player) {
-        UUID playerID = player.getUniqueId();
-        Document playerObject = playerCollection.find(eq("playerID", playerID.toString())).first();
-
-        if (playerObject == null) {
-            Politik.getInstance().logger.log(Level.WARNING, "Error finding player " + player.getName() + " in database");
-            return;
-        }
-
-        playerCollection.updateOne(playerObject, new Document("$set", new Document("lastOnline", Instant.now().getEpochSecond())));
-    }
-
-
-    public void addPlayer(Player player) {
-        /*
-            This is intended to only be run once when a new player joins the server
-         */
-
-
-        //get uuid to store
-        UUID uuid = player.getUniqueId();
-        //only do this once
-        Document playerObject = new Document("playerID", uuid.toString());
-        playerObject.put("playerName", player.getName());
-        playerObject.put("money", 0);
-        playerObject.put("infamy", 0);
-        playerObject.put("joinDate", Instant.now().getEpochSecond());
-        playerObject.put("lastOnline", 0);
-        playerObject.put("town", "none");
-        playerObject.put("nation", "none");
-        playerObject.put("job", "none");
-
-        Politik.getInstance().logger.log(Level.INFO, "Adding new player to database: " + player.getName() + ": " + uuid);
-        playerCollection.insertOne(playerObject);
     }
 }

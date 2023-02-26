@@ -1,25 +1,34 @@
 package goose.politik.util.landUtil;
 
 import goose.politik.Politik;
-import goose.politik.util.MoneyHandler;
-import org.bukkit.Location;
+import goose.politik.util.government.PolitikPlayer;
 import org.bukkit.entity.Player;
-
 import java.math.BigDecimal;
-import java.util.logging.Level;
+import java.util.HashMap;
+import java.util.TreeMap;
 
 public class Land {
     //will be an instance of land
     private static final int minSize = 16;
     private static final int maxSize = 4096;
     private static final BigDecimal costPerArea = new BigDecimal("0.25");
+    private static HashMap<Integer, Land> hashMap = new HashMap<Integer, Land>();
     private String townOwner;
     private String nationOwner;
-    private Player playerOwner;
+    private PolitikPlayer playerOwner;
 
     private String firstPos;
     private String secondPos;
     private int area;
+
+    public static boolean playerInLand(Player player) {
+        return false;
+    }
+
+    public static boolean claimOverlaps(Land land) {
+        return false;
+    }
+
 
     public static int getX(String position) {
         int x;
@@ -43,10 +52,9 @@ public class Land {
     public boolean validLand(String firstPos, String secondPos) {
         int totalArea = calculateArea(firstPos, secondPos);
         this.area = totalArea;
-        boolean valid = (totalArea <= Land.maxSize && totalArea >= Land.minSize);
-        return valid;
+        return (totalArea <= Land.maxSize && totalArea >= Land.minSize);
     }
-    public Land(String firstPos, String secondPos, Player player) {
+    public Land(String firstPos, String secondPos, PolitikPlayer player) {
         if (validLand(firstPos, secondPos)) {
             //it is valid
             this.firstPos = firstPos;
@@ -54,14 +62,14 @@ public class Land {
             this.secondPos = secondPos;
             BigDecimal cost = costPerArea.multiply(BigDecimal.valueOf(area));
             //check if player has enough money to cover it
-            if (Politik.moneyHandler.canPurchase(cost, Politik.moneyHandler.getMoney(player))) {
-                this.playerOwner.sendMessage(Politik.successMessage("You've successfully claimed " + this.area + " blocks, costing you $" + cost.toString()));
-                Politik.moneyHandler.changeMoney(cost.negate(), player);
+            if (player.canPurchase(cost)) {
+                this.playerOwner.message(Politik.successMessage("You've successfully claimed " + this.area + " blocks, costing you $" + cost));
+                player.changeMoney(cost.negate());
             } else {
-                this.playerOwner.sendMessage(Politik.errorMessage("You don't have enough funds to cover this purchase"));
+                player.message(Politik.errorMessage("You don't have enough funds to cover this purchase"));
             }
         } else {
-            player.sendMessage(Politik.errorMessage("Area was too small, minimum area size is 16, maximum is 4096"));
+            player.message(Politik.errorMessage("Area was too small, minimum area size is 16, maximum is 4096"));
         }
     }
 

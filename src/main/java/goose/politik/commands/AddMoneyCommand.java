@@ -2,24 +2,20 @@ package goose.politik.commands;
 
 import goose.politik.Politik;
 import goose.politik.util.MoneyHandler;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.NamespacedKey;
+import goose.politik.util.government.PolitikPlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
-import java.util.logging.Level;
+
 
 public class AddMoneyCommand implements CommandExecutor {
 
     @Override
-    public boolean onCommand(CommandSender sender,Command command,String label, String[] args) {
+    public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (sender.isOp()) {
             //they are allowed to run the function
             if (args.length > 2) {
@@ -44,7 +40,7 @@ public class AddMoneyCommand implements CommandExecutor {
                         amount = MoneyHandler.moneyRound(amount);
 
                         sender.sendMessage(Politik.successMessage("Successfully gave yourself $" + amount + "."));
-                        Politik.moneyHandler.changeMoney(amount, (Player) sender);
+                        PolitikPlayer.getPolitikPlayer((Player) sender).changeMoney(amount);
                     } else{
                         //console did this
                         sender.sendMessage(Politik.errorMessage("Server can't own money!"));
@@ -61,13 +57,16 @@ public class AddMoneyCommand implements CommandExecutor {
                     String player = args[0];
                     Player receivingPlayer = Politik.getInstance().getServer().getPlayer(player);
                     amount = MoneyHandler.moneyRound(amount);
+                    PolitikPlayer senderPlayer = PolitikPlayer.getPolitikPlayer((Player) sender);
 
                     if (receivingPlayer == null) {
                         sender.sendMessage(Politik.errorMessage("Player " + player + " does not exist, or is not online!"));
                     } else {
                         //player does exist give them money
-                        sender.sendMessage(Politik.successMessage("Successfully gave " + receivingPlayer.getName()  + " $" + amount + "."));
-                        
+                        PolitikPlayer receivingPPlayer = PolitikPlayer.getPolitikPlayer(receivingPlayer);
+                        receivingPPlayer.message(Politik.successMessage("You were added $" + amount + " from " + senderPlayer.getDisplayName()));
+                        senderPlayer.message(Politik.successMessage("Successfully gave " + receivingPlayer.getName()  + " $" + amount + "."));
+                        receivingPPlayer.changeMoney(amount);
                     }
                 }
             }

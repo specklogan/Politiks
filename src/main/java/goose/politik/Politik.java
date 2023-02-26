@@ -6,6 +6,7 @@ import goose.politik.events.JobEvent;
 import goose.politik.events.JoinLeaveHandler;
 import goose.politik.util.MoneyHandler;
 import goose.politik.util.MongoDBHandler;
+import goose.politik.util.government.PolitikPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
@@ -15,23 +16,26 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Objects;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public final class Politik extends JavaPlugin implements Listener {
 
     public static final String pluginVersion = "1.0";
     private static Politik plugin;
-    public static final MoneyHandler moneyHandler = new MoneyHandler();
-    public static final MongoDBHandler mongoDB = new MongoDBHandler();
+    public final MongoDBHandler mongoDB = new MongoDBHandler();
 
     public static TextComponent errorMessage(String text) {
-        TextComponent component = Component.text(text).color(TextColor.color(255, 0, 0));
-        return component;
+        return Component.text(text).color(TextColor.color(255, 0, 0));
+    }
+
+    public static TextComponent eventMessage(String text) {
+        return Component.text(text).color(TextColor.color(255, 255, 0));
     }
 
     public static TextComponent successMessage(String text) {
-        TextComponent component = Component.text(text).color(TextColor.color(62, 255, 54));
-        return component;
+        return Component.text(text).color(TextColor.color(62, 255, 54));
     }
 
     public static final String lackPerms = "You lack the permissions to run this command";
@@ -42,11 +46,12 @@ public final class Politik extends JavaPlugin implements Listener {
         plugin = this;
         getServer().getPluginManager().registerEvents(this,this);
         this.getLogger().log(Level.INFO, "Starting Politik Version " + pluginVersion);
-        getCommand("addmoney").setExecutor(new AddMoneyCommand());
-        getCommand("balance").setExecutor(new BalCommand());
-        getCommand("setmoney").setExecutor(new SetMoneyCommand());
-        getCommand("jobset").setExecutor(new SetJobCommand());
-        getCommand("claimtool").setExecutor(new ClaimToolCommand());
+        Objects.requireNonNull(getCommand("addmoney")).setExecutor(new AddMoneyCommand());
+        Objects.requireNonNull(getCommand("balance")).setExecutor(new BalCommand());
+        Objects.requireNonNull(getCommand("setmoney")).setExecutor(new SetMoneyCommand());
+        Objects.requireNonNull(getCommand("jobset")).setExecutor(new SetJobCommand());
+        Objects.requireNonNull(getCommand("claimtool")).setExecutor(new ClaimToolCommand());
+        //Objects.requireNonNull(getCommand("nation")).setExecutor(new NationCommands());
     }
 
     @EventHandler
@@ -85,6 +90,11 @@ public final class Politik extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        for (UUID player: PolitikPlayer.playerList.keySet()) {
+            PolitikPlayer user = PolitikPlayer.playerList.get(player);
+            Politik.getInstance().logger.log(Level.INFO, "Saving player " + user.getDisplayName());
+            user.leave();
+        }
     }
 
     public static Politik getInstance() {
