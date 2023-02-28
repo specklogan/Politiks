@@ -4,26 +4,30 @@ import goose.politik.commands.*;
 import goose.politik.events.InteractEvent;
 import goose.politik.events.JobEvent;
 import goose.politik.events.JoinLeaveHandler;
-import goose.politik.util.MoneyHandler;
 import goose.politik.util.MongoDBHandler;
 import goose.politik.util.government.PolitikPlayer;
+import goose.politik.util.landUtil.LandUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class Politik extends JavaPlugin implements Listener {
 
     public static final String pluginVersion = "1.0";
-    private static Politik plugin;
+    public static Politik plugin;
+    public static Logger logger;
     public final MongoDBHandler mongoDB = new MongoDBHandler();
 
     public static TextComponent errorMessage(String text) {
@@ -44,6 +48,7 @@ public final class Politik extends JavaPlugin implements Listener {
     public void onEnable() {
         // Plugin startup logic
         plugin = this;
+        logger = plugin.getLogger();
         getServer().getPluginManager().registerEvents(this,this);
         this.getLogger().log(Level.INFO, "Starting Politik Version " + pluginVersion);
         Objects.requireNonNull(getCommand("addmoney")).setExecutor(new AddMoneyCommand());
@@ -51,13 +56,25 @@ public final class Politik extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("setmoney")).setExecutor(new SetMoneyCommand());
         Objects.requireNonNull(getCommand("jobset")).setExecutor(new SetJobCommand());
         Objects.requireNonNull(getCommand("claimtool")).setExecutor(new ClaimToolCommand());
-        //Objects.requireNonNull(getCommand("nation")).setExecutor(new NationCommands());
+        Objects.requireNonNull(getCommand("nation")).setExecutor(new NationCommands());
+
+        //Add dimensions to the land handler
+        LandUtil.addDimensionToLandMap(World.Environment.NORMAL);
     }
 
     @EventHandler
     public void playerJoinEvent(PlayerJoinEvent event){
         //send it to the other things
         JoinLeaveHandler.playerJoin(event);
+    }
+
+    @EventHandler
+    public void serverSaveEvent(WorldSaveEvent event) {
+        for (UUID player: PolitikPlayer.playerList.keySet()) {
+            PolitikPlayer user = PolitikPlayer.playerList.get(player);
+            user.savePlayer();
+        }
+        //saves the player just like when the server shuts down
     }
 
     @EventHandler
@@ -92,7 +109,7 @@ public final class Politik extends JavaPlugin implements Listener {
         // Plugin shutdown logic
         for (UUID player: PolitikPlayer.playerList.keySet()) {
             PolitikPlayer user = PolitikPlayer.playerList.get(player);
-            Politik.getInstance().logger.log(Level.INFO, "Saving player " + user.getDisplayName());
+            logger.log(Level.INFO, "Saving player " + user.getDisplayName());
             user.leave();
         }
     }

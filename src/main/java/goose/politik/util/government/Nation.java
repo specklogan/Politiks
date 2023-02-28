@@ -1,8 +1,6 @@
 package goose.politik.util.government;
 
 import goose.politik.Politik;
-import goose.politik.util.MoneyHandler;
-import goose.politik.util.MongoDBHandler;
 import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;

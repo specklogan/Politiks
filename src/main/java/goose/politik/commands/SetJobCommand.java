@@ -26,7 +26,7 @@ public class SetJobCommand implements CommandExecutor {
         if (args != null) {
             if (args.length == 1) {
                 String job = args[0];
-                Politik.getInstance().logger.log(Level.INFO, "Chosen job: " + job);
+                Politik.logger.log(Level.INFO, "Chosen job: " + job);
 
                 //check if the string job is a valid member of joblist otherwise we say no
                 for (int i = 0; i < jobList.length; i++) {

@@ -20,8 +20,9 @@ public class JoinLeaveHandler {
         Player player = event.getPlayer();
         try {
             PolitikPlayer.getPolitikPlayer(player).leave();
+            event.quitMessage(Politik.eventMessage(player.getName() + " has left, thanks for playing!" ));
         } catch (Exception e) {
-            Politik.getInstance().logger.log(Level.WARNING, "Error in removing player, player not in the list, probably caused by reloading the server.");
+            Politik.logger.log(Level.WARNING, "Error in removing player, player not in the list, probably caused by reloading the server.");
         }
     }
 }

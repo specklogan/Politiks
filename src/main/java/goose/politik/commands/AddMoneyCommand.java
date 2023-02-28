@@ -1,7 +1,7 @@
 package goose.politik.commands;
 
 import goose.politik.Politik;
-import goose.politik.util.MoneyHandler;
+import goose.politik.util.economy.MoneyHandler;
 import goose.politik.util.government.PolitikPlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

@@ -1,4 +1,4 @@
-package goose.politik.util;
+package goose.politik.util.economy;
 
 import goose.politik.Politik;
 import goose.politik.util.government.PolitikPlayer;

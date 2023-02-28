@@ -28,4 +28,9 @@ commands:
     aliases:
       -ct
     usage: /<command>
+  nation:
+    description: Returns list of valid nation commands
+    aliases:
+      -na
+    usage: /<command>
 

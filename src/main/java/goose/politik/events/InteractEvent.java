@@ -3,6 +3,7 @@ package goose.politik.events;
 import goose.politik.Politik;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.landUtil.Land;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -14,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import java.util.Objects;
+import java.util.logging.Level;
 
 public class InteractEvent {
     public static void playerInteract(PlayerInteractEvent event) {
@@ -35,13 +37,15 @@ public class InteractEvent {
                         return;
                     }
                     Location blockLocation = clickedBlock.getLocation();
-
                     String x = String.valueOf(blockLocation.getBlockX());
+                    String y = String.valueOf(blockLocation.getBlockY());
                     String z = String.valueOf(blockLocation.getBlockZ());
+                    Chunk chunk = clickedBlock.getChunk();
+
                     if (posOneStr == null || posOneStr.equals("")) {
                         //hasn't used it before
 
-                        String locationStr = x + "," + z;
+                        String locationStr = x + "," + y + "," + z;
                         ItemMeta temp = handItem.getItemMeta();
                         temp.getPersistentDataContainer().set(new NamespacedKey(Politik.getInstance(), "posOne"), PersistentDataType.STRING,locationStr);
                         handItem.setItemMeta(temp);
@@ -49,8 +53,8 @@ public class InteractEvent {
                     } else {
                         //has used before, set second value
                         ItemMeta temp = handItem.getItemMeta();
-                        String locationStr = x + "," + z;
-                        Land land = new Land(handItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Politik.getInstance(), "posOne"), PersistentDataType.STRING), locationStr, player);
+                        String locationStr = x + "," + y + "," + z;
+                        new Land(handItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Politik.getInstance(), "posOne"), PersistentDataType.STRING), locationStr, player, chunk);
                         temp.getPersistentDataContainer().set(new NamespacedKey(Politik.getInstance(), "posOne"), PersistentDataType.STRING,"");
                         handItem.setItemMeta(temp);
                     }

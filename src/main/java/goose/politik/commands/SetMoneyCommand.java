@@ -1,7 +1,7 @@
 package goose.politik.commands;
 
 import goose.politik.Politik;
-import goose.politik.util.MoneyHandler;
+import goose.politik.util.economy.MoneyHandler;
 import goose.politik.util.government.PolitikPlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -50,7 +50,7 @@ public class SetMoneyCommand implements CommandExecutor {
                         targetPlayer.message(Politik.successMessage("Successfully set " + targetPlayer.getDisplayName() + "'s money to $" + value));
                         targetPlayer.setMoney(value);
                     } else {
-                        Politik.getInstance().logger.log(Level.WARNING, "Error, player was null line 42 setm");
+                        Politik.logger.log(Level.WARNING, "Error, player was null");
                     }
 
                 } else {
@@ -73,7 +73,7 @@ public class SetMoneyCommand implements CommandExecutor {
                     if (target != null) {
                         //successful, player does exist
                         PolitikPlayer targetPlayer = PolitikPlayer.getPolitikPlayer(target);
-                        Politik.getInstance().logger.log(Level.INFO, value + " amount set");
+                        Politik.logger.log(Level.INFO, value + " amount set");
                         targetPlayer.setMoney(value);
                         sender.sendMessage(Politik.successMessage("Successfully set " + target.getName() + "'s money to $" + value));
                     } else {
