@@ -2,6 +2,7 @@ package goose.politik.util.government;
 
 import goose.politik.Politik;
 import goose.politik.util.MongoDBHandler;
+import goose.politik.util.landUtil.Land;
 import net.kyori.adventure.text.TextComponent;
 import org.bson.Document;
 import org.bukkit.entity.Player;
@@ -21,6 +22,7 @@ public class PolitikPlayer {
     private int infamy;
     private Nation nation;
     private Town town;
+    private Land lastEnteredLand;
     private BigInteger joinDate;
     private final Player player;
     private String job;
@@ -97,6 +99,14 @@ public class PolitikPlayer {
 
     public Town getTown() {
         return this.town;
+    }
+
+    public void setNation(Nation nation) {
+        this.nation = nation;
+    }
+
+    public void setTown(Town town) {
+        this.town = town;
     }
 
     public BigDecimal getMoney() {
