@@ -182,6 +182,8 @@ public class Land {
                     //do a further check to see if it overlaps
                     this.playerOwner.message(Politik.successMessage("You've successfully claimed " + this.area + " blocks, costing you $" + cost));
                     player.changeMoney(cost.negate());
+                    this.setNationOwner(playerNation);
+                    this.setTownOwner(playerTown);
                 } else {
                     System.out.println(result);
                     this.playerOwner.message(Politik.errorMessage("Land claim overlaps with an existing claim"));

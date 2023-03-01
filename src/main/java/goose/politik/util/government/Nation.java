@@ -8,10 +8,14 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public class Nation {
+
+    //Static stuff
+    public static final BigDecimal NATIONCOST = new BigDecimal("1000");
+    public static final ArrayList<Nation> NATIONS = new ArrayList<>();
+
     private TextComponent enterMessage;
     private String nationName;
     private PolitikPlayer leader;
-    private static final BigDecimal nationCost = new BigDecimal("1000");
     private ArrayList<PolitikPlayer> playerList;
     private ArrayList<Town> townList;
 
@@ -28,11 +32,21 @@ public class Nation {
         return this.townList;
     }
 
+    public void addTown(Town town) {
+        if (this.townList == null) {
+            this.townList = new ArrayList<>();
+        }
+        this.townList.add(town);
+    }
+
     public ArrayList<PolitikPlayer> getPlayerList() {
         return playerList;
     }
 
     public void addToPlayerList(PolitikPlayer player) {
+        if (this.playerList == null) {
+            this.playerList = new ArrayList<>();
+        }
         this.playerList.add(player);
     }
 
@@ -74,11 +88,11 @@ public class Nation {
 
 
     public Nation(String nationName, PolitikPlayer leader) {
-        //create new nation
-        //make sure they have the money to do so
-        if (leader.canPurchase(nationCost)) {
-            leader.message(Politik.successMessage("You've successfully bought your town for $1000"));
-            leader.changeMoney(new BigDecimal("-1000"));
-        }
+        leader.message(Politik.successMessage("Successfully created nation: " + nationName));
+        this.nationName = nationName;
+        this.leader = leader;
+        addToPlayerList(leader);
+        leader.setNation(this);
+        NATIONS.add(this);
     }
 }

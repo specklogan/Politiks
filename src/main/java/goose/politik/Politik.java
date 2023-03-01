@@ -4,6 +4,7 @@ import goose.politik.commands.*;
 import goose.politik.events.InteractEvent;
 import goose.politik.events.JobEvent;
 import goose.politik.events.JoinLeaveHandler;
+import goose.politik.events.MoveEvent;
 import goose.politik.util.MongoDBHandler;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.landUtil.LandUtil;
@@ -42,6 +43,10 @@ public final class Politik extends JavaPlugin implements Listener {
         return Component.text(text).color(TextColor.color(62, 255, 54));
     }
 
+    public static TextComponent detailMessage(String text) {
+        return Component.text(text).color(TextColor.color(84, 200, 255));
+    }
+
     public static final String lackPerms = "You lack the permissions to run this command";
 
     @Override
@@ -57,6 +62,7 @@ public final class Politik extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("jobset")).setExecutor(new SetJobCommand());
         Objects.requireNonNull(getCommand("claimtool")).setExecutor(new ClaimToolCommand());
         Objects.requireNonNull(getCommand("nation")).setExecutor(new NationCommands());
+        Objects.requireNonNull(getCommand("town")).setExecutor(new TownCommand());
 
         //Add dimensions to the land handler
         LandUtil.addDimensionToLandMap(World.Environment.NORMAL);
@@ -75,6 +81,11 @@ public final class Politik extends JavaPlugin implements Listener {
             user.savePlayer();
         }
         //saves the player just like when the server shuts down
+    }
+
+    @EventHandler
+    public void playerMoveEvent(PlayerMoveEvent event) {
+        MoveEvent.playerMoveEvent(event);
     }
 
     @EventHandler

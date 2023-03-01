@@ -133,6 +133,14 @@ public class PolitikPlayer {
         this.job = job;
     }
 
+    public void setLastEnteredLand(Land land) {
+        this.lastEnteredLand = land;
+    }
+
+    public Land getLastEnteredLand() {
+        return this.lastEnteredLand;
+    }
+
     public void changeMoney(BigDecimal amount) {
         BigDecimal currentPlayerMoney = getMoney();
         if (!currentPlayerMoney.equals(new BigDecimal("-1"))) {

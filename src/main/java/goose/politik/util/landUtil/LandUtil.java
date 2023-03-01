@@ -262,14 +262,53 @@ public class LandUtil {
             //empty chunk, continue
             return null;
         } else {
-            //do some calculations
-            //we can assume no lands overlap that are stored
-            //because when they are added, we check that that's not the case
+            int blockX = block.getX();
+            int blockZ = block.getZ();
+            boolean xCollision = false;
+            boolean zCollision = false;
+            int landOneLargestX;
+            int landOneSmallestX;
+            for (Land land : landsInChunk) {
+                Block firstLandFirstBlock = land.getFirstBlock();
+                Block firstLandSecondBlock = land.getSecondBlock();
 
-            for (int i=0; i<landsInChunk.size(); i++) {
-                //iterate over all of the lands in the chunk
+                //figure out which x is bigger on the first land
+                if (firstLandFirstBlock.getX() > firstLandSecondBlock.getX()) {
+                    //first block is greater
+                    //think of it like, the first position is EAST of the second position
+                    landOneLargestX = firstLandFirstBlock.getX();
+                    landOneSmallestX = firstLandSecondBlock.getX();
+
+                } else {
+                    landOneLargestX = firstLandSecondBlock.getX();
+                    landOneSmallestX = firstLandFirstBlock.getX();
+                }
+
+                int landOneLargestZ;
+                int landOneSmallestZ;
+
+                if (firstLandFirstBlock.getZ() > firstLandSecondBlock.getZ()) {
+                    landOneLargestZ = firstLandFirstBlock.getZ();
+                    landOneSmallestZ = firstLandSecondBlock.getZ();
+                } else {
+                    landOneLargestZ = firstLandSecondBlock.getZ();
+                    landOneSmallestZ = firstLandFirstBlock.getZ();
+                }
+
+                if (landOneSmallestX <= blockX && landOneLargestX >= blockX) {
+                    //x collision
+                    xCollision = true;
+                }
+                if (landOneSmallestZ <= blockZ && landOneLargestZ >= blockZ) {
+                    //z collision
+                    zCollision = true;
+                }
+                if (xCollision && zCollision) {
+                    //it did actually collide
+                    return land;
+                }
+
             }
-
             return null;
         }
     }
