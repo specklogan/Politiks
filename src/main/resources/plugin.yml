@@ -34,4 +34,6 @@ commands:
     description: Returns list of valid town commands
     aliases: t
     usage: /<command> [help,list,create]
+  list:
+    description: List all players
 

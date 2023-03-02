@@ -1,19 +1,15 @@
 package goose.politik.util.landUtil;
 
 import goose.politik.Politik;
-import goose.politik.util.MongoDBHandler;
 import goose.politik.util.government.Nation;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.government.Town;
-import io.papermc.paper.math.BlockPosition;
 import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
+
 import java.math.BigDecimal;
-import java.util.ArrayList;
 
 public class Land {
     //will be an instance of land
@@ -185,7 +181,6 @@ public class Land {
                     this.setNationOwner(playerNation);
                     this.setTownOwner(playerTown);
                 } else {
-                    System.out.println(result);
                     this.playerOwner.message(Politik.errorMessage("Land claim overlaps with an existing claim"));
                 }
             } else {

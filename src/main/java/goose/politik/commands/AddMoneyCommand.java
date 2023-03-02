@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 
 public class AddMoneyCommand implements CommandExecutor {
@@ -54,20 +55,45 @@ public class AddMoneyCommand implements CommandExecutor {
                         return false;
                     }
                     //apply to another person
-                    String player = args[0];
-                    Player receivingPlayer = Politik.getInstance().getServer().getPlayer(player);
-                    amount = MoneyHandler.moneyRound(amount);
-                    PolitikPlayer senderPlayer = PolitikPlayer.getPolitikPlayer((Player) sender);
-
-                    if (receivingPlayer == null) {
-                        sender.sendMessage(Politik.errorMessage("Player " + player + " does not exist, or is not online!"));
-                    } else {
-                        //player does exist give them money
-                        PolitikPlayer receivingPPlayer = PolitikPlayer.getPolitikPlayer(receivingPlayer);
-                        receivingPPlayer.message(Politik.successMessage("You were added $" + amount + " from " + senderPlayer.getDisplayName()));
-                        senderPlayer.message(Politik.successMessage("Successfully gave " + receivingPlayer.getName()  + " $" + amount + "."));
-                        receivingPPlayer.changeMoney(amount);
+                    PolitikPlayer receivingPlayer = null;
+                    for (UUID person : PolitikPlayer.playerList.keySet()) {
+                        if (PolitikPlayer.playerList.get(person).getDisplayName().equalsIgnoreCase(args[0])) {
+                            receivingPlayer = PolitikPlayer.playerList.get(person);
+                        }
                     }
+                    amount = MoneyHandler.moneyRound(amount);
+                    if (sender instanceof Player) {
+                        PolitikPlayer senderPlayer = PolitikPlayer.getPolitikPlayer((Player) sender);
+                        if (receivingPlayer == null) {
+                            sender.sendMessage(Politik.errorMessage("Player " + args[0] + " does not exist"));
+                        } else {
+                            //player does exist give them money
+                            if (receivingPlayer.getPlayer() == null) {
+                                senderPlayer.message(Politik.successMessage("Successfully gave " + receivingPlayer.getDisplayName()  + " $" + amount + "."));
+                                receivingPlayer.changeMoney(amount);
+                            } else {
+                                receivingPlayer.message(Politik.successMessage("You were added $" + amount + " from " + senderPlayer.getDisplayName()));
+                                senderPlayer.message(Politik.successMessage("Successfully gave " + receivingPlayer.getDisplayName()  + " $" + amount + "."));
+                                receivingPlayer.changeMoney(amount);
+                            }
+                        }
+                    } else {
+                        if (receivingPlayer == null) {
+                            sender.sendMessage(Politik.errorMessage("Player " + args[0] + " does not exist"));
+                        } else {
+                            //player does exist give them money
+                            if (receivingPlayer.getPlayer() == null) {
+                                //offline
+                                receivingPlayer.changeMoney(amount);
+                                sender.sendMessage(Politik.successMessage("Successfully added $" + amount + " to" + args[0]));
+                            } else {
+                                receivingPlayer.message(Politik.successMessage("You were added $" + amount + " from Server"));
+                                sender.sendMessage(Politik.successMessage("Successfully added $" + amount + " to" + args[0]));
+                                receivingPlayer.changeMoney(amount);
+                            }
+                        }
+                    }
+
                 }
             }
         } else {

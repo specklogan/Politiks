@@ -1,11 +1,12 @@
 package goose.politik.util.government;
 
-import goose.politik.Politik;
+import goose.politik.util.database.MongoDBHandler;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class Nation {
 
@@ -14,15 +15,24 @@ public class Nation {
     public static final ArrayList<Nation> NATIONS = new ArrayList<>();
 
     private TextComponent enterMessage;
+
     private String nationName;
     private PolitikPlayer leader;
     private ArrayList<PolitikPlayer> playerList;
     private ArrayList<Town> townList;
 
     //Political stuff
-    private ArrayList<Nation> allies;
-    private ArrayList<Nation> enemies;
+    private Town capitol;
+    private ArrayList<Nation> allies = new ArrayList<>();
+    private ArrayList<Nation> enemies = new ArrayList<>();
     private BigDecimal taxRate = new BigDecimal("20");
+
+    public static void saveNations() {
+        //saves everything to database
+        for (Nation nation : Nation.NATIONS) {
+            MongoDBHandler.saveNation(nation);
+        }
+    }
 
     public String getNationName() {
         return this.nationName;
@@ -85,14 +95,26 @@ public class Nation {
         this.taxRate = taxRate;
     }
 
+    public void setCapitol(Town capitol) {
+        this.capitol = capitol;
+    }
+
+    public Town getCapitol() {
+        return this.capitol;
+    }
+
 
 
     public Nation(String nationName, PolitikPlayer leader) {
-        leader.message(Politik.successMessage("Successfully created nation: " + nationName));
         this.nationName = nationName;
         this.leader = leader;
         addToPlayerList(leader);
         leader.setNation(this);
         NATIONS.add(this);
+    }
+
+    public Nation(String nationName, UUID leader, Town capitol, ArrayList<String> allies, ArrayList<String> enemies, BigDecimal taxRate, ArrayList<Town> towns) {
+        //called to create a nation on loading of the database
+
     }
 }

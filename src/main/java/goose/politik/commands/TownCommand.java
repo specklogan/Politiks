@@ -19,35 +19,46 @@ public class TownCommand implements CommandExecutor {
             return true;
         }
 
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(Politik.errorMessage("Only players can use town commands"));
+            return true;
+        }
+
         String firstArg = args[0];
+        PolitikPlayer player = PolitikPlayer.getPolitikPlayer((Player) sender);
 
         if (firstArg.equalsIgnoreCase("create")) {
-            if (!(sender instanceof Player)) {
-                sender.sendMessage(Politik.errorMessage("Server can't create towns"));
-                return true;
-            }
             if (args.length == 1) {
                 sender.sendMessage(Politik.errorMessage("You need a town name to create a town"));
                 return true;
             }
-            PolitikPlayer player = PolitikPlayer.getPolitikPlayer((Player) sender);
             String townName = args[1];
-           if (player.getTown() == null) {
-               if (player.getNation() == null) {
-                   //player needs a nation to make a town
-                   sender.sendMessage(Politik.errorMessage("You need to be in a nation to create a town, join or create one using /nation [create/join]"));
-               } else {
-                   if (player.canPurchase(Town.TOWNCOST)) {
-                       player.changeMoney(Town.TOWNCOST.negate());
-                       sender.sendMessage(Politik.successMessage("Successfully created town: " + townName));
-                       new Town(townName, player, player.getNation());
-                   } else {
-                       sender.sendMessage(Politik.errorMessage("Not enough funds to purchase town, $" + Town.TOWNCOST + " required"));
-                   }
-               }
-           } else {
-               sender.sendMessage(Politik.errorMessage("You're already in a town, leave it to create another"));
-           }
+
+            if (player.getTown() != null) {
+                sender.sendMessage(Politik.errorMessage("You are already in a town, leave your town to create another"));
+                return true;
+            }
+
+            if (player.getNation() == null) {
+                sender.sendMessage(Politik.errorMessage("You need to be in a nation to create a town"));
+                return true;
+            }
+
+            if (!player.canPurchase(Town.TOWNCOST)) {
+                player.message(Politik.errorMessage("You lack the funds to purchase a town"));
+                return true;
+            }
+
+            player.changeMoney(Town.TOWNCOST.negate());
+            sender.sendMessage(Politik.successMessage("Successfully created town: " + townName));
+            Town newTown = new Town(townName, player, player.getNation());
+            if (player.getNation().getLeader() == player) {
+                //they are in their own nation, and have not created a town
+                player.getNation().setCapitol(newTown);
+                player.message(Politik.detailMessage(player.getNation().getNationName() + "'s capitol set to " + townName));
+            }
+
+
         } else if (firstArg.equalsIgnoreCase("list")) {
             for (Nation nation: Nation.NATIONS) {
                 for (Town town: nation.getTownList()) {
@@ -56,9 +67,10 @@ public class TownCommand implements CommandExecutor {
             }
         } else {
             sender.sendMessage("---------------- Town Help ----------------");
-            sender.sendMessage(Politik.detailMessage("/town create [town-name] : takes in a town name"));
-            sender.sendMessage(Politik.detailMessage("/town list [@optional nation] : lists all towns in the map, or in a nation"));
-            sender.sendMessage(Politik.detailMessage("/town help : outputs town command help"));
+            player.message(Politik.detailMessage("/town create [town-name] : takes in a town name"));
+            player.message(Politik.detailMessage("/town list [@optional nation] : lists all towns in the map, or in a nation"));
+            player.message(Politik.detailMessage("/town help : outputs town command help"));
+
 
         }
         return true;

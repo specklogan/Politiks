@@ -1,14 +1,11 @@
 package goose.politik.util.landUtil;
 
-import goose.politik.Politik;
-import jdk.jfr.internal.Logger;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Level;
 
 public class LandUtil {
 
@@ -120,8 +117,6 @@ public class LandUtil {
             //To do this, we need to check all of the chunks, then check all of those claims
             Chunk firstBlockChunk = land.getFirstBlock().getChunk();
             Chunk secondBlockChunk = land.getSecondBlock().getChunk();
-            Politik.logger.log(Level.INFO, "FirstChunk: " + firstBlockChunk.getX() + " " + firstBlockChunk.getZ());
-            Politik.logger.log(Level.INFO, "Second: " + secondBlockChunk.getX() + " " + secondBlockChunk.getZ());
 
             //you can think of this as:
             /*
@@ -153,7 +148,6 @@ public class LandUtil {
             //now knowing the minimum, we have to loop through it like a 2d array
             for (int i = minX; i <= maxX; i++) {
                 for (int v = minZ; v <= maxZ; v++) {
-                    Politik.logger.log(Level.INFO, "Looping through chunk " + i + " " + v);
                     ArrayList<Land> chunkLand = getLandListInChunk(world.getChunkAt(i,v));
                     if (chunkLand != null) {
                         // chunk is not empty
@@ -246,7 +240,6 @@ public class LandUtil {
             //if it gets to this point, that means that it hasn't encountered something blocking it
             //so, it is good to add to the list
             for (Chunk successChunk : successChunks) {
-                Politik.logger.log(Level.INFO, "Chunk had no collisions " + successChunk.getX() + " " + successChunk.getZ());
                 addToLandMap(land, successChunk);
             }
             return null;

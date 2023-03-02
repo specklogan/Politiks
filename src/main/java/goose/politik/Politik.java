@@ -1,11 +1,10 @@
 package goose.politik;
 
 import goose.politik.commands.*;
-import goose.politik.events.InteractEvent;
-import goose.politik.events.JobEvent;
-import goose.politik.events.JoinLeaveHandler;
-import goose.politik.events.MoveEvent;
-import goose.politik.util.MongoDBHandler;
+import goose.politik.events.*;
+import goose.politik.util.database.MongoDBHandler;
+import goose.politik.util.database.PlayerDB;
+import goose.politik.util.government.Nation;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.landUtil.LandUtil;
 import net.kyori.adventure.text.Component;
@@ -63,9 +62,12 @@ public final class Politik extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("claimtool")).setExecutor(new ClaimToolCommand());
         Objects.requireNonNull(getCommand("nation")).setExecutor(new NationCommands());
         Objects.requireNonNull(getCommand("town")).setExecutor(new TownCommand());
+        Objects.requireNonNull(getCommand("list")).setExecutor(new List());
 
         //Add dimensions to the land handler
         LandUtil.addDimensionToLandMap(World.Environment.NORMAL);
+        PlayerDB.loadAllPlayers();
+        //MongoDBHandler.loadNations();
     }
 
     @EventHandler
@@ -81,6 +83,7 @@ public final class Politik extends JavaPlugin implements Listener {
             user.savePlayer();
         }
         //saves the player just like when the server shuts down
+        Nation.saveNations();
     }
 
     @EventHandler
@@ -106,7 +109,7 @@ public final class Politik extends JavaPlugin implements Listener {
     @EventHandler
     public void blockBreakEvent(BlockBreakEvent event) {
         //do stuff eventually
-        
+        BlockBreak.blockBreakEvent(event);
     }
 
     @EventHandler
@@ -123,6 +126,9 @@ public final class Politik extends JavaPlugin implements Listener {
             logger.log(Level.INFO, "Saving player " + user.getDisplayName());
             user.leave();
         }
+
+        //save the nations and town
+        Nation.saveNations();
     }
 
     public static Politik getInstance() {

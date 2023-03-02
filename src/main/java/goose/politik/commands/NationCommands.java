@@ -20,22 +20,52 @@ public class NationCommands implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         //this is called when the player does /nation, from there we can check what specific thing they are looking for
+        if (args.length == 0) {
+            sender.sendMessage(Politik.errorMessage("Not enough parameters, type '/nation help' for help"));
+            return true;
+        }
+
+        if (!(sender instanceof Player)) {
+            //server can't execute commands
+            sender.sendMessage(Politik.errorMessage("Server can't issue nation commands"));
+            return true;
+        }
+
+        PolitikPlayer player = PolitikPlayer.getPolitikPlayer((Player) sender);
         String firstArg = args[0];
 
         if (firstArg.equalsIgnoreCase("create")) {
-            if (!(sender instanceof Player)) {
-                sender.sendMessage(Politik.errorMessage("Server can't create a nation"));
-                return true;
-            }
             if (args.length > 1) {
                 //enough args
                 String nationName = args[1];
-                PolitikPlayer player = PolitikPlayer.getPolitikPlayer((Player) sender);
                 //check if they can buy it
-                if (player.canPurchase(Nation.NATIONCOST) && player.getNation() == null) {
-                    player.changeMoney(Nation.NATIONCOST.negate());
-                    new Nation(nationName, player);
+                if (!player.canPurchase(Nation.NATIONCOST)) {
+                    player.message(Politik.errorMessage("You lack the funds to purchase a nation"));
+                    return true;
                 }
+                //make sure they arent in a nation
+                if (!(player.getNation() == null)) {
+                    player.message(Politik.errorMessage("You are already in a nation, leave your nation to create another"));
+                }
+
+                //make sure they aren't in a town
+                if (!(player.getTown() == null)) {
+                    player.message(Politik.errorMessage("You are already in a town, you can't create a new nation while in a town"));
+                }
+
+                //check if the nation name is already taken
+                for (Nation nation : Nation.NATIONS) {
+                    if (nation.getNationName().equalsIgnoreCase(nationName)) {
+                        player.message(Politik.errorMessage("Nation name is already taken"));
+                        return true;
+                    }
+                }
+
+                //all of our checks were successful, go ahead and create it
+                player.changeMoney(Nation.NATIONCOST.negate());
+                player.message(Politik.successMessage("Successfully created " + nationName + " , next create a town for your capitol"));
+                new Nation(nationName, player);
+
             } else {
                 sender.sendMessage(Politik.errorMessage("You need to provide a name for the nation"));
             }
@@ -45,6 +75,16 @@ public class NationCommands implements CommandExecutor {
             for (Nation nation : Nation.NATIONS) {
                 sender.sendMessage("Nation: " + nation.getNationName() + " lead by " + nation.getLeader().getDisplayName());
             }
+        } else if (firstArg.equalsIgnoreCase("spawn")) {
+            //spawn at nation home
+
+
+        } else {
+            //list nation help
+            sender.sendMessage("---------------- Nation Help ----------------");
+            sender.sendMessage(Politik.detailMessage("/nation create [nation-name] : takes in a nation name"));
+            sender.sendMessage(Politik.detailMessage("/nation list [@optional enemy,ally] : lists all nation in the map"));
+            sender.sendMessage(Politik.detailMessage("/nation help : outputs nation command help"));
         }
         return true;
     }

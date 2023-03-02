@@ -1,10 +1,9 @@
 package goose.politik.util.government;
 
 import goose.politik.Politik;
-import goose.politik.util.MongoDBHandler;
+import goose.politik.util.database.MongoDBHandler;
 import goose.politik.util.landUtil.Land;
 import net.kyori.adventure.text.TextComponent;
-import org.bson.Document;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 import java.math.BigDecimal;
@@ -12,19 +11,18 @@ import java.math.BigInteger;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.UUID;
-import java.util.logging.Level;
 
 import static com.mongodb.client.model.Filters.eq;
 
 public class PolitikPlayer {
-    private final String displayName;
-    private final UUID uuid;
+    private String displayName;
+    private UUID uuid;
     private int infamy;
     private Nation nation;
     private Town town;
     private Land lastEnteredLand;
     private BigInteger joinDate;
-    private final Player player;
+    private Player player;
     private String job;
     private BigDecimal money;
 
@@ -39,6 +37,10 @@ public class PolitikPlayer {
         loadPlayer();
     }
 
+    public PolitikPlayer() {
+        //empty constructor when loaded from database
+    }
+
     public static PolitikPlayer getPolitikPlayer(Player player) {
         return playerList.get(player.getUniqueId());
     }
@@ -47,25 +49,30 @@ public class PolitikPlayer {
         return this.player;
     }
 
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    public void setUUID(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    public void setInfamy(int infamy) {
+        this.infamy = infamy;
+    }
+
+    public void setJoinDate(BigInteger number) {
+        this.joinDate = number;
+    }
+
     public static Player getPlayerFromID(UUID playerID) {
         return playerList.get(playerID).getPlayer();
     }
 
     public void loadPlayer() {
-        //load from database, called when player joins
-        if (this.player.hasPlayedBefore()) {
-            //normal load, player has played before
-
-            //load all of the values from the database
-            this.money = new BigDecimal(MongoDBHandler.loadValueFromDatabase("money", this.uuid));
-            this.joinDate = new BigInteger(MongoDBHandler.loadValueFromDatabase("joinDate", this.uuid));
-            this.job = MongoDBHandler.loadValueFromDatabase("job", this.uuid);
-            this.infamy = Integer.parseInt(MongoDBHandler.loadValueFromDatabase("infamy", this.uuid));
-
-        } else {
-            this.joinDate = new BigInteger(String.valueOf(Instant.now().getEpochSecond()));
-            this.money = BigDecimal.ZERO;
-        }
+        //RUN ONLY ON INITIAL PLAYER JOIN
+        this.joinDate = new BigInteger(String.valueOf(Instant.now().getEpochSecond()));
+        this.money = BigDecimal.ZERO;
         PolitikPlayer.playerList.put(this.uuid, this);
     }
 
@@ -76,9 +83,9 @@ public class PolitikPlayer {
 
     public void leave() {
         //called upon leave
-        this.message(Politik.eventMessage(this.displayName + " has left the server, thank you for playing!"));
         savePlayer();
-        PolitikPlayer.playerList.remove(this.uuid);
+        this.player = null;
+        //set the player to null, so we can't message them
     }
 
     public String getDisplayName() {
@@ -161,5 +168,9 @@ public class PolitikPlayer {
 
     public void setMoney(BigDecimal amount) {
         this.money = amount;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 }

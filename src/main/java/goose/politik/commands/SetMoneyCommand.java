@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class SetMoneyCommand implements CommandExecutor {
@@ -44,11 +45,15 @@ public class SetMoneyCommand implements CommandExecutor {
                         return true;
                     }
 
-                    Player target = ((Player) sender).getPlayer();
+                    PolitikPlayer target = null;
+                    for (UUID player : PolitikPlayer.playerList.keySet()) {
+                        if (PolitikPlayer.playerList.get(player).getDisplayName().equalsIgnoreCase(args[0])) {
+                            target = PolitikPlayer.playerList.get(player);
+                        }
+                    }
                     if (target != null) {
-                        PolitikPlayer targetPlayer = PolitikPlayer.getPolitikPlayer(target);
-                        targetPlayer.message(Politik.successMessage("Successfully set " + targetPlayer.getDisplayName() + "'s money to $" + value));
-                        targetPlayer.setMoney(value);
+                        target.message(Politik.successMessage("Successfully set " + target.getDisplayName() + "'s money to $" + value));
+                        target.setMoney(value);
                     } else {
                         Politik.logger.log(Level.WARNING, "Error, player was null");
                     }
@@ -65,17 +70,19 @@ public class SetMoneyCommand implements CommandExecutor {
                     }
 
                     //successful conversion
-                    Player target = Politik.getInstance().getServer().getPlayer(player) ;
-
-                    //doesnt work with offline players just yet
+                    PolitikPlayer target = null;
+                    for (UUID person : PolitikPlayer.playerList.keySet()) {
+                        if (PolitikPlayer.playerList.get(person).getDisplayName().equalsIgnoreCase(args[0])) {
+                            target = PolitikPlayer.playerList.get(person);
+                        }
+                    }
 
                     //verify target isn't null
                     if (target != null) {
                         //successful, player does exist
-                        PolitikPlayer targetPlayer = PolitikPlayer.getPolitikPlayer(target);
                         Politik.logger.log(Level.INFO, value + " amount set");
-                        targetPlayer.setMoney(value);
-                        sender.sendMessage(Politik.successMessage("Successfully set " + target.getName() + "'s money to $" + value));
+                        target.setMoney(value);
+                        sender.sendMessage(Politik.successMessage("Successfully set " + target.getDisplayName() + "'s money to $" + value));
                     } else {
                         sender.sendMessage(Politik.errorMessage(player + " does not exist"));
                     }
