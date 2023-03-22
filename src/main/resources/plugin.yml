@@ -1,36 +1,39 @@
 name: Politik
+description: Nation-based land plugin, with emphasis on fighting and factory elements
+author: gooseapple5
 version: '${project.version}'
+website: https://github.com/specklogan/Politiks
 main: goose.politik.Politik
 api-version: 1.19
 commands:
   addmoney:
     description: Adds money to player, negative numbers subtract money
-    aliases:
-      - addm
+    aliases: addm
     usage: /addmoney {player} {amount}
   setmoney:
     description: Sets the money of a player
-    aliases:
-      - setm
+    aliases: setm
     usage: /setmoney {player} {amount}
   balance:
     description: Returns the value of your balance {$}
-    aliases:
-      - bal
+    aliases: bal
     usage: /<command> [player]
   jobset:
     desription: Set which job you want to be
-    aliases:
-      - js
+    aliases: js
     usage: /<command> [job]
   claimtool:
     description: Gives the player the tool to claim land
-    aliases:
-      -ct
+    aliases: ct
     usage: /<command>
   nation:
     description: Returns list of valid nation commands
-    aliases:
-      -na
-    usage: /<command>
+    aliases: [na, nt]
+    usage: /<command> [help, list, create]
+  town:
+    description: Returns list of valid town commands
+    aliases: t
+    usage: /<command> [help,list,create]
+  list:
+    description: List all players
 

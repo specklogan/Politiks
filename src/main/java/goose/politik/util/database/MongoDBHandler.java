@@ -1,10 +1,16 @@
-package goose.politik.util;
+package goose.politik.util.database;
 
+import com.google.gson.Gson;
+import com.mongodb.Cursor;
 import com.mongodb.MongoClient;
 import static com.mongodb.client.model.Filters.*;
+
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import goose.politik.Politik;
+import goose.politik.util.government.Nation;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.landUtil.Land;
 import org.bson.Document;
@@ -21,6 +27,7 @@ public class MongoDBHandler {
     public static MongoClient mongoClient;
     public static MongoDatabase serverDB;
     public static MongoCollection<Document> playerCollection;
+    public static MongoCollection<Document> nationCollection;
     public static MongoCollection<Document> overworldLand;
     public static MongoCollection<Document> netherLand;
     public static MongoCollection<Document> endLand;
@@ -36,6 +43,7 @@ public class MongoDBHandler {
         }
         serverDB = mongoClient.getDatabase("mcserver");
         playerCollection = serverDB.getCollection("players");
+        nationCollection = serverDB.getCollection("nations");
         overworldLand = serverDB.getCollection("overworld_Land");
         netherLand = serverDB.getCollection("nether_Land");
         endLand = serverDB.getCollection("end_Land");
@@ -50,38 +58,35 @@ public class MongoDBHandler {
         return playerDocument.get(key).toString();
     }
 
-    public static void saveLandToChunk(Chunk chunk, Land land) {
-        Document chunkDocument = overworldLand.find(eq("chunkKey", chunk.getChunkKey())).first();
-        if (chunkDocument == null) {
-            //chunk is empty, we can go ahead and save it to the database
+    public static void saveNation(Nation nation) {
+        //saves a nation
+        Document nationDocument = nationCollection.find(eq("nationName", nation.getNationName())).first();
+
+        if (nationDocument == null) {
+            //no nation exists, was created before this, so go ahead and replace it
+            Document updatedDocument = new Document();
+            updatedDocument.put("nationName", nation.getNationName());
+            updatedDocument.put("leaderUUID", nation.getLeader().getUUID().toString());
+            updatedDocument.put("nationCapitol", nation.getCapitol().getTownName());
+            updatedDocument.put("allyList", nation.getAllies().toString());
+            updatedDocument.put("enemyList", nation.getEnemies().toString());
+            updatedDocument.put("taxRate", nation.getTaxRate().toString());
+            updatedDocument.put("townList", nation.getTownList().toString());
+            updatedDocument.put("enterMessage", nation.getEnterMessage().toString());
+            nationCollection.insertOne(updatedDocument);
+        } else {
+            //nation already exist
+            Document updatedDocument = new Document();
+            updatedDocument.put("nationName", nation.getNationName());
+            updatedDocument.put("leaderUUID", nation.getLeader().getUUID().toString());
+            updatedDocument.put("nationCapitol", nation.getCapitol().getTownName());
+            updatedDocument.put("allyList", nation.getAllies().toString());
+            updatedDocument.put("enemyList", nation.getEnemies().toString());
+            updatedDocument.put("taxRate", nation.getTaxRate().toString());
+            updatedDocument.put("townList", nation.getTownList().toString());
+            updatedDocument.put("enterMessage", nation.getEnterMessage().toString());
+            nationCollection.replaceOne(nationDocument, updatedDocument);
         }
-    }
-
-    public static ArrayList<Land> loadLandFromChunk(Chunk chunk) {
-
-        World.Environment chunkDimension = chunk.getWorld().getEnvironment();
-        //allows us to get land from custom dimensions
-        if (chunkDimension == World.Environment.NORMAL) {
-            //overworld
-            Document chunkDocument = overworldLand.find(eq("chunkKey", chunk.getChunkKey())).first();
-            //if it returns empty, that means nothing is there
-            if (chunkDocument == null) {
-                return null;
-            }
-            //chunk does exist with land in it
-            ArrayList<Land> claimsInChunk;
-
-
-
-        } else if (chunkDimension == World.Environment.NETHER) {
-            //nether
-
-        } else if (chunkDimension == World.Environment.THE_END) {
-            //end
-
-        }
-
-        return null;
     }
 
     public static void savePlayerToDatabase(PolitikPlayer player) {

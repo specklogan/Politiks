@@ -6,13 +6,24 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class JoinLeaveHandler {
     public static void playerJoin(PlayerJoinEvent event) {
-        //check if it was the first time someone's joined
-        new PolitikPlayer(event.getPlayer());
-        event.joinMessage(Politik.eventMessage("Welcome " + event.getPlayer().getName() + " to the server"));
+        //Check if they are a valid PolitikPlayer ( have played before )
+        if (!event.getPlayer().hasPlayedBefore()) {
+            //run some stuff at first join
+            new PolitikPlayer(event.getPlayer());
+            event.joinMessage(Politik.eventMessage("Welcome " + event.getPlayer().getName() + " to the server"));
+        } else {
+            //now we have to figure out which one of the player objects they are
+            for (UUID key : PolitikPlayer.playerList.keySet()) {
+                if (PolitikPlayer.playerList.get(key).getUUID().equals(event.getPlayer().getUniqueId())) {
+                    PolitikPlayer.playerList.get(key).setPlayer(event.getPlayer());
+                }
+            }
+        }
     }
 
     public static void playerLeave(PlayerQuitEvent event) {
