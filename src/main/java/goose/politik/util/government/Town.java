@@ -47,7 +47,7 @@ public class Town {
         this.townName = townName;
         this.mayor = mayor;
         this.nationOwner = owner;
-        addPlayer(mayor);
+        this.addPlayer(mayor);
         owner.addTown(this);
         mayor.setTown(this);
     }

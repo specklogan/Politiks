@@ -1,6 +1,7 @@
 package goose.politik.util.government;
 
 import goose.politik.util.database.MongoDBHandler;
+import goose.politik.util.database.NationDB;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 
@@ -14,24 +15,28 @@ public class Nation {
     public static final BigDecimal NATIONCOST = new BigDecimal("1000");
     public static final ArrayList<Nation> NATIONS = new ArrayList<>();
 
-    private TextComponent enterMessage;
+    private TextComponent enterMessage = Component.text("");
 
     private String nationName;
     private PolitikPlayer leader;
-    private ArrayList<PolitikPlayer> playerList;
-    private ArrayList<Town> townList;
+    private final ArrayList<PolitikPlayer> playerList = new ArrayList<>();
+    private final ArrayList<Town> townList = new ArrayList<>();
 
     //Political stuff
     private Town capitol;
-    private ArrayList<Nation> allies = new ArrayList<>();
-    private ArrayList<Nation> enemies = new ArrayList<>();
+    private final ArrayList<Nation> allies = new ArrayList<>();
+    private final ArrayList<Nation> enemies = new ArrayList<>();
     private BigDecimal taxRate = new BigDecimal("20");
 
     public static void saveNations() {
         //saves everything to database
         for (Nation nation : Nation.NATIONS) {
-            MongoDBHandler.saveNation(nation);
+            NationDB.saveNation(nation);
         }
+    }
+
+    public void setEnterMessage(TextComponent enterMessage) {
+        this.enterMessage = enterMessage;
     }
 
     public String getNationName() {
@@ -43,9 +48,6 @@ public class Nation {
     }
 
     public void addTown(Town town) {
-        if (this.townList == null) {
-            this.townList = new ArrayList<>();
-        }
         this.townList.add(town);
     }
 
@@ -54,9 +56,6 @@ public class Nation {
     }
 
     public void addToPlayerList(PolitikPlayer player) {
-        if (this.playerList == null) {
-            this.playerList = new ArrayList<>();
-        }
         this.playerList.add(player);
     }
 
