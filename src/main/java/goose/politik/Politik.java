@@ -3,6 +3,7 @@ package goose.politik;
 import goose.politik.commands.*;
 import goose.politik.events.*;
 import goose.politik.util.database.MongoDBHandler;
+import goose.politik.util.database.NationDB;
 import goose.politik.util.database.PlayerDB;
 import goose.politik.util.government.Nation;
 import goose.politik.util.government.PolitikPlayer;
@@ -67,7 +68,7 @@ public final class Politik extends JavaPlugin implements Listener {
         //Add dimensions to the land handler
         LandUtil.addDimensionToLandMap(World.Environment.NORMAL);
         PlayerDB.loadAllPlayers();
-        //MongoDBHandler.loadNations();
+        NationDB.loadNations();
     }
 
     @EventHandler

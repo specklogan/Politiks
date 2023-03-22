@@ -16,6 +16,18 @@ public class Town {
     public static final BigDecimal TOWNCOST = new BigDecimal("250");
     private ArrayList<PolitikPlayer> playerList;
 
+    //static
+    public static Town getTownFromName(String townName) {
+        for (Nation nation : Nation.NATIONS) {
+            for (Town town : nation.getTownList()) {
+                if (town.getTownName().equals(townName)) {
+                    return town;
+                }
+            }
+        }
+        return null;
+    }
+
     public String getTownName() {
         return this.townName;
     }

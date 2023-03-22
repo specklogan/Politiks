@@ -1,12 +1,21 @@
 package goose.politik.util.database;
 
 import com.mongodb.client.MongoCursor;
+import goose.politik.Politik;
 import goose.politik.util.government.Nation;
+import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.government.Town;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.serializer.ComponentSerializer;
 import org.bson.Document;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -16,9 +25,13 @@ public class NationDB {
             //read through all saved nations
             String nationName = document.getString("nationName");
             UUID leaderUUID = UUID.fromString(document.getString("leaderUUID"));
-//            String capitol = document.getString("nationalCapitol");
-//            ArrayList<String> allyList = (ArrayList<String>) document.get("allyList");
-//            new Nation(nationName, leaderUUID, capitol, );
+            String capitol = document.getString("nationalCapitol");
+            BigDecimal taxRate = new BigDecimal(document.getString("taxRate"));
+            //TextComponent enterMessage = Component.text(enterMessageArr[1]);
+            Politik.logger.log(Level.INFO, "Loading nation from database: " + capitol);
+            Nation nation = new Nation(nationName, PolitikPlayer.getPolitikPlayerFromID(leaderUUID));
+            //nation.setEnterMessage(enterMessage);
+            nation.setTaxRate(taxRate);
         }
     }
 
@@ -33,6 +46,11 @@ public class NationDB {
             capitolName = nationCapitol.getTownName();
         }
 
+        ArrayList<String> townList = new ArrayList<String>();
+        for (Town town : nation.getTownList()) {
+            townList.add(town.getTownName());
+        }
+
         if (nationDocument == null) {
             //no nation exists, was created before this, so go ahead and replace it
             Document updatedDocument = new Document();
@@ -42,7 +60,7 @@ public class NationDB {
             updatedDocument.put("allyList", nation.getAllies().toString());
             updatedDocument.put("enemyList", nation.getEnemies().toString());
             updatedDocument.put("taxRate", nation.getTaxRate().toString());
-            updatedDocument.put("townList", nation.getTownList().toString());
+            updatedDocument.put("townList", townList);
             updatedDocument.put("enterMessage", nation.getEnterMessage().toString());
             MongoDBHandler.nationCollection.insertOne(updatedDocument);
         } else {
@@ -54,7 +72,7 @@ public class NationDB {
             updatedDocument.put("allyList", nation.getAllies().toString());
             updatedDocument.put("enemyList", nation.getEnemies().toString());
             updatedDocument.put("taxRate", nation.getTaxRate().toString());
-            updatedDocument.put("townList", nation.getTownList().toString());
+            updatedDocument.put("townList", townList);
             updatedDocument.put("enterMessage", nation.getEnterMessage().toString());
             MongoDBHandler.nationCollection.replaceOne(nationDocument, updatedDocument);
         }
