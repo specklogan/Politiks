@@ -5,6 +5,7 @@ import goose.politik.util.government.Nation;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.government.Town;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -21,10 +22,8 @@ public class Land {
     private PolitikPlayer playerOwner;
     private World.Environment environment;
 
-    private String firstPos;
-    private String secondPos;
-    private Block firstBlock;
-    private Block secondBlock;
+    private Location firstLocation;
+    private Location secondLocation;
     private int area;
 
     //Initialize some values like is fire, tnt, pvp allowed
@@ -32,20 +31,14 @@ public class Land {
     private boolean fireEnabled = false;
     private boolean pvpEnabled = false;
 
-    public String getFirstPos() {
-        return this.firstPos;
-    }
 
-    public String getSecondPos() {
-        return this.secondPos;
-    }
 
     public Block getFirstBlock() {
-        return this.firstBlock;
+        return this.firstLocation.getBlock();
     }
 
     public Block getSecondBlock() {
-        return this.secondBlock;
+        return this.firstLocation.getBlock();
     }
 
     public static int getX(String position) {
@@ -138,9 +131,26 @@ public class Land {
     }
 
     public void setVisibleLand() {
-        this.firstBlock.setType(Material.GOLD_BLOCK);
-        this.secondBlock.setType(Material.GOLD_BLOCK);
+        this.getFirstBlock().setType(Material.GOLD_BLOCK);
+        this.getSecondBlock().setType(Material.GOLD_BLOCK);
     }
+
+    public Location getFirstLocation() {
+        return firstLocation;
+    }
+
+    public void setFirstLocation(Location firstLocation) {
+        this.firstLocation = firstLocation;
+    }
+
+    public Location getSecondLocation() {
+        return secondLocation;
+    }
+
+    public void setSecondLocation(Location secondLocation) {
+        this.secondLocation = secondLocation;
+    }
+
     public Land(String firstPos, String secondPos, PolitikPlayer player, Chunk chunk) {
         //we need to make sure the player is in a town, or nation
         Nation playerNation = player.getNation();
@@ -155,21 +165,19 @@ public class Land {
         int fx = getX(firstPos);
         int fy = getY(firstPos);
         int fz = getZ(firstPos);
-        Block firstBlock = chunk.getWorld().getBlockAt(fx,fy,fz);
+        Location firstLocation = new Location(chunk.getWorld(), fx, fy, fz);
 
         int sx = getX(secondPos);
         int sy = getY(secondPos);
         int sz = getZ(secondPos);
-        Block secondBlock = chunk.getWorld().getBlockAt(sx,sy,sz);
+        Location secondLocation = new Location(chunk.getWorld(), sx, sy, sz);
 
         if (validLand(firstPos, secondPos)) {
             //it is valid
-            this.firstPos = firstPos;
             this.playerOwner = player;
-            this.secondPos = secondPos;
             this.environment = chunk.getWorld().getEnvironment();
-            this.firstBlock = firstBlock;
-            this.secondBlock = secondBlock;
+            this.firstLocation = firstLocation;
+            this.secondLocation = secondLocation;
             BigDecimal cost = costPerArea.multiply(BigDecimal.valueOf(area));
             //check if player has enough money to cover it
             if (player.canPurchase(cost)) {

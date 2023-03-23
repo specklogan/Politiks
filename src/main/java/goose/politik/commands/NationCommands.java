@@ -48,11 +48,13 @@ public class NationCommands implements CommandExecutor {
                 //make sure they arent in a nation
                 if (!(player.getNation() == null)) {
                     player.message(Politik.errorMessage("You are already in a nation, leave your nation to create another"));
+                    return true;
                 }
 
                 //make sure they aren't in a town
                 if (!(player.getTown() == null)) {
                     player.message(Politik.errorMessage("You are already in a town, you can't create a new nation while in a town"));
+                    return true;
                 }
 
                 //check if the nation name is already taken

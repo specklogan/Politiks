@@ -5,8 +5,10 @@ import goose.politik.events.*;
 import goose.politik.util.database.MongoDBHandler;
 import goose.politik.util.database.NationDB;
 import goose.politik.util.database.PlayerDB;
+import goose.politik.util.database.TownDB;
 import goose.politik.util.government.Nation;
 import goose.politik.util.government.PolitikPlayer;
+import goose.politik.util.government.Town;
 import goose.politik.util.landUtil.LandUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -69,6 +71,7 @@ public final class Politik extends JavaPlugin implements Listener {
         LandUtil.addDimensionToLandMap(World.Environment.NORMAL);
         PlayerDB.loadAllPlayers();
         NationDB.loadNations();
+        TownDB.loadTowns();
     }
 
     @EventHandler
@@ -85,6 +88,7 @@ public final class Politik extends JavaPlugin implements Listener {
         }
         //saves the player just like when the server shuts down
         Nation.saveNations();
+        Town.saveTowns();
     }
 
     @EventHandler
@@ -130,6 +134,7 @@ public final class Politik extends JavaPlugin implements Listener {
 
         //save the nations and town
         Nation.saveNations();
+        Town.saveTowns();
     }
 
     public static Politik getInstance() {

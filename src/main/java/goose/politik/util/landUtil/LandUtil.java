@@ -1,6 +1,7 @@
 package goose.politik.util.landUtil;
 
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
@@ -20,8 +21,8 @@ public class LandUtil {
     }
 
     public static Land getLandInLand(Land land, Chunk chunk) {
-        Block blockOne = land.getFirstBlock();
-        Block blockTwo = land.getSecondBlock();
+        Location blockOne = land.getFirstLocation();
+        Location blockTwo = land.getSecondLocation();
         World world = chunk.getWorld();
 
         //check quickly if they are in the same chunk
@@ -33,21 +34,21 @@ public class LandUtil {
                 //the chunk is not empty do a check
                 for (Land tempLand : chunkLand) {
                     //loop through every land in here
-                    Block firstLandFirstBlock = tempLand.getFirstBlock();
-                    Block firstLandSecondBlock = tempLand.getSecondBlock();
+                    Location firstLandFirstBlock = tempLand.getFirstLocation();
+                    Location firstLandSecondBlock = tempLand.getSecondLocation();
 
-                    Block secondLandFirstBlock = land.getFirstBlock();
-                    Block secondLandSecondBlock = land.getSecondBlock();
+                    Location secondLandFirstBlock = land.getFirstLocation();
+                    Location secondLandSecondBlock = land.getSecondLocation();
 
                     //quick check to ensure that the Block1 of one land isnt the same as of the other
                     if (firstLandFirstBlock.equals(secondLandFirstBlock) || firstLandFirstBlock.equals(secondLandSecondBlock) || firstLandSecondBlock.equals(secondLandFirstBlock) || firstLandSecondBlock.equals(secondLandSecondBlock)) {
                         return tempLand;
                     }
 
-                    int landOneLargestX;
-                    int landOneSmallestX;
-                    int landTwoSmallestX;
-                    int landTwoLargestX;
+                    double landOneLargestX;
+                    double landOneSmallestX;
+                    double landTwoSmallestX;
+                    double landTwoLargestX;
 
                     //figure out which x is bigger on the first land
                     if (firstLandFirstBlock.getX() > firstLandSecondBlock.getX()) {
@@ -68,10 +69,10 @@ public class LandUtil {
                         landTwoLargestX = secondLandFirstBlock.getX();
                     }
 
-                    int landOneLargestZ;
-                    int landOneSmallestZ;
-                    int landTwoSmallestZ;
-                    int landTwoLargestZ;
+                    double landOneLargestZ;
+                    double landOneSmallestZ;
+                    double landTwoSmallestZ;
+                    double landTwoLargestZ;
 
                     if (firstLandFirstBlock.getZ() > firstLandSecondBlock.getZ()) {
                         landOneLargestZ = firstLandFirstBlock.getZ();
@@ -115,8 +116,8 @@ public class LandUtil {
         } else {
             //Trying to make a multi chunk claim
             //To do this, we need to check all of the chunks, then check all of those claims
-            Chunk firstBlockChunk = land.getFirstBlock().getChunk();
-            Chunk secondBlockChunk = land.getSecondBlock().getChunk();
+            Chunk firstBlockChunk = land.getFirstLocation().getChunk();
+            Chunk secondBlockChunk = land.getSecondLocation().getChunk();
 
             //you can think of this as:
             /*
@@ -153,21 +154,21 @@ public class LandUtil {
                         // chunk is not empty
                         for (Land tempLand : chunkLand) {
                             //loop through every land in here
-                            Block firstLandFirstBlock = tempLand.getFirstBlock();
-                            Block firstLandSecondBlock = tempLand.getSecondBlock();
+                            Location firstLandFirstBlock = tempLand.getFirstLocation();
+                            Location firstLandSecondBlock = tempLand.getSecondLocation();
 
-                            Block secondLandFirstBlock = land.getFirstBlock();
-                            Block secondLandSecondBlock = land.getSecondBlock();
+                            Location secondLandFirstBlock = land.getFirstLocation();
+                            Location secondLandSecondBlock = land.getSecondLocation();
 
                             //quick check to ensure that the Block1 of one land isnt the same as of the other
                             if (firstLandFirstBlock.equals(secondLandFirstBlock) || firstLandFirstBlock.equals(secondLandSecondBlock) || firstLandSecondBlock.equals(secondLandFirstBlock) || firstLandSecondBlock.equals(secondLandSecondBlock)) {
                                 return tempLand;
                             }
 
-                            int landOneLargestX;
-                            int landOneSmallestX;
-                            int landTwoSmallestX;
-                            int landTwoLargestX;
+                            double landOneLargestX;
+                            double landOneSmallestX;
+                            double landTwoSmallestX;
+                            double landTwoLargestX;
 
                             //figure out which x is bigger on the first land
                             if (firstLandFirstBlock.getX() > firstLandSecondBlock.getX()) {
@@ -188,10 +189,10 @@ public class LandUtil {
                                 landTwoLargestX = secondLandFirstBlock.getX();
                             }
 
-                            int landOneLargestZ;
-                            int landOneSmallestZ;
-                            int landTwoSmallestZ;
-                            int landTwoLargestZ;
+                            double landOneLargestZ;
+                            double landOneSmallestZ;
+                            double landTwoSmallestZ;
+                            double landTwoLargestZ;
 
                             if (firstLandFirstBlock.getZ() > firstLandSecondBlock.getZ()) {
                                 landOneLargestZ = firstLandFirstBlock.getZ();
@@ -259,11 +260,11 @@ public class LandUtil {
             int blockZ = block.getZ();
             boolean xCollision = false;
             boolean zCollision = false;
-            int landOneLargestX;
-            int landOneSmallestX;
+            double landOneLargestX;
+            double landOneSmallestX;
             for (Land land : landsInChunk) {
-                Block firstLandFirstBlock = land.getFirstBlock();
-                Block firstLandSecondBlock = land.getSecondBlock();
+                Location firstLandFirstBlock = land.getFirstLocation();
+                Location firstLandSecondBlock = land.getSecondLocation();
 
                 //figure out which x is bigger on the first land
                 if (firstLandFirstBlock.getX() > firstLandSecondBlock.getX()) {
@@ -277,8 +278,8 @@ public class LandUtil {
                     landOneSmallestX = firstLandFirstBlock.getX();
                 }
 
-                int landOneLargestZ;
-                int landOneSmallestZ;
+                double landOneLargestZ;
+                double landOneSmallestZ;
 
                 if (firstLandFirstBlock.getZ() > firstLandSecondBlock.getZ()) {
                     landOneLargestZ = firstLandFirstBlock.getZ();

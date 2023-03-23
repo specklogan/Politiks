@@ -29,6 +29,7 @@ public class MongoDBHandler {
     public static MongoDatabase serverDB;
     public static MongoCollection<Document> playerCollection;
     public static MongoCollection<Document> nationCollection;
+    public static MongoCollection<Document> townCollection;
     public static MongoCollection<Document> overworldLand;
     public static MongoCollection<Document> netherLand;
     public static MongoCollection<Document> endLand;
@@ -45,6 +46,7 @@ public class MongoDBHandler {
         serverDB = mongoClient.getDatabase("mcserver");
         playerCollection = serverDB.getCollection("players");
         nationCollection = serverDB.getCollection("nations");
+        townCollection = serverDB.getCollection("towns");
         overworldLand = serverDB.getCollection("overworld_Land");
         netherLand = serverDB.getCollection("nether_Land");
         endLand = serverDB.getCollection("end_Land");
