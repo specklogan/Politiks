@@ -1,5 +1,7 @@
 package goose.politik.util.landUtil;
 
+import goose.politik.Politik;
+import goose.politik.util.database.LandDB;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -7,6 +9,7 @@ import org.bukkit.block.Block;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 public class LandUtil {
 
@@ -325,5 +328,15 @@ public class LandUtil {
             }
         }
         return -1;
+    }
+
+    public static void saveLands() {
+        for (Long chunkKey : landMap.get(World.Environment.NORMAL).keySet()) {
+            //returns a list of all lands saved
+            //Politik.logger.log(Level.INFO, "Saving chunk: " + chunkKey);
+            for (Land land : landMap.get(World.Environment.NORMAL).get(chunkKey)) {
+                LandDB.saveLand(land);
+            }
+        }
     }
 }

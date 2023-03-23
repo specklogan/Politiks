@@ -35,6 +35,15 @@ public class Nation {
         }
     }
 
+    public static Nation getNationFromName(String nationName) {
+        for (Nation nation : Nation.NATIONS) {
+            if (nation.getNationName().equals(nationName)) {
+                return nation;
+            }
+        }
+        return null;
+    }
+
     public void setEnterMessage(TextComponent enterMessage) {
         this.enterMessage = enterMessage;
     }

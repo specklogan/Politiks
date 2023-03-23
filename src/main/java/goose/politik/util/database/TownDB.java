@@ -37,7 +37,6 @@ public class TownDB {
         for (PolitikPlayer player : town.getPlayerList()) {
             playerList.add(player.getUUID().toString());
         }
-        Politik.logger.log(Level.INFO, "Saving Town: " + townName + " into the database");
         if (townDocument == null) {
             //town is new and hasn't been saved yet, create a blank database
             Document newTownDocument = new Document();
@@ -94,11 +93,16 @@ public class TownDB {
             town.setSpawnLocation(location);
             town.getNation().addTown(town);
 
+            PolitikPlayer mayor = PolitikPlayer.getPolitikPlayerFromID(mayorUUID);
+            mayor.setTown(town);
+
             //now add all of the players
             List<String> playerList = document.getList("playerList", String.class);
             for (String plrStr : playerList) {
                 PolitikPlayer player = PolitikPlayer.getPolitikPlayerFromID(UUID.fromString(plrStr));
                 town.addPlayer(player);
+                player.setTown(town);
+                player.setNation(town.getNation());
             }
         }
     }

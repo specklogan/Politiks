@@ -101,7 +101,5 @@ public class Town {
         this.townName = townName;
         this.mayor = mayor;
         this.nationOwner = owner;
-        this.addPlayer(mayor);
-        mayor.setTown(this);
     }
 }

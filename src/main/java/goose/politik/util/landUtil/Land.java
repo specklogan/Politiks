@@ -11,6 +11,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public class Land {
     //will be an instance of land
@@ -25,6 +26,7 @@ public class Land {
     private Location firstLocation;
     private Location secondLocation;
     private int area;
+    private UUID uuid;
 
     //Initialize some values like is fire, tnt, pvp allowed
     private boolean explosionsEnabled = false;
@@ -135,6 +137,14 @@ public class Land {
         this.getSecondBlock().setType(Material.GOLD_BLOCK);
     }
 
+    public int getArea() {
+        return area;
+    }
+
+    public void setArea(int area) {
+        this.area = area;
+    }
+
     public Location getFirstLocation() {
         return firstLocation;
     }
@@ -178,12 +188,13 @@ public class Land {
             this.environment = chunk.getWorld().getEnvironment();
             this.firstLocation = firstLocation;
             this.secondLocation = secondLocation;
+            this.setArea(Land.calculateArea(firstPos, secondPos));
+            this.setUUID(UUID.randomUUID());
             BigDecimal cost = costPerArea.multiply(BigDecimal.valueOf(area));
             //check if player has enough money to cover it
             if (player.canPurchase(cost)) {
                 Land result = LandUtil.getLandInLand(this, chunk);
                 if (result == null) {
-                    //do a further check to see if it overlaps
                     this.playerOwner.message(Politik.successMessage("You've successfully claimed " + this.area + " blocks, costing you $" + cost));
                     player.changeMoney(cost.negate());
                     this.setNationOwner(playerNation);
@@ -197,5 +208,17 @@ public class Land {
         } else {
             player.message(Politik.errorMessage("Incorrect area, minimum area size is 16, maximum is 8192"));
         }
+    }
+
+    public Land() {
+
+    }
+
+    public UUID getUUID() {
+        return this.uuid;
+    }
+
+    public void setUUID(UUID uuid) {
+        this.uuid = uuid;
     }
 }

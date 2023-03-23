@@ -2,10 +2,7 @@ package goose.politik;
 
 import goose.politik.commands.*;
 import goose.politik.events.*;
-import goose.politik.util.database.MongoDBHandler;
-import goose.politik.util.database.NationDB;
-import goose.politik.util.database.PlayerDB;
-import goose.politik.util.database.TownDB;
+import goose.politik.util.database.*;
 import goose.politik.util.government.Nation;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.government.Town;
@@ -72,6 +69,7 @@ public final class Politik extends JavaPlugin implements Listener {
         PlayerDB.loadAllPlayers();
         NationDB.loadNations();
         TownDB.loadTowns();
+        LandDB.loadLands();
     }
 
     @EventHandler
@@ -89,6 +87,7 @@ public final class Politik extends JavaPlugin implements Listener {
         //saves the player just like when the server shuts down
         Nation.saveNations();
         Town.saveTowns();
+        LandUtil.saveLands();
     }
 
     @EventHandler
@@ -135,6 +134,7 @@ public final class Politik extends JavaPlugin implements Listener {
         //save the nations and town
         Nation.saveNations();
         Town.saveTowns();
+        LandUtil.saveLands();
     }
 
     public static Politik getInstance() {

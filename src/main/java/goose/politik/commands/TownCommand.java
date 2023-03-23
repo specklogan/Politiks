@@ -57,6 +57,8 @@ public class TownCommand implements CommandExecutor {
                 //they are in their own nation, and have not created a town
                 player.getNation().setCapitol(newTown);
                 player.getNation().addTown(newTown);
+                player.setTown(newTown);
+                newTown.addPlayer(player);
                 player.message(Politik.detailMessage(player.getNation().getNationName() + "'s capitol set to " + townName));
             }
 
