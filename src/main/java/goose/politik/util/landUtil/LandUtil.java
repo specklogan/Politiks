@@ -16,7 +16,7 @@ public class LandUtil {
     public static final HashMap<World.Environment, HashMap<Long, ArrayList<Land>>> landMap = new HashMap<>();
 
     public static ArrayList<Land> getLandListInChunk(Chunk chunk) {
-        return landMap.get(chunk.getWorld().getEnvironment()).get(chunk.getChunkKey());
+        return landMap.get(World.Environment.NORMAL).get(chunk.getChunkKey());
     }
 
     public static void addDimensionToLandMap(World.Environment dimension) {
@@ -101,9 +101,13 @@ public class LandUtil {
                     if (landOneSmallestX < landTwoLargestX && landOneLargestX > landTwoSmallestX) {
                         //x collision
                         xCollision = true;
+                    } else if (landOneSmallestX == landTwoLargestX) {
+                        xCollision = true;
                     }
                     if (landOneSmallestZ < landTwoLargestZ && landOneLargestZ > landTwoSmallestZ) {
                         //z collision
+                        zCollision = true;
+                    } else if (landOneSmallestZ == landTwoLargestZ) {
                         zCollision = true;
                     }
 
@@ -117,7 +121,6 @@ public class LandUtil {
                 }
             }
         } else {
-            //Trying to make a multi chunk claim
             //To do this, we need to check all of the chunks, then check all of those claims
             Chunk firstBlockChunk = land.getFirstLocation().getChunk();
             Chunk secondBlockChunk = land.getSecondLocation().getChunk();
@@ -221,9 +224,13 @@ public class LandUtil {
                             if (landOneSmallestX < landTwoLargestX && landOneLargestX > landTwoSmallestX) {
                                 //x collision
                                 xCollision = true;
+                            } else if (landOneSmallestX == landTwoLargestX) {
+                                xCollision = true;
                             }
                             if (landOneSmallestZ < landTwoLargestZ && landOneLargestZ > landTwoSmallestZ) {
                                 //z collision
+                                zCollision = true;
+                            } else if (landOneSmallestZ == landTwoLargestZ) {
                                 zCollision = true;
                             }
 
@@ -328,6 +335,41 @@ public class LandUtil {
             }
         }
         return -1;
+    }
+    public static ArrayList<Chunk> getChunksInLand(Land land) {
+        Location firstLoc = land.getFirstLocation();
+        Location secondLoc = land.getSecondLocation();
+        Chunk firstChunk = firstLoc.getChunk();
+        Chunk secondChunk = secondLoc.getChunk();
+        World world = firstChunk.getWorld();
+        ArrayList<Chunk> chunkList = new ArrayList<>();
+
+        if (firstChunk.equals(secondChunk)) {
+            chunkList.add(firstLoc.getChunk());
+        } else {
+            int minX, maxX, minZ, maxZ;
+            if (firstChunk.getX() > secondChunk.getX()) {
+                maxX = firstChunk.getX();
+                minX = secondChunk.getX();
+            } else {
+                maxX = secondChunk.getX();
+                minX = firstChunk.getX();
+            }
+            if (firstChunk.getZ() > secondChunk.getZ()) {
+                maxZ = firstChunk.getZ();
+                minZ = secondChunk.getZ();
+            } else {
+                maxZ = secondChunk.getZ();
+                minZ = firstChunk.getZ();
+            }
+
+            for (int i = minX; i <= maxX; i++) {
+                for (int v = minZ; v <= maxZ; v++) {
+                    chunkList.add(world.getChunkAt(i,v));
+                }
+            }
+        }
+        return chunkList;
     }
 
     public static void saveLands() {

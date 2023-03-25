@@ -25,7 +25,7 @@ public class NationDB {
             //read through all saved nations
             String nationName = document.getString("nationName");
             UUID leaderUUID = UUID.fromString(document.getString("leaderUUID"));
-            String capitol = document.getString("nationalCapitol");
+            String capitol = document.getString("nationCapitol");
             BigDecimal taxRate = new BigDecimal(document.getString("taxRate"));
             //TextComponent enterMessage = Component.text(enterMessageArr[1]);
             Politik.logger.log(Level.INFO, "Loading nation from database: " + capitol);

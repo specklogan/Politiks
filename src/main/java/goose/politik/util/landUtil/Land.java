@@ -11,6 +11,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class Land {
@@ -41,6 +42,16 @@ public class Land {
 
     public Block getSecondBlock() {
         return this.firstLocation.getBlock();
+    }
+
+    public ArrayList<Chunk> occupiedChunks = new ArrayList<>();
+
+    public ArrayList<Chunk> getOccupiedChunks() {
+        return this.occupiedChunks;
+    }
+
+    public void setOccupiedChunks(ArrayList<Chunk> occupiedChunks) {
+        this.occupiedChunks = occupiedChunks;
     }
 
     public static int getX(String position) {
@@ -161,6 +172,10 @@ public class Land {
         this.secondLocation = secondLocation;
     }
 
+    public void setEnvironment(World.Environment environment) {
+        this.environment = environment;
+    }
+
     public Land(String firstPos, String secondPos, PolitikPlayer player, Chunk chunk) {
         //we need to make sure the player is in a town, or nation
         Nation playerNation = player.getNation();
@@ -195,6 +210,7 @@ public class Land {
             if (player.canPurchase(cost)) {
                 Land result = LandUtil.getLandInLand(this, chunk);
                 if (result == null) {
+                    this.setOccupiedChunks(LandUtil.getChunksInLand(this));
                     this.playerOwner.message(Politik.successMessage("You've successfully claimed " + this.area + " blocks, costing you $" + cost));
                     player.changeMoney(cost.negate());
                     this.setNationOwner(playerNation);

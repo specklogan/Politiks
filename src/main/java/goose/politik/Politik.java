@@ -6,6 +6,7 @@ import goose.politik.util.database.*;
 import goose.politik.util.government.Nation;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.government.Town;
+import goose.politik.util.landUtil.Land;
 import goose.politik.util.landUtil.LandUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -15,6 +16,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -46,6 +49,11 @@ public final class Politik extends JavaPlugin implements Listener {
         return Component.text(text).color(TextColor.color(84, 200, 255));
     }
 
+    public static TextComponent infoMessage(String text) {
+        return Component.text(text).color(TextColor.color(255, 255, 255));
+    }
+
+
     public static final String lackPerms = "You lack the permissions to run this command";
 
     @Override
@@ -63,13 +71,14 @@ public final class Politik extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("nation")).setExecutor(new NationCommands());
         Objects.requireNonNull(getCommand("town")).setExecutor(new TownCommand());
         Objects.requireNonNull(getCommand("list")).setExecutor(new List());
+        Objects.requireNonNull(getCommand("land")).setExecutor(new LandCommand());
 
         //Add dimensions to the land handler
         LandUtil.addDimensionToLandMap(World.Environment.NORMAL);
         PlayerDB.loadAllPlayers();
         NationDB.loadNations();
         TownDB.loadTowns();
-        LandDB.loadLands();
+        //LandDB.loadLands();
     }
 
     @EventHandler
@@ -88,6 +97,16 @@ public final class Politik extends JavaPlugin implements Listener {
         Nation.saveNations();
         Town.saveTowns();
         LandUtil.saveLands();
+    }
+
+    @EventHandler
+    public void chunkUnloadEvent(ChunkUnloadEvent event) {
+        LandLoadUnloadEvent.onChunkUnload(event);
+    }
+
+    @EventHandler
+    public void chunkLoadEvent(ChunkLoadEvent event) {
+        LandLoadUnloadEvent.onChunkLoad(event);
     }
 
     @EventHandler
