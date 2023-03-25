@@ -12,6 +12,7 @@ import com.mongodb.client.MongoDatabase;
 import goose.politik.Politik;
 import goose.politik.util.government.Nation;
 import goose.politik.util.government.PolitikPlayer;
+import goose.politik.util.government.Town;
 import goose.politik.util.landUtil.Land;
 import org.bson.Document;
 import org.bukkit.Chunk;
@@ -28,6 +29,7 @@ public class MongoDBHandler {
     public static MongoDatabase serverDB;
     public static MongoCollection<Document> playerCollection;
     public static MongoCollection<Document> nationCollection;
+    public static MongoCollection<Document> townCollection;
     public static MongoCollection<Document> overworldLand;
     public static MongoCollection<Document> netherLand;
     public static MongoCollection<Document> endLand;
@@ -44,6 +46,7 @@ public class MongoDBHandler {
         serverDB = mongoClient.getDatabase("mcserver");
         playerCollection = serverDB.getCollection("players");
         nationCollection = serverDB.getCollection("nations");
+        townCollection = serverDB.getCollection("towns");
         overworldLand = serverDB.getCollection("overworld_Land");
         netherLand = serverDB.getCollection("nether_Land");
         endLand = serverDB.getCollection("end_Land");
@@ -58,42 +61,23 @@ public class MongoDBHandler {
         return playerDocument.get(key).toString();
     }
 
-    public static void saveNation(Nation nation) {
-        //saves a nation
-        Document nationDocument = nationCollection.find(eq("nationName", nation.getNationName())).first();
-
-        if (nationDocument == null) {
-            //no nation exists, was created before this, so go ahead and replace it
-            Document updatedDocument = new Document();
-            updatedDocument.put("nationName", nation.getNationName());
-            updatedDocument.put("leaderUUID", nation.getLeader().getUUID().toString());
-            updatedDocument.put("nationCapitol", nation.getCapitol().getTownName());
-            updatedDocument.put("allyList", nation.getAllies().toString());
-            updatedDocument.put("enemyList", nation.getEnemies().toString());
-            updatedDocument.put("taxRate", nation.getTaxRate().toString());
-            updatedDocument.put("townList", nation.getTownList().toString());
-            updatedDocument.put("enterMessage", nation.getEnterMessage().toString());
-            nationCollection.insertOne(updatedDocument);
-        } else {
-            //nation already exist
-            Document updatedDocument = new Document();
-            updatedDocument.put("nationName", nation.getNationName());
-            updatedDocument.put("leaderUUID", nation.getLeader().getUUID().toString());
-            updatedDocument.put("nationCapitol", nation.getCapitol().getTownName());
-            updatedDocument.put("allyList", nation.getAllies().toString());
-            updatedDocument.put("enemyList", nation.getEnemies().toString());
-            updatedDocument.put("taxRate", nation.getTaxRate().toString());
-            updatedDocument.put("townList", nation.getTownList().toString());
-            updatedDocument.put("enterMessage", nation.getEnterMessage().toString());
-            nationCollection.replaceOne(nationDocument, updatedDocument);
-        }
-    }
-
     public static void savePlayerToDatabase(PolitikPlayer player) {
         Document playerObject = playerCollection.find(eq("playerID", player.getUUID().toString())).first();
         if (playerObject == null) {
             //if a player is new, and has left or is being saved
             Politik.logger.log(Level.INFO, "New player is being saved to database: " + player.getDisplayName());
+
+            //check if they are part of a town/nation
+            Nation playerNation = player.getNation();
+            String playerNationName = "none";
+            if (playerNation != null) {
+                playerNationName = playerNation.getNationName();
+            }
+            Town playerTown = player.getTown();
+            String playerTownName = "none";
+            if (playerTown != null) {
+                playerTownName = playerTown.getTownName();
+            }
 
             //create blank document
             Document updatedDocument = new Document();
@@ -104,11 +88,24 @@ public class MongoDBHandler {
             updatedDocument.put("job", player.getJob());
             updatedDocument.put("money", player.getMoney().toString());
             updatedDocument.put("infamy", player.getInfamy());
-            updatedDocument.put("nation", "none");
-            updatedDocument.put("town", "none");
+            updatedDocument.put("nation", playerNationName);
+            updatedDocument.put("town", playerTownName);
             playerCollection.insertOne(updatedDocument);
 
         } else {
+
+            //check if they are part of a town/nation
+            Nation playerNation = player.getNation();
+            String playerNationName = "none";
+            if (playerNation != null) {
+                playerNationName = playerNation.getNationName();
+            }
+            Town playerTown = player.getTown();
+            String playerTownName = "none";
+            if (playerTown != null) {
+                playerTownName = playerTown.getTownName();
+            }
+
             Document updatedDocument = new Document();
             updatedDocument.put("playerID", player.getUUID().toString());
             updatedDocument.put("playerName", player.getDisplayName());

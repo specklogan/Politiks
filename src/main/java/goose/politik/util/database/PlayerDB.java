@@ -1,7 +1,9 @@
 package goose.politik.util.database;
 
+import goose.politik.Politik;
 import goose.politik.util.government.PolitikPlayer;
 import org.bson.Document;
+import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -17,6 +19,11 @@ public class PlayerDB {
             //empty player, load every value from the database, when a player joins, just assign a 'message' to it
             String money = document.getString("money");
             UUID uuid = UUID.fromString(document.getString("playerID"));
+
+            Player onlinePlayer = Politik.getInstance().getServer().getPlayer(uuid);
+            if (onlinePlayer != null) {
+                player.setPlayer(onlinePlayer);
+            }
 
             player.setMoney(new BigDecimal(money));
             player.setUUID(uuid);

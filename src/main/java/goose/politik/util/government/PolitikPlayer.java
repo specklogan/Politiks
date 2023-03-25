@@ -69,6 +69,9 @@ public class PolitikPlayer {
         return playerList.get(playerID).getPlayer();
     }
 
+    public static PolitikPlayer getPolitikPlayerFromID(UUID uuid) {
+        return playerList.get(uuid);
+    }
     public void loadPlayer() {
         //RUN ONLY ON INITIAL PLAYER JOIN
         this.joinDate = new BigInteger(String.valueOf(Instant.now().getEpochSecond()));

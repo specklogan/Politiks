@@ -36,4 +36,8 @@ commands:
     usage: /<command> [help,list,create]
   list:
     description: List all players
+  land:
+    description: Returns a list of valid land commands
+    aliases: l
+    usage: /<command> [list, position]
 

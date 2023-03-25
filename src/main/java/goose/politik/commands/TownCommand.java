@@ -52,9 +52,13 @@ public class TownCommand implements CommandExecutor {
             player.changeMoney(Town.TOWNCOST.negate());
             sender.sendMessage(Politik.successMessage("Successfully created town: " + townName));
             Town newTown = new Town(townName, player, player.getNation());
+            newTown.setSpawnLocation(((Player) sender).getLocation());
             if (player.getNation().getLeader() == player) {
                 //they are in their own nation, and have not created a town
                 player.getNation().setCapitol(newTown);
+                player.getNation().addTown(newTown);
+                player.setTown(newTown);
+                newTown.addPlayer(player);
                 player.message(Politik.detailMessage(player.getNation().getNationName() + "'s capitol set to " + townName));
             }
 

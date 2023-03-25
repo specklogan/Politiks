@@ -1,10 +1,12 @@
 package goose.politik.commands;
 
 import goose.politik.Politik;
+import goose.politik.util.database.NationDB;
 import goose.politik.util.government.Nation;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.landUtil.Land;
 import goose.politik.util.landUtil.LandUtil;
+import net.kyori.adventure.text.Component;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -46,11 +48,13 @@ public class NationCommands implements CommandExecutor {
                 //make sure they arent in a nation
                 if (!(player.getNation() == null)) {
                     player.message(Politik.errorMessage("You are already in a nation, leave your nation to create another"));
+                    return true;
                 }
 
                 //make sure they aren't in a town
                 if (!(player.getTown() == null)) {
                     player.message(Politik.errorMessage("You are already in a town, you can't create a new nation while in a town"));
+                    return true;
                 }
 
                 //check if the nation name is already taken
@@ -64,7 +68,8 @@ public class NationCommands implements CommandExecutor {
                 //all of our checks were successful, go ahead and create it
                 player.changeMoney(Nation.NATIONCOST.negate());
                 player.message(Politik.successMessage("Successfully created " + nationName + " , next create a town for your capitol"));
-                new Nation(nationName, player);
+                Nation nation = new Nation(nationName, player);
+                nation.setEnterMessage(Component.text("Entering Nation " + nationName));
 
             } else {
                 sender.sendMessage(Politik.errorMessage("You need to provide a name for the nation"));
@@ -80,6 +85,7 @@ public class NationCommands implements CommandExecutor {
 
 
         } else {
+            NationDB.saveNation(player.getNation());
             //list nation help
             sender.sendMessage("---------------- Nation Help ----------------");
             sender.sendMessage(Politik.detailMessage("/nation create [nation-name] : takes in a nation name"));

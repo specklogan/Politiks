@@ -5,11 +5,14 @@ import goose.politik.util.government.Nation;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.government.Town;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.UUID;
 
 public class Land {
     //will be an instance of land
@@ -21,31 +24,34 @@ public class Land {
     private PolitikPlayer playerOwner;
     private World.Environment environment;
 
-    private String firstPos;
-    private String secondPos;
-    private Block firstBlock;
-    private Block secondBlock;
+    private Location firstLocation;
+    private Location secondLocation;
     private int area;
+    private UUID uuid;
 
     //Initialize some values like is fire, tnt, pvp allowed
     private boolean explosionsEnabled = false;
     private boolean fireEnabled = false;
     private boolean pvpEnabled = false;
 
-    public String getFirstPos() {
-        return this.firstPos;
-    }
 
-    public String getSecondPos() {
-        return this.secondPos;
-    }
 
     public Block getFirstBlock() {
-        return this.firstBlock;
+        return this.firstLocation.getBlock();
     }
 
     public Block getSecondBlock() {
-        return this.secondBlock;
+        return this.firstLocation.getBlock();
+    }
+
+    public ArrayList<Chunk> occupiedChunks = new ArrayList<>();
+
+    public ArrayList<Chunk> getOccupiedChunks() {
+        return this.occupiedChunks;
+    }
+
+    public void setOccupiedChunks(ArrayList<Chunk> occupiedChunks) {
+        this.occupiedChunks = occupiedChunks;
     }
 
     public static int getX(String position) {
@@ -138,9 +144,38 @@ public class Land {
     }
 
     public void setVisibleLand() {
-        this.firstBlock.setType(Material.GOLD_BLOCK);
-        this.secondBlock.setType(Material.GOLD_BLOCK);
+        this.getFirstBlock().setType(Material.GOLD_BLOCK);
+        this.getSecondBlock().setType(Material.GOLD_BLOCK);
     }
+
+    public int getArea() {
+        return area;
+    }
+
+    public void setArea(int area) {
+        this.area = area;
+    }
+
+    public Location getFirstLocation() {
+        return firstLocation;
+    }
+
+    public void setFirstLocation(Location firstLocation) {
+        this.firstLocation = firstLocation;
+    }
+
+    public Location getSecondLocation() {
+        return secondLocation;
+    }
+
+    public void setSecondLocation(Location secondLocation) {
+        this.secondLocation = secondLocation;
+    }
+
+    public void setEnvironment(World.Environment environment) {
+        this.environment = environment;
+    }
+
     public Land(String firstPos, String secondPos, PolitikPlayer player, Chunk chunk) {
         //we need to make sure the player is in a town, or nation
         Nation playerNation = player.getNation();
@@ -155,27 +190,27 @@ public class Land {
         int fx = getX(firstPos);
         int fy = getY(firstPos);
         int fz = getZ(firstPos);
-        Block firstBlock = chunk.getWorld().getBlockAt(fx,fy,fz);
+        Location firstLocation = new Location(chunk.getWorld(), fx, fy, fz);
 
         int sx = getX(secondPos);
         int sy = getY(secondPos);
         int sz = getZ(secondPos);
-        Block secondBlock = chunk.getWorld().getBlockAt(sx,sy,sz);
+        Location secondLocation = new Location(chunk.getWorld(), sx, sy, sz);
 
         if (validLand(firstPos, secondPos)) {
             //it is valid
-            this.firstPos = firstPos;
             this.playerOwner = player;
-            this.secondPos = secondPos;
             this.environment = chunk.getWorld().getEnvironment();
-            this.firstBlock = firstBlock;
-            this.secondBlock = secondBlock;
+            this.firstLocation = firstLocation;
+            this.secondLocation = secondLocation;
+            this.setArea(Land.calculateArea(firstPos, secondPos));
+            this.setUUID(UUID.randomUUID());
             BigDecimal cost = costPerArea.multiply(BigDecimal.valueOf(area));
             //check if player has enough money to cover it
             if (player.canPurchase(cost)) {
                 Land result = LandUtil.getLandInLand(this, chunk);
                 if (result == null) {
-                    //do a further check to see if it overlaps
+                    this.setOccupiedChunks(LandUtil.getChunksInLand(this));
                     this.playerOwner.message(Politik.successMessage("You've successfully claimed " + this.area + " blocks, costing you $" + cost));
                     player.changeMoney(cost.negate());
                     this.setNationOwner(playerNation);
@@ -189,5 +224,17 @@ public class Land {
         } else {
             player.message(Politik.errorMessage("Incorrect area, minimum area size is 16, maximum is 8192"));
         }
+    }
+
+    public Land() {
+
+    }
+
+    public UUID getUUID() {
+        return this.uuid;
+    }
+
+    public void setUUID(UUID uuid) {
+        this.uuid = uuid;
     }
 }
