@@ -28,7 +28,11 @@ public class PlayerDB {
             player.setMoney(new BigDecimal(money));
             player.setUUID(uuid);
             player.setDisplayName(document.getString("playerName"));
-            player.setJob(document.getString("job"));
+            String job = document.getString("job");
+            if (job == null) {
+                job = "none";
+            }
+            player.setJob(job);
             player.setJoinDate(new BigInteger(document.getString("joinDate")));
             player.setInfamy(document.getInteger("infamy"));
             PolitikPlayer.playerList.put(uuid, player);

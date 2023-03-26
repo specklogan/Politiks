@@ -3,6 +3,7 @@ package goose.politik.events;
 import goose.politik.Politik;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.landUtil.Land;
+import goose.politik.util.landUtil.LandUtil;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,16 +19,16 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 public class InteractEvent {
+
     public static void playerInteract(PlayerInteractEvent event) {
         PolitikPlayer player = PolitikPlayer.getPolitikPlayer(event.getPlayer());
         ItemStack handItem = player.getInventory().getItemInMainHand();
 
-        //only run for one hand
-        if (event.getHand() == null || event.getHand().equals(EquipmentSlot.OFF_HAND)) {
-            return;
-        }
-
         if (handItem.getType().equals(Material.STICK)) {
+            //only run for one hand
+            if (event.getHand() == null || event.getHand().equals(EquipmentSlot.OFF_HAND)) {
+                return;
+            }
             if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                 if (Objects.equals(handItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Politik.getInstance(), "name"), PersistentDataType.STRING), "landClaimTool")) {
                     String posOneStr = handItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Politik.getInstance(), "posOne"), PersistentDataType.STRING);
@@ -61,5 +62,40 @@ public class InteractEvent {
                 }
             }
         }
+
+        Block interactedBlock =  event.getClickedBlock();
+            if (interactedBlock == null || event.getAction() == Action.LEFT_CLICK_BLOCK) {
+            return;
+        }
+        Material interactedType = interactedBlock.getType();
+
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            if (handItem.getType().toString().contains("EGG")) {
+                if (player.getPlayer().isOp()) {
+                    return;
+                }
+            }
+        }
+
+        //check if it is farmland
+        if ((interactedType == Material.FARMLAND || interactedType == Material.WHEAT) && event.getAction() == Action.PHYSICAL) {
+            event.setCancelled(true);
+        }
+
+        //prevent player from using doors, crafting tables, or chests
+        if (interactedType.toString().contains("DOOR") || interactedType == Material.CHEST || interactedType == Material.BARREL || interactedType == Material.FURNACE || interactedType == Material.BLAST_FURNACE || interactedType == Material.SMOKER || interactedType.toString().contains("SHULKER_BOX") || interactedType.toString().contains("BUTTON") || interactedType == Material.LEVER) {
+            //check if any of the special blocks are valid to be used
+            Land land = LandUtil.blockInLand(interactedBlock);
+            if (land != null) {
+                if (!player.getPlayer().isOp()) {
+                    if (land.getPlayerOwner() != player) {
+                        player.message(Politik.errorMessage("You can't interact here"));
+                        event.setCancelled(true);
+                    }
+                }
+            }
+        }
+
+
     }
 }

@@ -6,7 +6,6 @@ import goose.politik.util.database.*;
 import goose.politik.util.government.Nation;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.government.Town;
-import goose.politik.util.landUtil.Land;
 import goose.politik.util.landUtil.LandUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -15,6 +14,13 @@ import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockSpreadEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
@@ -136,10 +142,39 @@ public final class Politik extends JavaPlugin implements Listener {
     }
 
     @EventHandler
+    public void blockPlaceEvent(BlockPlaceEvent event) {
+        BlockPlace.blockPlaceEvent(event);
+    }
+
+    @EventHandler
+    public void entityDamageByEntityEvent(EntityDamageByEntityEvent event) {
+        DamageEvent.entityDamageByEntityEvent(event);
+    }
+
+    @EventHandler
+    public void entityExplodeEvent(EntityExplodeEvent event) {
+        ExplodeEvent.entityExplodeEvent(event);
+    }
+
+    @EventHandler
+    public void blockExplodeEvent(BlockExplodeEvent event) {
+        ExplodeEvent.blockExplodeEvent(event);
+    }
+
+    @EventHandler
+    public void blockSpreadEvent(BlockSpreadEvent event) {
+        SpreadEvent.blockSpreadEvent(event);
+    }
+
+    @EventHandler
     public void harvestEvent(PlayerHarvestBlockEvent event) {
         JobEvent.harvestCropEvent(event);
     }
 
+    @EventHandler
+    public void mobSpawnEvent(CreatureSpawnEvent event) {
+        MobEvent.mobSpawnEvent(event);
+    }
 
     @Override
     public void onDisable() {

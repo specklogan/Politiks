@@ -19,6 +19,7 @@ public class JobEvent {
             if (land != null) {
                 if (land.getPlayerOwner() != player) {
                     event.setCancelled(true);
+                    return;
                 }
             }
             //they can gain money from shearing
