@@ -24,50 +24,24 @@ public class InteractEvent {
         PolitikPlayer player = PolitikPlayer.getPolitikPlayer(event.getPlayer());
         ItemStack handItem = player.getInventory().getItemInMainHand();
 
-        if (handItem.getType().equals(Material.STICK)) {
-            //only run for one hand
-            if (event.getHand() == null || event.getHand().equals(EquipmentSlot.OFF_HAND)) {
-                return;
-            }
-            if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-                if (Objects.equals(handItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Politik.getInstance(), "name"), PersistentDataType.STRING), "landClaimTool")) {
-                    String posOneStr = handItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Politik.getInstance(), "posOne"), PersistentDataType.STRING);
-
-                    Block clickedBlock = event.getClickedBlock();
-                    if (clickedBlock == null) {
-                        return;
-                    }
-                    Location blockLocation = clickedBlock.getLocation();
-                    String x = String.valueOf(blockLocation.getBlockX());
-                    String y = String.valueOf(blockLocation.getBlockY());
-                    String z = String.valueOf(blockLocation.getBlockZ());
-                    Chunk chunk = clickedBlock.getChunk();
-
-                    if (posOneStr == null || posOneStr.equals("")) {
-                        //hasn't used it before
-
-                        String locationStr = x + "," + y + "," + z;
-                        ItemMeta temp = handItem.getItemMeta();
-                        temp.getPersistentDataContainer().set(new NamespacedKey(Politik.getInstance(), "posOne"), PersistentDataType.STRING,locationStr);
-                        handItem.setItemMeta(temp);
-
-                    } else {
-                        //has used before, set second value
-                        ItemMeta temp = handItem.getItemMeta();
-                        String locationStr = x + "," + y + "," + z;
-                        new Land(handItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Politik.getInstance(), "posOne"), PersistentDataType.STRING), locationStr, player, chunk);
-                        temp.getPersistentDataContainer().set(new NamespacedKey(Politik.getInstance(), "posOne"), PersistentDataType.STRING,"");
-                        handItem.setItemMeta(temp);
-                    }
-                }
-            }
-        }
-
         Block interactedBlock =  event.getClickedBlock();
             if (interactedBlock == null || event.getAction() == Action.LEFT_CLICK_BLOCK) {
             return;
         }
         Material interactedType = interactedBlock.getType();
+
+        if (interactedType.toString().contains("BUCKET") && !(interactedType == Material.BUCKET || interactedType == Material.MILK_BUCKET)) {
+            Land land = LandUtil.blockInLand(interactedBlock);
+            if (land != null) {
+                if (!player.getPlayer().isOp()) {
+                    if (land.getPlayerOwner() != player) {
+                        //player trying to place bucket
+                        player.message(Politik.errorMessage("You can't interact here"));
+                        event.setCancelled(true);
+                    }
+                }
+            }
+        }
 
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (handItem.getType().toString().contains("EGG")) {

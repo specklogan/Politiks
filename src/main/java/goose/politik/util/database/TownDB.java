@@ -1,5 +1,6 @@
 package goose.politik.util.database;
 
+import com.mongodb.client.MongoCursor;
 import goose.politik.Politik;
 import goose.politik.util.government.Nation;
 import goose.politik.util.government.PolitikPlayer;
@@ -73,6 +74,11 @@ public class TownDB {
         for (Document document : MongoDBHandler.townCollection.find()) {
             //read through all saved nations
             String townName = document.getString("townName");
+            //make sure town isn't already loaded incase it's a capitol
+            Town town = Town.getTownFromName(townName);
+            if (town == null) {
+                town = new Town();
+            }
             String nationOwner = document.getString("nationOwner");
             Nation nationObj = null;
             for (Nation nation : Nation.NATIONS) {
@@ -82,19 +88,22 @@ public class TownDB {
             }
             if (nationObj == null) {
                 Politik.logger.log(Level.SEVERE, "Error loading town: " + townName + " from database, no valid town owner");
-                return;
+                continue;
             }
             UUID mayorUUID = UUID.fromString(document.getString("townMayor"));
-            Politik.logger.log(Level.INFO, "Loading town from database: " + townName);
-            Town town = new Town(townName, PolitikPlayer.getPolitikPlayerFromID(mayorUUID), nationObj);
+            //Town town = new Town(townName, PolitikPlayer.getPolitikPlayerFromID(mayorUUID), nationObj);
+
+            town.setTownName(townName);
+            town.setMayor(PolitikPlayer.getPolitikPlayerFromID(mayorUUID));
+            town.setNationOwner(nationObj);
             String spawnLocation = document.getString("spawnLocation");
             String[] splitLocation = spawnLocation.split(",");
             Location location = new Location(Politik.getInstance().getServer().getWorld(splitLocation[0]), Double.parseDouble(splitLocation[1]), Double.parseDouble(splitLocation[2]), Double.parseDouble(splitLocation[3]));
             town.setSpawnLocation(location);
-            town.getNation().addTown(town);
-
-            PolitikPlayer mayor = PolitikPlayer.getPolitikPlayerFromID(mayorUUID);
-            mayor.setTown(town);
+            if (!town.getNation().getTownList().contains(town)) {
+                town.getNation().addTown(town);
+            }
+            town.getNation().setCapitol(town);
 
             //now add all of the players
             List<String> playerList = document.getList("playerList", String.class);
@@ -104,6 +113,17 @@ public class TownDB {
                 player.setTown(town);
                 player.setNation(town.getNation());
             }
+        }
+    }
+
+    public static Town loadTown(String townName) {
+        //return a loaded town from the database
+        Document townDocument = MongoDBHandler.townCollection.find(new Document("townName", townName)).first();
+        if (townDocument != null) {
+            return new Town();
+        } else {
+            Politik.logger.log(Level.SEVERE, "Attempting to load town who's name doesn't exist: " + townName);
+            return null;
         }
     }
 }

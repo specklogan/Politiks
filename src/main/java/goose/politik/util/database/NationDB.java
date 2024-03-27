@@ -9,6 +9,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
 import org.bson.Document;
+import org.bukkit.Location;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -27,11 +28,19 @@ public class NationDB {
             UUID leaderUUID = UUID.fromString(document.getString("leaderUUID"));
             String capitol = document.getString("nationCapitol");
             BigDecimal taxRate = new BigDecimal(document.getString("taxRate"));
-            //TextComponent enterMessage = Component.text(enterMessageArr[1]);
-            Politik.logger.log(Level.INFO, "Loading nation from database: " + capitol);
             Nation nation = new Nation(nationName, PolitikPlayer.getPolitikPlayerFromID(leaderUUID));
-            //nation.setEnterMessage(enterMessage);
             nation.setTaxRate(taxRate);
+
+            //create blank capitol town
+            if (capitol != null) {
+                Town capitolTown = TownDB.loadTown(capitol);
+                if (capitolTown == null) {
+                    continue;
+                }
+                capitolTown.setNationOwner(nation);
+                capitolTown.setTownName(capitol);
+                nation.addTown(capitolTown);
+            }
         }
     }
 

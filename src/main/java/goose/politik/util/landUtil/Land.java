@@ -4,25 +4,28 @@ import goose.politik.Politik;
 import goose.politik.util.government.Nation;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.government.Town;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bson.Document;
+import org.bukkit.*;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class Land {
     //will be an instance of land
     private static final int minSize = 16;
     private static final int maxSize = 8192;
     private static final BigDecimal costPerArea = new BigDecimal("0.25");
+    public static final String type = "NORMAL";
     private Town townOwner;
     private Nation nationOwner;
     private PolitikPlayer playerOwner;
     private World.Environment environment;
+    private World world;
+    private Biome biome;
 
     private Location firstLocation;
     private Location secondLocation;
@@ -34,7 +37,17 @@ public class Land {
     private boolean fireEnabled = false;
     private boolean pvpEnabled = false;
 
+    public String getType() {
+        return Land.type;
+    }
 
+    public World getWorld() {
+        return world;
+    }
+
+    public void setWorld(World world) {
+        this.world = world;
+    }
 
     public Block getFirstBlock() {
         return this.firstLocation.getBlock();
@@ -48,6 +61,14 @@ public class Land {
 
     public ArrayList<Chunk> getOccupiedChunks() {
         return this.occupiedChunks;
+    }
+
+    public Biome getBiome() {
+        return biome;
+    }
+
+    public void setBiome(Biome biome) {
+        this.biome = biome;
     }
 
     public void setOccupiedChunks(ArrayList<Chunk> occupiedChunks) {
@@ -129,7 +150,7 @@ public class Land {
     }
 
     public String toString() {
-        return (this.playerOwner.getDisplayName() + " is the owner, with an area of " + this.area + " in dimension " + this.environment + " in town " + this.townOwner.getTownName() + " in nation " + this.nationOwner.getNationName());
+        return (this.playerOwner.getDisplayName() + " " + this.getUUID());
     }
 
 
@@ -176,6 +197,64 @@ public class Land {
         this.environment = environment;
     }
 
+    public static void load(Document document) {
+        UUID landIdentifier = UUID.fromString(document.getString("_id"));
+        PolitikPlayer landOwner = PolitikPlayer.getPolitikPlayerFromID(UUID.fromString(document.getString("playerOwner")));
+        String firstLoc = document.getString("firstLocation");
+        String[] firstLocSplit = firstLoc.split(",");
+        Location firstLocation = new Location(Politik.getInstance().getServer().getWorld(firstLocSplit[0]), Double.parseDouble(firstLocSplit[1]), Double.parseDouble(firstLocSplit[2]), Double.parseDouble(firstLocSplit[3]));
+        String secondLoc = document.getString("secondLocation");
+        String[] secondLocSplit = secondLoc.split(",");
+        Location secondLocation = new Location(Politik.getInstance().getServer().getWorld(secondLocSplit[0]), Double.parseDouble(secondLocSplit[1]), Double.parseDouble(secondLocSplit[2]), Double.parseDouble(secondLocSplit[3]));
+        String townOwner = document.getString("townOwner");
+        String nationOwner = document.getString("nationOwner");
+
+        Land land = new Land();
+        land.setUUID(landIdentifier);
+        land.setBiome(Biome.valueOf(document.getString("biome")));
+        land.setFirstLocation(firstLocation);
+        land.setEnvironment(World.Environment.valueOf(document.getString("environment")));
+        land.setWorld(Bukkit.getServer().getWorld(document.getString("world")));
+        land.setSecondLocation(secondLocation);
+        land.setArea(document.getInteger("area"));
+        land.setPlayerOwner(landOwner);
+        land.setTownOwner(Town.getTownFromName(townOwner));
+        land.setNationOwner(Nation.getNationFromName(nationOwner));
+
+        ArrayList<Chunk> chunkArrayList = LandUtil.getChunksInLand(land);
+        for (Chunk chunk : chunkArrayList) {
+            LandUtil.addToLandMap(land, chunk);
+        }
+        land.setOccupiedChunks(chunkArrayList);
+        LandUtil.landUUIDMap.get(World.Environment.valueOf(document.getString("environment"))).put(landIdentifier, land);
+    }
+
+    public Document toDocument() {
+        //run some calculations
+        ArrayList<String> chunkLongList = new ArrayList<>();
+        for (Chunk chunk : this.occupiedChunks) {
+            long key = chunk.getChunkKey();
+            chunkLongList.add(Long.toString(key));
+        }
+
+        //you can call this to get a document from a land, can be overwritten by any of the subtypes
+        Document landDocument = new Document();
+        landDocument.put("_id", this.getUUID().toString());
+        landDocument.put("playerOwner", this.getPlayerOwner().getUUID().toString());
+        landDocument.put("firstLocation", this.firstLocation.getWorld().getName() + "," + this.firstLocation.getX() + "," + this.firstLocation.getY() + "," + this.firstLocation.getZ());
+        landDocument.put("secondLocation", this.secondLocation.getWorld().getName() + "," + this.secondLocation.getX() + "," + this.secondLocation.getY() + "," + this.secondLocation.getZ());
+        landDocument.put("biome", this.biome.toString());
+        landDocument.put("environment", this.getEnvironment().name());
+        landDocument.put("world", this.getWorld().getName());
+        landDocument.put("type", "NORMAL");
+        landDocument.put("area", this.area);
+        landDocument.put("occupiedChunks", chunkLongList);
+        landDocument.put("tickable", false);
+        landDocument.put("townOwner", this.getTownOwner().getTownName());
+        landDocument.put("nationOwner", this.getNationOwner().getNationName());
+        return landDocument;
+    }
+
     public Land(String firstPos, String secondPos, PolitikPlayer player, Chunk chunk) {
         //we need to make sure the player is in a town, or nation
         Nation playerNation = player.getNation();
@@ -202,7 +281,10 @@ public class Land {
             this.playerOwner = player;
             this.environment = chunk.getWorld().getEnvironment();
             this.firstLocation = firstLocation;
+            this.biome = firstLocation.getBlock().getBiome();
             this.secondLocation = secondLocation;
+            this.setWorld(firstLocation.getWorld());
+            this.setEnvironment(this.world.getEnvironment());
             this.setArea(Land.calculateArea(firstPos, secondPos));
             this.setUUID(UUID.randomUUID());
             BigDecimal cost = costPerArea.multiply(BigDecimal.valueOf(area));

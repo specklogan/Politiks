@@ -1,4 +1,4 @@
-package goose.politik.events;
+package goose.politik.events.LandEvents;
 
 import goose.politik.Politik;
 import goose.politik.util.database.LandDB;
@@ -19,6 +19,7 @@ public class LandLoadUnloadEvent  {
         //check if that chunk has a land in it
         ArrayList<Land> lands = LandUtil.getLandListInChunk(chunk);
         if (lands != null) {
+            Politik.log(Level.INFO, "Trying to save land: " + lands);
             for (int i = 0; i < lands.size(); i++) {
                 ArrayList<Chunk> chunkArrayList = LandUtil.getChunksInLand(lands.get(i));
                 if (chunkArrayList.size() == 1) {
@@ -28,7 +29,7 @@ public class LandLoadUnloadEvent  {
                     //claim spans across multiple chunks
                     boolean anyLoaded = false;
                     for (Chunk chunkArray : chunkArrayList) {
-                        if (chunk.isLoaded()) {
+                        if (chunkArray.isLoaded()) {
                             anyLoaded = true;
                         }
                     }
@@ -46,7 +47,6 @@ public class LandLoadUnloadEvent  {
     }
 
     public static void onChunkLoad(ChunkLoadEvent chunkLoadEvent) {
-        Long chunkKey = chunkLoadEvent.getChunk().getChunkKey();
-        LandDB.loadChunk(chunkKey);
+        LandDB.loadChunk(chunkLoadEvent.getChunk());
     }
 }

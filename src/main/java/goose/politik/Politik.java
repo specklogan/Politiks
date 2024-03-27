@@ -2,6 +2,10 @@ package goose.politik;
 
 import goose.politik.commands.*;
 import goose.politik.events.*;
+import goose.politik.events.CustomEvents.DayListener;
+import goose.politik.events.LandEvents.LandLoadUnloadEvent;
+import goose.politik.events.LandEvents.LandToolInteractEvent;
+import goose.politik.util.config.ConfigValues;
 import goose.politik.util.database.*;
 import goose.politik.util.government.Nation;
 import goose.politik.util.government.PolitikPlayer;
@@ -20,13 +24,15 @@ import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -81,10 +87,22 @@ public final class Politik extends JavaPlugin implements Listener {
 
         //Add dimensions to the land handler
         LandUtil.addDimensionToLandMap(World.Environment.NORMAL);
+        LandUtil.landUUIDMap.put(World.Environment.NORMAL, new HashMap<>());
         PlayerDB.loadAllPlayers();
         NationDB.loadNations();
         TownDB.loadTowns();
-        //LandDB.loadLands();
+
+        //Add our custom events/listeners
+        getServer().getPluginManager().registerEvents(new LandToolInteractEvent(), this);
+        getServer().getPluginManager().registerEvents(new LandDayEvent(), this);
+
+        if (ConfigValues.canTick()) {
+            new DayListener(getServer().getWorlds().get(0),1).runTaskTimer(this,0,  20);
+        }
+    }
+
+    public static void log(Level level, String message) {
+        plugin.getLogger().log(level, message);
     }
 
     @EventHandler

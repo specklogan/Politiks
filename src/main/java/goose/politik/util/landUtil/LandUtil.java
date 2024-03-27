@@ -9,11 +9,13 @@ import org.bukkit.block.Block;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class LandUtil {
 
     public static final HashMap<World.Environment, HashMap<Long, ArrayList<Land>>> landMap = new HashMap<>();
+    public static final HashMap<World.Environment, HashMap<UUID, Land>> landUUIDMap = new HashMap<>();
 
     public static ArrayList<Land> getLandListInChunk(Chunk chunk) {
         return landMap.get(World.Environment.NORMAL).get(chunk.getChunkKey());
@@ -373,12 +375,11 @@ public class LandUtil {
     }
 
     public static void saveLands() {
-        for (Long chunkKey : landMap.get(World.Environment.NORMAL).keySet()) {
-            //returns a list of all lands saved
-            //Politik.logger.log(Level.INFO, "Saving chunk: " + chunkKey);
-            for (Land land : landMap.get(World.Environment.NORMAL).get(chunkKey)) {
-                LandDB.saveLand(land);
-            }
+        for (UUID uuid : landUUIDMap.get(World.Environment.NORMAL).keySet()) {
+            //returns a list of UUIDS of all lands
+            Land land = landUUIDMap.get(World.Environment.NORMAL).get(uuid);
+            LandDB.saveLand(land);
+            Politik.logger.log(Level.INFO, "Saving land: " + land);
         }
     }
 }

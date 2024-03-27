@@ -5,6 +5,7 @@ import com.mongodb.Cursor;
 import com.mongodb.MongoClient;
 import static com.mongodb.client.model.Filters.*;
 
+import com.mongodb.MongoClientOptions;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -39,6 +40,7 @@ public class MongoDBHandler {
     public MongoDBHandler() {
         try {
             mongoClient = new MongoClient("localhost", 27017);
+            MongoClientOptions options = mongoClient.getMongoClientOptions();
         } catch (Exception e) {
             Politik.logger.log(Level.WARNING, "Can't find database");
             return;
@@ -65,7 +67,6 @@ public class MongoDBHandler {
         Document playerObject = playerCollection.find(eq("playerID", player.getUUID().toString())).first();
         if (playerObject == null) {
             //if a player is new, and has left or is being saved
-            Politik.logger.log(Level.INFO, "New player is being saved to database: " + player.getDisplayName());
 
             //check if they are part of a town/nation
             Nation playerNation = player.getNation();

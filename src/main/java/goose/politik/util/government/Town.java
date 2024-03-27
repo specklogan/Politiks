@@ -102,4 +102,8 @@ public class Town {
         this.mayor = mayor;
         this.nationOwner = owner;
     }
+
+    public Town() {
+
+    }
 }
