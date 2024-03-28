@@ -5,7 +5,7 @@ import goose.politik.events.*;
 import goose.politik.events.CustomEvents.DayListener;
 import goose.politik.events.LandEvents.LandLoadUnloadEvent;
 import goose.politik.events.LandEvents.LandToolInteractEvent;
-import goose.politik.util.config.ConfigValues;
+import goose.politik.util.config.ConfigHandler;
 import goose.politik.util.database.*;
 import goose.politik.util.government.Nation;
 import goose.politik.util.government.PolitikPlayer;
@@ -29,8 +29,6 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -96,7 +94,7 @@ public final class Politik extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new LandToolInteractEvent(), this);
         getServer().getPluginManager().registerEvents(new LandDayEvent(), this);
 
-        if (ConfigValues.canTick()) {
+        if (ConfigHandler.canTick()) {
             new DayListener(getServer().getWorlds().get(0),1).runTaskTimer(this,0,  20);
         }
     }

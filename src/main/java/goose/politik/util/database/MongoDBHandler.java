@@ -1,21 +1,15 @@
 package goose.politik.util.database;
 
-import com.google.gson.Gson;
-import com.mongodb.Cursor;
-import com.mongodb.MongoClient;
 import static com.mongodb.client.model.Filters.*;
-
-import com.mongodb.MongoClientOptions;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.*;
 import goose.politik.Politik;
+import goose.politik.util.config.ConfigHandler;
 import goose.politik.util.government.Nation;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.government.Town;
 import goose.politik.util.landUtil.Land;
 import org.bson.Document;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 
@@ -39,13 +33,15 @@ public class MongoDBHandler {
 
     public MongoDBHandler() {
         try {
-            mongoClient = new MongoClient("localhost", 27017);
-            MongoClientOptions options = mongoClient.getMongoClientOptions();
+            Politik.log(Level.INFO, "Starting MongoDB: URI="+ ConfigHandler.getURL());
+            mongoClient = MongoClients.create(ConfigHandler.getURL());
         } catch (Exception e) {
-            Politik.logger.log(Level.WARNING, "Can't find database");
+            Politik.logger.log(Level.SEVERE, "Error connecting to database. Does it exist?");
+            Bukkit.getPluginManager().disablePlugin(Politik.plugin);
             return;
         }
-        serverDB = mongoClient.getDatabase("mcserver");
+
+        serverDB = mongoClient.getDatabase("politik-db");
         playerCollection = serverDB.getCollection("players");
         nationCollection = serverDB.getCollection("nations");
         townCollection = serverDB.getCollection("towns");
