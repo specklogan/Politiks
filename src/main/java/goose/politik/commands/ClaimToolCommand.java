@@ -1,6 +1,7 @@
 package goose.politik.commands;
 
 import goose.politik.Politik;
+import goose.politik.util.text.TextUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
@@ -21,7 +22,7 @@ public class ClaimToolCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(Politik.errorMessage("Server cannot get the claim chunk stick."));
+            sender.sendMessage(TextUtil.errorMessage("Server cannot get the claim chunk stick."));
             return true;
         }
 

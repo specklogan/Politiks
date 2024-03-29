@@ -5,7 +5,7 @@ import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.landUtil.Land;
 import goose.politik.util.landUtil.LandConverter;
 import goose.politik.util.landUtil.lands.Farm;
-import net.kyori.adventure.text.Component;
+import goose.politik.util.text.TextUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -16,7 +16,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -39,7 +38,7 @@ public class LandMenu implements Listener {
     private int layer = 0;
 
     public LandMenu(PolitikPlayer player) {
-        this.inventory = Bukkit.createInventory(player.getPlayer(), 27, Politik.detailMessage("Land Menu"));
+        this.inventory = Bukkit.createInventory(player.getPlayer(), 27, TextUtil.detailMessage("Land Menu"));
         addItems();
     }
 
@@ -55,17 +54,17 @@ public class LandMenu implements Listener {
             //populate the inventory with custom items that will have their own effect
             ItemStack closeButton = new ItemStack(Material.RED_STAINED_GLASS_PANE);
             ItemMeta closeMeta = closeButton.getItemMeta();
-            closeMeta.displayName(Politik.errorMessage("Close Menu"));
+            closeMeta.displayName(TextUtil.errorMessage("Close Menu"));
             closeButton.setItemMeta(closeMeta);
 
             ItemStack blankButton = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
             ItemMeta blankMeta = blankButton.getItemMeta();
-            blankMeta.displayName(Politik.infoMessage(""));
+            blankMeta.displayName(TextUtil.infoMessage(""));
             blankButton.setItemMeta(blankMeta);
 
             ItemStack productionType = new ItemStack(Material.CARTOGRAPHY_TABLE);
             ItemMeta productionMeta = productionType.getItemMeta();
-            productionMeta.displayName(Politik.detailMessage("Land Production Type"));
+            productionMeta.displayName(TextUtil.detailMessage("Land Production Type"));
             productionType.setItemMeta(productionMeta);
 
             this.inventory.setItem(26,closeButton);
@@ -79,7 +78,7 @@ public class LandMenu implements Listener {
         } else if (this.layer == 1) {
             ItemStack farm = new ItemStack(Material.DIAMOND_HOE);
             ItemMeta farmMeta = farm.getItemMeta();
-            farmMeta.displayName(Politik.detailMessage("Convert To Farm"));
+            farmMeta.displayName(TextUtil.detailMessage("Convert To Farm"));
             farm.setItemMeta(farmMeta);
             this.inventory.setItem(0,farm);
         }
@@ -91,19 +90,20 @@ public class LandMenu implements Listener {
             //prevent players from clicking
             if (event.getCurrentItem() != null) {
                 ItemMeta itemMeta = event.getCurrentItem().getItemMeta();
-                if (Objects.equals(itemMeta.displayName(), Politik.errorMessage("Close Menu"))) {
+                if (Objects.equals(itemMeta.displayName(), TextUtil.errorMessage("Close Menu"))) {
                     closeGui();
-                } else if (Objects.equals(itemMeta.displayName(), Politik.detailMessage("Land Production Type"))) {
-                    this.layer++;
-                    addItems();
-                } else if (Objects.equals(itemMeta.displayName(), Politik.detailMessage("Convert To Farm"))) {
+                } else if (Objects.equals(itemMeta.displayName(), TextUtil.detailMessage("Land Production Type"))) {
+                    return; //will have to do later
+                    //this.layer++;
+                    //addItems();
+                } else if (Objects.equals(itemMeta.displayName(), TextUtil.detailMessage("Convert To Farm"))) {
                     //call the function which converts it
                     closeGui();
                     PolitikPlayer player = PolitikPlayer.getPolitikPlayer((Player) Objects.requireNonNull(this.inventory.getHolder()));
                     Farm farm = new Farm();
                     farm = (Farm) LandConverter.convertLand(this.land, farm);
                     Politik.logger.log(Level.INFO, "FARM: " + farm);
-                    player.message(Politik.detailMessage("Successfully converted to Farm"));
+                    player.message(TextUtil.detailMessage("Successfully converted to Farm"));
                 }
             }
             event.setCancelled(true);

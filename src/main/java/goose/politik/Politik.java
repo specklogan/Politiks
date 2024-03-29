@@ -11,9 +11,6 @@ import goose.politik.util.government.Nation;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.government.Town;
 import goose.politik.util.landUtil.LandUtil;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -31,7 +28,6 @@ import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,27 +37,6 @@ public final class Politik extends JavaPlugin implements Listener {
     public static final String pluginVersion = "1.0";
     public static Politik plugin;
     public static Logger logger;
-
-    public static TextComponent errorMessage(String text) {
-        return Component.text(text).color(TextColor.color(255, 0, 0));
-    }
-
-    public static TextComponent eventMessage(String text) {
-        return Component.text(text).color(TextColor.color(255, 255, 0));
-    }
-
-    public static TextComponent successMessage(String text) {
-        return Component.text(text).color(TextColor.color(62, 255, 54));
-    }
-
-    public static TextComponent detailMessage(String text) {
-        return Component.text(text).color(TextColor.color(84, 200, 255));
-    }
-
-    public static TextComponent infoMessage(String text) {
-        return Component.text(text).color(TextColor.color(255, 255, 255));
-    }
-
 
     public static final String lackPerms = "You lack the permissions to run this command";
 
@@ -109,6 +84,7 @@ public final class Politik extends JavaPlugin implements Listener {
 
     @EventHandler
     public void serverSaveEvent(WorldSaveEvent event) {
+        log(Level.INFO, "SAVING SERVER");
         for (UUID player: PolitikPlayer.playerList.keySet()) {
             PolitikPlayer user = PolitikPlayer.playerList.get(player);
             user.savePlayer();

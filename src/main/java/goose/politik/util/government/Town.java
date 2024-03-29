@@ -15,7 +15,6 @@ public class Town {
     private TextComponent enterMessage = Component.text("");
     private Location spawnLocation;
     private Nation nationOwner;
-    public static final BigDecimal TOWNCOST = new BigDecimal("250");
     private ArrayList<PolitikPlayer> playerList;
 
     //static

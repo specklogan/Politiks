@@ -1,9 +1,9 @@
 package goose.politik.events;
 
-import goose.politik.Politik;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.landUtil.Land;
 import goose.politik.util.landUtil.LandUtil;
+import goose.politik.util.text.TextUtil;
 import org.bukkit.event.block.BlockBreakEvent;
 
 public class BlockBreak {
@@ -15,7 +15,7 @@ public class BlockBreak {
             if (land != null) {
                 //let the same player destroy their own land
                 if (land.getPlayerOwner() != player) {
-                    player.message(Politik.errorMessage("You can't break blocks here"));
+                    player.message(TextUtil.errorMessage("You can't break blocks here"));
                     event.setCancelled(true);
                 }
             }

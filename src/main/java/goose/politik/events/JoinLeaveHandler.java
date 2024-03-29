@@ -2,6 +2,7 @@ package goose.politik.events;
 
 import goose.politik.Politik;
 import goose.politik.util.government.PolitikPlayer;
+import goose.politik.util.text.TextUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -15,7 +16,7 @@ public class JoinLeaveHandler {
         if (!event.getPlayer().hasPlayedBefore()) {
             //run some stuff at first join
             new PolitikPlayer(event.getPlayer());
-            event.joinMessage(Politik.eventMessage("Welcome " + event.getPlayer().getName() + " to the server"));
+            event.joinMessage(TextUtil.eventMessage("Welcome " + event.getPlayer().getName() + " to the server"));
         } else {
             //now we have to figure out which one of the player objects they are
             for (UUID key : PolitikPlayer.playerList.keySet()) {
@@ -27,7 +28,7 @@ public class JoinLeaveHandler {
             //Player wasnt found and they have played before (make note of this)
             Politik.log(Level.WARNING, event.getPlayer().getName() + " not found in database and they aren't new, creating entry.");
             new PolitikPlayer(event.getPlayer());
-            event.joinMessage(Politik.eventMessage("Welcome " + event.getPlayer().getName() + " to the server"));
+            event.joinMessage(TextUtil.eventMessage("Welcome " + event.getPlayer().getName() + " to the server"));
         }
     }
 
@@ -36,7 +37,7 @@ public class JoinLeaveHandler {
         Player player = event.getPlayer();
         try {
             PolitikPlayer.getPolitikPlayer(player).leave();
-            event.quitMessage(Politik.eventMessage(player.getName() + " has left, thanks for playing!" ));
+            event.quitMessage(TextUtil.eventMessage(player.getName() + " has left, thanks for playing!" ));
         } catch (Exception e) {
             Politik.logger.log(Level.WARNING, "Error in removing player, player not in the list, probably caused by reloading the server.");
         }

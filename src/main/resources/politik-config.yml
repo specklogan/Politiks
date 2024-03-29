@@ -9,12 +9,14 @@ politik:
     production-cycle: 1
 
   nation:
-    found-cost: 1000
+    cost: 1000
   town:
-    found-cost: 250
+    cost: 250
 
   land:
     #Area size in blocks
     max-size: 8192
     min-size: 16
+    #Per block cost
+    cost: 0.25
 

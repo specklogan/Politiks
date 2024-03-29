@@ -1,22 +1,14 @@
 package goose.politik.events;
 
-import goose.politik.Politik;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.landUtil.Land;
 import goose.politik.util.landUtil.LandUtil;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
+import goose.politik.util.text.TextUtil;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataType;
-import java.util.Objects;
-import java.util.logging.Level;
 
 public class InteractEvent {
 
@@ -36,7 +28,7 @@ public class InteractEvent {
                 if (!player.getPlayer().isOp()) {
                     if (land.getPlayerOwner() != player) {
                         //player trying to place bucket
-                        player.message(Politik.errorMessage("You can't interact here"));
+                        player.message(TextUtil.errorMessage("You can't interact here"));
                         event.setCancelled(true);
                     }
                 }
@@ -63,7 +55,7 @@ public class InteractEvent {
             if (land != null) {
                 if (!player.getPlayer().isOp()) {
                     if (land.getPlayerOwner() != player) {
-                        player.message(Politik.errorMessage("You can't interact here"));
+                        player.message(TextUtil.errorMessage("You can't interact here"));
                         event.setCancelled(true);
                     }
                 }

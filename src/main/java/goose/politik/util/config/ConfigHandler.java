@@ -7,6 +7,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -56,6 +57,18 @@ public class ConfigHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static BigDecimal getCostPerArea() {
+        return BigDecimal.valueOf(config.getDouble("politik.land.cost"));
+    }
+
+    public static BigDecimal getNationCost() {
+        return BigDecimal.valueOf(config.getDouble("politik.nation.cost"));
+    }
+
+    public static BigDecimal getTownCost() {
+        return BigDecimal.valueOf(config.getDouble("politik.town.cost"));
     }
 
     public static int getMaxLandSize() {

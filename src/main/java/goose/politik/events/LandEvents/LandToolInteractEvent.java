@@ -5,6 +5,7 @@ import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.landUtil.Land;
 import goose.politik.util.landUtil.LandUtil;
 import goose.politik.util.menu.LandMenu;
+import goose.politik.util.text.TextUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Chunk;
@@ -17,13 +18,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Objects;
-import java.util.logging.Level;
 
 public class LandToolInteractEvent implements Listener {
 
@@ -89,10 +88,10 @@ public class LandToolInteractEvent implements Listener {
                 Block playerLoc = player.getPlayer().getLocation().getBlock();
                 Land land = LandUtil.blockInLand(playerLoc);
                 if (land != null) {
-                    player.message(Politik.detailMessage("Nation: " + land.getPlayerOwner().getNation().getNationName()).append(Component.text(" Town: " + land.getTownOwner().getTownName()).color(TextColor.color(49, 125, 53)).append(Component.text(" Land: " + land.getPlayerOwner().getDisplayName()).color(TextColor.color(36, 8, 94)))));
+                    player.message(TextUtil.detailMessage("Nation: " + land.getPlayerOwner().getNation().getNationName()).append(Component.text(" Town: " + land.getTownOwner().getTownName()).color(TextColor.color(49, 125, 53)).append(Component.text(" Land: " + land.getPlayerOwner().getDisplayName()).color(TextColor.color(36, 8, 94)))));
                     //player.message(Politik.detailMessage("Land Claim: owned by " + land.getPlayerOwner().getDisplayName() + " : " + land.getUUID() + " area of: " + land.getArea() + " in the town of: " + land.getTownOwner().getTownName() + " in the nation: " + land.getNationOwner().getNationName() + ", it is type: " + land.getType()));
                 } else {
-                    player.message(Politik.errorMessage("You aren't in any land claims"));
+                    player.message(TextUtil.errorMessage("You aren't in any land claims"));
                 }
                 event.setCancelled(true);
             }

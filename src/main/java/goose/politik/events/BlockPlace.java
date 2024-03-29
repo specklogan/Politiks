@@ -1,15 +1,11 @@
 package goose.politik.events;
 
-import goose.politik.Politik;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.landUtil.Land;
 import goose.politik.util.landUtil.LandUtil;
+import goose.politik.util.text.TextUtil;
 import org.bukkit.block.Block;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
-
-import java.util.logging.Level;
 
 public class BlockPlace {
 
@@ -22,7 +18,7 @@ public class BlockPlace {
             //block was placed not in the wilderness
             if (!player.getPlayer().isOp()) {
                 if (land.getPlayerOwner() != player) {
-                    player.message(Politik.errorMessage("You can't place blocks here"));
+                    player.message(TextUtil.errorMessage("You can't place blocks here"));
                     event.setCancelled(true);
                 }
             }

@@ -11,7 +11,6 @@ import java.util.UUID;
 public class Nation {
 
     //Static stuff
-    public static final BigDecimal NATIONCOST = new BigDecimal("1000");
     public static final ArrayList<Nation> NATIONS = new ArrayList<>();
 
     private TextComponent enterMessage = Component.text("");

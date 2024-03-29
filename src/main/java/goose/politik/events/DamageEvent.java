@@ -1,12 +1,11 @@
 package goose.politik.events;
 
-import goose.politik.Politik;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.landUtil.Land;
 import goose.politik.util.landUtil.LandUtil;
+import goose.politik.util.text.TextUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 
 import java.util.Objects;
 
@@ -20,7 +19,7 @@ public class DamageEvent {
                 //player did damage inside land
                 if (!player.getPlayer().isOp()) {
                     if (land.getPlayerOwner() != player) {
-                        player.message(Politik.errorMessage("You can't damage here"));
+                        player.message(TextUtil.errorMessage("You can't damage here"));
                         event.setCancelled(true);
                     }
                 }

@@ -5,6 +5,7 @@ import goose.politik.util.config.ConfigHandler;
 import goose.politik.util.government.Nation;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.government.Town;
+import goose.politik.util.text.TextUtil;
 import org.bson.Document;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
@@ -13,11 +14,9 @@ import org.bukkit.block.Block;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.UUID;
-import java.util.logging.Level;
 
 public class Land {
     //will be an instance of land
-    private static final BigDecimal costPerArea = new BigDecimal("0.25");
     public static final String type = "NORMAL";
     private Town townOwner;
     private Nation nationOwner;
@@ -260,7 +259,7 @@ public class Land {
         Town playerTown = player.getTown();
         if (playerNation == null || playerTown == null) {
             //error, becuase in order to claim land you need to join a town
-            player.message(Politik.errorMessage("In order to claim land, you need to be in a town and nation"));
+            player.message(TextUtil.errorMessage("In order to claim land, you need to be in a town and nation"));
             return;
         }
 
@@ -286,24 +285,24 @@ public class Land {
             this.setEnvironment(this.world.getEnvironment());
             this.setArea(Land.calculateArea(firstPos, secondPos));
             this.setUUID(UUID.randomUUID());
-            BigDecimal cost = costPerArea.multiply(BigDecimal.valueOf(area));
+            BigDecimal cost = ConfigHandler.getCostPerArea().multiply(BigDecimal.valueOf(area));
             //check if player has enough money to cover it
             if (player.canPurchase(cost)) {
                 Land result = LandUtil.getLandInLand(this, chunk);
                 if (result == null) {
                     this.setOccupiedChunks(LandUtil.getChunksInLand(this));
-                    this.playerOwner.message(Politik.successMessage("You've successfully claimed " + this.area + " blocks, costing you $" + cost));
+                    this.playerOwner.message(TextUtil.successMessage("You've successfully claimed " + this.area + " blocks, costing you $" + cost));
                     player.changeMoney(cost.negate());
                     this.setNationOwner(playerNation);
                     this.setTownOwner(playerTown);
                 } else {
-                    this.playerOwner.message(Politik.errorMessage("Land claim overlaps with an existing claim"));
+                    this.playerOwner.message(TextUtil.errorMessage("Land claim overlaps with an existing claim"));
                 }
             } else {
-                player.message(Politik.errorMessage("You don't have enough funds to cover this purchase"));
+                player.message(TextUtil.errorMessage("You need $" + cost + " to purchase, you only have $" + player.getMoney()));
             }
         } else {
-            player.message(Politik.errorMessage("Incorrect area, minimum area size is " + ConfigHandler.getMinLandSize() + " blocks, maximum is " + ConfigHandler.getMaxLandSize() + " blocks."));
+            player.message(TextUtil.errorMessage("Incorrect area, minimum area size is " + ConfigHandler.getMinLandSize() + " blocks, maximum is " + ConfigHandler.getMaxLandSize() + " blocks."));
         }
     }
 

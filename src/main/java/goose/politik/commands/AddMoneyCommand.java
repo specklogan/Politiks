@@ -1,8 +1,8 @@
 package goose.politik.commands;
 
-import goose.politik.Politik;
 import goose.politik.util.economy.MoneyHandler;
 import goose.politik.util.government.PolitikPlayer;
+import goose.politik.util.text.TextUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -20,10 +20,10 @@ public class AddMoneyCommand implements CommandExecutor {
         if (sender.isOp()) {
             //they are allowed to run the function
             if (args.length > 2) {
-                sender.sendMessage(Politik.errorMessage("You supplied too many arguments!"));
+                sender.sendMessage(TextUtil.errorMessage("You supplied too many arguments!"));
             } else if (args.length < 1) {
                 //too few args
-                sender.sendMessage(Politik.errorMessage("You supplied too few arguments!"));
+                sender.sendMessage(TextUtil.errorMessage("You supplied too few arguments!"));
             } else {
                 if (args.length == 1) {
 
@@ -31,7 +31,7 @@ public class AddMoneyCommand implements CommandExecutor {
                     try {
                         amount = new BigDecimal(args[0]);
                     } catch (NumberFormatException e) {
-                        Politik.errorMessage("Error in command, value wasn't a number.");
+                        TextUtil.errorMessage("Error in command, value wasn't a number.");
                         return false;
                     }
                     //apply to themselves
@@ -40,18 +40,18 @@ public class AddMoneyCommand implements CommandExecutor {
                         //add money to themselves
                         amount = MoneyHandler.moneyRound(amount);
 
-                        sender.sendMessage(Politik.successMessage("Successfully gave yourself $" + amount + "."));
+                        sender.sendMessage(TextUtil.successMessage("Successfully gave yourself $" + amount + "."));
                         PolitikPlayer.getPolitikPlayer((Player) sender).changeMoney(amount);
                     } else{
                         //console did this
-                        sender.sendMessage(Politik.errorMessage("Server can't own money!"));
+                        sender.sendMessage(TextUtil.errorMessage("Server can't own money!"));
                     }
                 } else {
                     BigDecimal amount;
                     try {
                         amount = new BigDecimal(args[1]);
                     } catch (NumberFormatException e) {
-                        sender.sendMessage(Politik.errorMessage("Error in command, value wasn't a number."));
+                        sender.sendMessage(TextUtil.errorMessage("Error in command, value wasn't a number."));
                         return false;
                     }
                     //apply to another person
@@ -65,30 +65,30 @@ public class AddMoneyCommand implements CommandExecutor {
                     if (sender instanceof Player) {
                         PolitikPlayer senderPlayer = PolitikPlayer.getPolitikPlayer((Player) sender);
                         if (receivingPlayer == null) {
-                            sender.sendMessage(Politik.errorMessage("Player " + args[0] + " does not exist"));
+                            sender.sendMessage(TextUtil.errorMessage("Player " + args[0] + " does not exist"));
                         } else {
                             //player does exist give them money
                             if (receivingPlayer.getPlayer() == null) {
-                                senderPlayer.message(Politik.successMessage("Successfully gave " + receivingPlayer.getDisplayName()  + " $" + amount + "."));
+                                senderPlayer.message(TextUtil.successMessage("Successfully gave " + receivingPlayer.getDisplayName()  + " $" + amount + "."));
                                 receivingPlayer.changeMoney(amount);
                             } else {
-                                receivingPlayer.message(Politik.successMessage("You were added $" + amount + " from " + senderPlayer.getDisplayName()));
-                                senderPlayer.message(Politik.successMessage("Successfully gave " + receivingPlayer.getDisplayName()  + " $" + amount + "."));
+                                receivingPlayer.message(TextUtil.successMessage("You were added $" + amount + " from " + senderPlayer.getDisplayName()));
+                                senderPlayer.message(TextUtil.successMessage("Successfully gave " + receivingPlayer.getDisplayName()  + " $" + amount + "."));
                                 receivingPlayer.changeMoney(amount);
                             }
                         }
                     } else {
                         if (receivingPlayer == null) {
-                            sender.sendMessage(Politik.errorMessage("Player " + args[0] + " does not exist"));
+                            sender.sendMessage(TextUtil.errorMessage("Player " + args[0] + " does not exist"));
                         } else {
                             //player does exist give them money
                             if (receivingPlayer.getPlayer() == null) {
                                 //offline
                                 receivingPlayer.changeMoney(amount);
-                                sender.sendMessage(Politik.successMessage("Successfully added $" + amount + " to" + args[0]));
+                                sender.sendMessage(TextUtil.successMessage("Successfully added $" + amount + " to" + args[0]));
                             } else {
-                                receivingPlayer.message(Politik.successMessage("You were added $" + amount + " from Server"));
-                                sender.sendMessage(Politik.successMessage("Successfully added $" + amount + " to" + args[0]));
+                                receivingPlayer.message(TextUtil.successMessage("You were added $" + amount + " from Server"));
+                                sender.sendMessage(TextUtil.successMessage("Successfully added $" + amount + " to" + args[0]));
                                 receivingPlayer.changeMoney(amount);
                             }
                         }
@@ -97,7 +97,7 @@ public class AddMoneyCommand implements CommandExecutor {
                 }
             }
         } else {
-            sender.sendMessage(Politik.errorMessage("You don't have permission to run this command!"));
+            sender.sendMessage(TextUtil.errorMessage("You don't have permission to run this command!"));
         }
         return true;
     }
