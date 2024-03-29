@@ -14,7 +14,7 @@ public class PlayerDB {
         //the goal for this is to allow players to have their money manipulated while offline, as they
         //are stored in java objects on server loading and unloading
 
-        for (Document document : MongoDBHandler.playerCollection.find()) {
+        for (Document document : DatabaseHandler.playerCollection.find()) {
             PolitikPlayer player = new PolitikPlayer();
             //empty player, load every value from the database, when a player joins, just assign a 'message' to it
             String money = document.getString("money");

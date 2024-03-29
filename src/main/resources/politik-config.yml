@@ -1,0 +1,20 @@
+politik:
+  database:
+    connection-string: mongodb://localhost:27017
+
+  economy:
+    #Should land produce things? (experimental)
+    do-production: false
+    #In minecraft days, how often should production be calculated? (1, ...)
+    production-cycle: 1
+
+  nation:
+    found-cost: 1000
+  town:
+    found-cost: 250
+
+  land:
+    #Area size in blocks
+    max-size: 8192
+    min-size: 16
+

@@ -1,24 +1,75 @@
 package goose.politik.util.config;
 
+import goose.politik.Politik;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+import java.util.logging.Level;
+
 public class ConfigHandler {
-    private static Config config;
+    private static YamlConfiguration config;
 
     public static void loadConfig() {
         if (!configExist()) {
-            //setup new config file
-            Config config = new Config();
-            return;
+            Politik.plugin.saveResource("politik-config.yml", false);
         }
-        Config config = new Config();
+
+
+        config = new YamlConfiguration();
+        config.options().parseComments(true);
+        File file = new File(Politik.plugin.getDataFolder() + "/politik-config.yml");
+        try {
+            config.load(file);
+            checkIfConfigLatest();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public static String getURL() {
-        return config.getURL();
+    public static YamlConfiguration getConfig() {
+        return config;
     }
+
+    public static String getURI() {
+        return getConfig().getString("politik.database.connection-string");
+    }
+
+    private static void checkIfConfigLatest() {
+        InputStreamReader internalConfigReader = new InputStreamReader(Objects.requireNonNull(Politik.getInstance().getResource("politik-config.yml")), StandardCharsets.UTF_8);
+        YamlConfiguration internalConfig = YamlConfiguration.loadConfiguration(internalConfigReader);
+
+        for (String string : internalConfig.getKeys(true)) {
+            //Line is the same
+            if (config.contains(string)) {
+                continue;
+            }
+            config.set(string, internalConfig.get(string));
+        }
+
+        try {
+            config.save(Politik.plugin.getDataFolder() + "/politik-config.yml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static int getMaxLandSize() {
+        return config.getInt("politik.land.max-size");
+    }
+
+    public static int getMinLandSize() {
+        return config.getInt("politik.land.min-size");
+    }
+
 
     private static boolean configExist() {
 
-        return false;
+        return new File(Politik.plugin.getDataFolder() + "/politik-config.yml").exists();
     }
 
     public static boolean canTick() {

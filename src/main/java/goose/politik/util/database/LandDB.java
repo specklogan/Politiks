@@ -1,22 +1,15 @@
 package goose.politik.util.database;
 
 import com.mongodb.client.MongoCursor;
-import goose.politik.Politik;
-import goose.politik.util.government.Nation;
-import goose.politik.util.government.PolitikPlayer;
-import goose.politik.util.government.Town;
 import goose.politik.util.landUtil.Land;
 import goose.politik.util.landUtil.LandUtil;
 import goose.politik.util.landUtil.lands.Farm;
 import org.bson.Document;
 import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.Biome;
 
 import java.util.ArrayList;
 import java.util.UUID;
-import java.util.logging.Level;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -24,14 +17,14 @@ public class LandDB {
     public static void saveLand(Land land) {
         if (land.getFirstLocation().getWorld().getEnvironment() == World.Environment.NORMAL) {
             //check if land is in a database or not
-            Document landDocument = MongoDBHandler.overworldLand.find(eq("_id", land.getUUID().toString())).first();
+            Document landDocument = DatabaseHandler.overworldLand.find(eq("_id", land.getUUID().toString())).first();
 
             if (landDocument == null) {
                 //add new land to database
-                MongoDBHandler.overworldLand.insertOne(land.toDocument());
+                DatabaseHandler.overworldLand.insertOne(land.toDocument());
             } else {
                 //existing land
-                MongoDBHandler.overworldLand.replaceOne(landDocument, land.toDocument());
+                DatabaseHandler.overworldLand.replaceOne(landDocument, land.toDocument());
             }
         }
     }
@@ -42,7 +35,7 @@ public class LandDB {
         ArrayList<Land> tickableLand = new ArrayList<>();
         //find all documents not equal to 'NORMAL' type
         Document query = new Document("type", new Document("$ne", "NORMAL"));
-        MongoCursor<Document> cursor = MongoDBHandler.overworldLand.find(query).iterator();
+        MongoCursor<Document> cursor = DatabaseHandler.overworldLand.find(query).iterator();
         while (cursor.hasNext()) {
             Document document = cursor.next();
             tickableLandDocuments.add(document);
@@ -66,7 +59,7 @@ public class LandDB {
 
         ArrayList<Document> chunkClaims = new ArrayList<>();
         Document query = new Document("occupiedChunks", new Document("$elemMatch", new Document("$eq", ((Long)chunk.getChunkKey()).toString())));
-        MongoCursor<Document> cursor = MongoDBHandler.overworldLand.find(query).iterator();
+        MongoCursor<Document> cursor = DatabaseHandler.overworldLand.find(query).iterator();
         while (cursor.hasNext()) {
             Document document = cursor.next();
             chunkClaims.add(document);

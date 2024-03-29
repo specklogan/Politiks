@@ -41,7 +41,6 @@ public final class Politik extends JavaPlugin implements Listener {
     public static final String pluginVersion = "1.0";
     public static Politik plugin;
     public static Logger logger;
-    public final MongoDBHandler mongoDB = new MongoDBHandler();
 
     public static TextComponent errorMessage(String text) {
         return Component.text(text).color(TextColor.color(255, 0, 0));
@@ -72,16 +71,15 @@ public final class Politik extends JavaPlugin implements Listener {
         plugin = this;
         logger = plugin.getLogger();
         getServer().getPluginManager().registerEvents(this,this);
-        this.getLogger().log(Level.INFO, "Starting Politik Version " + pluginVersion);
-        Objects.requireNonNull(getCommand("addmoney")).setExecutor(new AddMoneyCommand());
-        Objects.requireNonNull(getCommand("balance")).setExecutor(new BalCommand());
-        Objects.requireNonNull(getCommand("setmoney")).setExecutor(new SetMoneyCommand());
-        Objects.requireNonNull(getCommand("jobset")).setExecutor(new SetJobCommand());
-        Objects.requireNonNull(getCommand("claimtool")).setExecutor(new ClaimToolCommand());
-        Objects.requireNonNull(getCommand("nation")).setExecutor(new NationCommands());
-        Objects.requireNonNull(getCommand("town")).setExecutor(new TownCommand());
-        Objects.requireNonNull(getCommand("list")).setExecutor(new List());
-        Objects.requireNonNull(getCommand("land")).setExecutor(new LandCommand());
+
+        //Load Config
+        ConfigHandler.loadConfig();
+
+        //Register commands
+        CommandRegister.registerCommands();
+
+        //Start Database
+        DatabaseHandler.initializeDatabase();
 
         //Add dimensions to the land handler
         LandUtil.addDimensionToLandMap(World.Environment.NORMAL);
@@ -197,7 +195,7 @@ public final class Politik extends JavaPlugin implements Listener {
         // Plugin shutdown logic
         for (UUID player: PolitikPlayer.playerList.keySet()) {
             PolitikPlayer user = PolitikPlayer.playerList.get(player);
-            logger.log(Level.INFO, "Saving player " + user.getDisplayName());
+            log(Level.INFO, "Saving player " + user.getDisplayName());
             user.leave();
         }
 

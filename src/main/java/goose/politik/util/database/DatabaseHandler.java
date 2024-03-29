@@ -7,19 +7,14 @@ import goose.politik.util.config.ConfigHandler;
 import goose.politik.util.government.Nation;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.government.Town;
-import goose.politik.util.landUtil.Land;
 import org.bson.Document;
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.World;
 
-import java.lang.reflect.Array;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.UUID;
 import java.util.logging.Level;
 
-public class MongoDBHandler {
+public class DatabaseHandler {
     public static MongoClient mongoClient;
     public static MongoDatabase serverDB;
     public static MongoCollection<Document> playerCollection;
@@ -31,10 +26,11 @@ public class MongoDBHandler {
 
 
 
-    public MongoDBHandler() {
+
+    public static void initializeDatabase() {
         try {
-            Politik.log(Level.INFO, "Starting MongoDB: URI="+ ConfigHandler.getURL());
-            mongoClient = MongoClients.create(ConfigHandler.getURL());
+            Politik.log(Level.INFO, "Starting MongoDB: URI="+ ConfigHandler.getURI());
+            mongoClient = MongoClients.create(ConfigHandler.getURI());
         } catch (Exception e) {
             Politik.logger.log(Level.SEVERE, "Error connecting to database. Does it exist?");
             Bukkit.getPluginManager().disablePlugin(Politik.plugin);

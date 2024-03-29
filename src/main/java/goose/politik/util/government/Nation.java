@@ -1,6 +1,5 @@
 package goose.politik.util.government;
 
-import goose.politik.util.database.MongoDBHandler;
 import goose.politik.util.database.NationDB;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;

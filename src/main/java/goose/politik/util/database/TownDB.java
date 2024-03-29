@@ -1,20 +1,16 @@
 package goose.politik.util.database;
 
-import com.mongodb.client.MongoCursor;
 import goose.politik.Politik;
 import goose.politik.util.government.Nation;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.government.Town;
 import org.bson.Document;
 import org.bukkit.Location;
-import org.bukkit.World;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -30,7 +26,7 @@ public class TownDB {
      */
 
     public static void saveTown(Town town) {
-        Document townDocument = MongoDBHandler.townCollection.find(eq("townName", town.getTownName())).first();
+        Document townDocument = DatabaseHandler.townCollection.find(eq("townName", town.getTownName())).first();
 
         String townName = town.getTownName();
         String locationStr = town.getSpawnLocation().getWorld().getName() + "," + town.getSpawnLocation().getX() + "," + town.getSpawnLocation().getY() + "," + town.getSpawnLocation().getZ();
@@ -47,7 +43,7 @@ public class TownDB {
             newTownDocument.put("enterMessage", town.getEnterMessage().toString());
             newTownDocument.put("spawnLocation", locationStr);
             newTownDocument.put("playerList", playerList);
-            MongoDBHandler.townCollection.insertOne(newTownDocument);
+            DatabaseHandler.townCollection.insertOne(newTownDocument);
         } else {
             //town already exists, just overwrite it
             Document newTownDocument = new Document();
@@ -57,7 +53,7 @@ public class TownDB {
             newTownDocument.put("enterMessage", town.getEnterMessage().toString());
             newTownDocument.put("spawnLocation", locationStr);
             newTownDocument.put("playerList", playerList);
-            MongoDBHandler.townCollection.replaceOne(townDocument, newTownDocument);
+            DatabaseHandler.townCollection.replaceOne(townDocument, newTownDocument);
         }
     }
 
@@ -71,7 +67,7 @@ public class TownDB {
             4) Load all lands
          */
         //loop through the town DB and load them one-by-one, add all of their members into the town and nation
-        for (Document document : MongoDBHandler.townCollection.find()) {
+        for (Document document : DatabaseHandler.townCollection.find()) {
             //read through all saved nations
             String townName = document.getString("townName");
             //make sure town isn't already loaded incase it's a capitol
@@ -118,7 +114,7 @@ public class TownDB {
 
     public static Town loadTown(String townName) {
         //return a loaded town from the database
-        Document townDocument = MongoDBHandler.townCollection.find(new Document("townName", townName)).first();
+        Document townDocument = DatabaseHandler.townCollection.find(new Document("townName", townName)).first();
         if (townDocument != null) {
             return new Town();
         } else {

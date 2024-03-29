@@ -1,7 +1,6 @@
 package goose.politik.util.government;
 
-import goose.politik.Politik;
-import goose.politik.util.database.MongoDBHandler;
+import goose.politik.util.database.DatabaseHandler;
 import goose.politik.util.landUtil.Land;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.entity.Player;
@@ -81,7 +80,7 @@ public class PolitikPlayer {
 
     public void savePlayer() {
         //save to database, can be called without actually kicking the player
-        MongoDBHandler.savePlayerToDatabase(this);
+        DatabaseHandler.savePlayerToDatabase(this);
     }
 
     public void leave() {

@@ -85,7 +85,7 @@ public class NationCommands implements CommandExecutor {
 
 
         } else {
-            NationDB.saveNation(player.getNation());
+            //NationDB.saveNation(player.getNation()); Not sure why I did this?
             //list nation help
             sender.sendMessage("---------------- Nation Help ----------------");
             sender.sendMessage(Politik.detailMessage("/nation create [nation-name] : takes in a nation name"));

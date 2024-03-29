@@ -1,28 +1,19 @@
 package goose.politik.util.database;
 
-import com.mongodb.client.MongoCursor;
-import goose.politik.Politik;
 import goose.politik.util.government.Nation;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.government.Town;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.serializer.ComponentSerializer;
 import org.bson.Document;
-import org.bukkit.Location;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static com.mongodb.client.model.Filters.eq;
 
 public class NationDB {
     public static void loadNations() {
-        for (Document document : MongoDBHandler.nationCollection.find()) {
+        for (Document document : DatabaseHandler.nationCollection.find()) {
             //read through all saved nations
             String nationName = document.getString("nationName");
             UUID leaderUUID = UUID.fromString(document.getString("leaderUUID"));
@@ -46,7 +37,7 @@ public class NationDB {
 
     public static void saveNation(Nation nation) {
         //saves a nation
-        Document nationDocument = MongoDBHandler.nationCollection.find(eq("nationName", nation.getNationName())).first();
+        Document nationDocument = DatabaseHandler.nationCollection.find(eq("nationName", nation.getNationName())).first();
 
         Town nationCapitol = nation.getCapitol();
         String capitolName = "none";
@@ -71,7 +62,7 @@ public class NationDB {
             updatedDocument.put("taxRate", nation.getTaxRate().toString());
             updatedDocument.put("townList", townList);
             updatedDocument.put("enterMessage", nation.getEnterMessage().toString());
-            MongoDBHandler.nationCollection.insertOne(updatedDocument);
+            DatabaseHandler.nationCollection.insertOne(updatedDocument);
         } else {
             //nation already exist
             Document updatedDocument = new Document();
@@ -83,7 +74,7 @@ public class NationDB {
             updatedDocument.put("taxRate", nation.getTaxRate().toString());
             updatedDocument.put("townList", townList);
             updatedDocument.put("enterMessage", nation.getEnterMessage().toString());
-            MongoDBHandler.nationCollection.replaceOne(nationDocument, updatedDocument);
+            DatabaseHandler.nationCollection.replaceOne(nationDocument, updatedDocument);
         }
     }
 }

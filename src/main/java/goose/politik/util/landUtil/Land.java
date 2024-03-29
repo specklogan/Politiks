@@ -1,6 +1,7 @@
 package goose.politik.util.landUtil;
 
 import goose.politik.Politik;
+import goose.politik.util.config.ConfigHandler;
 import goose.politik.util.government.Nation;
 import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.government.Town;
@@ -16,8 +17,6 @@ import java.util.logging.Level;
 
 public class Land {
     //will be an instance of land
-    private static final int minSize = 16;
-    private static final int maxSize = 8192;
     private static final BigDecimal costPerArea = new BigDecimal("0.25");
     public static final String type = "NORMAL";
     private Town townOwner;
@@ -161,7 +160,7 @@ public class Land {
     public boolean validLand(String firstPos, String secondPos) {
         int totalArea = calculateArea(firstPos, secondPos);
         this.area = totalArea;
-        return (totalArea <= Land.maxSize && totalArea >= Land.minSize);
+        return (totalArea <= ConfigHandler.getMaxLandSize() && totalArea >= ConfigHandler.getMinLandSize());
     }
 
     public void setVisibleLand() {
@@ -304,7 +303,7 @@ public class Land {
                 player.message(Politik.errorMessage("You don't have enough funds to cover this purchase"));
             }
         } else {
-            player.message(Politik.errorMessage("Incorrect area, minimum area size is 16, maximum is 8192"));
+            player.message(Politik.errorMessage("Incorrect area, minimum area size is " + ConfigHandler.getMinLandSize() + " blocks, maximum is " + ConfigHandler.getMaxLandSize() + " blocks."));
         }
     }
 

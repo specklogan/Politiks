@@ -21,8 +21,13 @@ public class JoinLeaveHandler {
             for (UUID key : PolitikPlayer.playerList.keySet()) {
                 if (PolitikPlayer.playerList.get(key).getUUID().equals(event.getPlayer().getUniqueId())) {
                     PolitikPlayer.playerList.get(key).setPlayer(event.getPlayer());
+                    return;
                 }
             }
+            //Player wasnt found and they have played before (make note of this)
+            Politik.log(Level.WARNING, event.getPlayer().getName() + " not found in database and they aren't new, creating entry.");
+            new PolitikPlayer(event.getPlayer());
+            event.joinMessage(Politik.eventMessage("Welcome " + event.getPlayer().getName() + " to the server"));
         }
     }
 
