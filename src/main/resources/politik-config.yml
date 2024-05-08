@@ -20,3 +20,6 @@ politik:
     #Per block cost
     cost: 0.25
 
+    #Claim tool cost
+    claim-tool-cost: 100
+

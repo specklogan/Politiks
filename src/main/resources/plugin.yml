@@ -4,15 +4,17 @@ author: gooseapple5
 version: '${project.version}'
 website: https://github.com/specklogan/Politiks
 main: goose.politik.Politik
-api-version: 1.19
+api-version: 1.20
 commands:
   addmoney:
     description: Adds money to player, negative numbers subtract money
     aliases: addm
+    permission: politik.command.addmoney
     usage: /addmoney {player} {amount}
   setmoney:
     description: Sets the money of a player
     aliases: setm
+    permission: politik.command.setmoney
     usage: /setmoney {player} {amount}
   balance:
     description: Returns the value of your balance {$}
@@ -26,6 +28,11 @@ commands:
     description: Gives the player the tool to claim land
     aliases: ct
     usage: /<command>
+  serverclaimtool:
+    description: Used for server claims
+    aliases: sct
+    usage: /<command>
+    permission: politik.command.serverclaimtool
   nation:
     description: Returns list of valid nation commands
     aliases: [na, nt]
@@ -36,8 +43,8 @@ commands:
     usage: /<command> [help,list,create]
   list:
     description: List all players
+    permission: politik.command.list
   land:
     description: Returns a list of valid land commands
     aliases: l
     usage: /<command> [list, position]
-

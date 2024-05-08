@@ -59,6 +59,10 @@ public class ConfigHandler {
         }
     }
 
+    public static BigDecimal getClaimToolCost() {
+        return BigDecimal.valueOf(config.getDouble("politik.land.claim-tool-cost"));
+    }
+
     public static BigDecimal getCostPerArea() {
         return BigDecimal.valueOf(config.getDouble("politik.land.cost"));
     }

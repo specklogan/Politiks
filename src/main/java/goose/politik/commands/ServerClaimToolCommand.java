@@ -21,7 +21,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-public class ClaimToolCommand implements CommandExecutor {
+public class ServerClaimToolCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
 
@@ -36,13 +36,13 @@ public class ClaimToolCommand implements CommandExecutor {
         ItemStack stickItem = new ItemStack(Material.STICK);
         ItemMeta stickMeta = stickItem.getItemMeta();
         stickMeta.getPersistentDataContainer().set(new NamespacedKey(Politik.getInstance(), "posOne"), PersistentDataType.STRING,"");
-        stickMeta.getPersistentDataContainer().set(new NamespacedKey(Politik.getInstance(), "name"), PersistentDataType.STRING,"landClaimTool");
+        stickMeta.getPersistentDataContainer().set(new NamespacedKey(Politik.getInstance(), "name"), PersistentDataType.STRING,"serverClaimTool");
         stickMeta.setUnbreakable(true);
         stickMeta.addEnchant(Enchantment.CHANNELING, 1, true);
         stickMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 2, 1);
         //set stick text
-        TextComponent component = Component.text("Land Claim Tool").decoration(TextDecoration.ITALIC, false).color(TextColor.color(255, 255, 0));
+        TextComponent component = Component.text("Server Claim Tool").decoration(TextDecoration.ITALIC, false).color(TextColor.color(255, 0, 0));
         stickMeta.displayName(component);
         stickItem.setItemMeta(stickMeta);
         player.getInventory().addItem(stickItem);

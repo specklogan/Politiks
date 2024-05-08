@@ -76,6 +76,10 @@ public final class Politik extends JavaPlugin implements Listener {
         plugin.getLogger().log(level, message);
     }
 
+    public static void log(String message) {
+        plugin.getLogger().log(Level.INFO, message);
+    }
+
     @EventHandler
     public void playerJoinEvent(PlayerJoinEvent event){
         //send it to the other things
@@ -84,7 +88,6 @@ public final class Politik extends JavaPlugin implements Listener {
 
     @EventHandler
     public void serverSaveEvent(WorldSaveEvent event) {
-        log(Level.INFO, "SAVING SERVER");
         for (UUID player: PolitikPlayer.playerList.keySet()) {
             PolitikPlayer user = PolitikPlayer.playerList.get(player);
             user.savePlayer();

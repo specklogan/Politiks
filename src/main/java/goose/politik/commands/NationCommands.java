@@ -8,10 +8,16 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class NationCommands implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class NationCommands implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         //this is called when the player does /nation, from there we can check what specific thing they are looking for
@@ -22,8 +28,7 @@ public class NationCommands implements CommandExecutor {
 
         if (!(sender instanceof Player)) {
             //server can't execute commands
-            sender.sendMessage(TextUtil.errorMessage("Server can't issue nation commands"));
-            return true;
+            return false;
         }
 
         PolitikPlayer player = PolitikPlayer.getPolitikPlayer((Player) sender);
@@ -86,5 +91,16 @@ public class NationCommands implements CommandExecutor {
             sender.sendMessage(TextUtil.detailMessage("/nation help : outputs nation command help"));
         }
         return true;
+    }
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if (args.length == 1) {
+            return Arrays.asList("create", "list", "help");
+        }
+        if (args.length == 2 && args[0].equals("list")) {
+            return Arrays.asList("enemy", "ally");
+        }
+
+        return new ArrayList<>();
     }
 }

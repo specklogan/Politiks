@@ -16,5 +16,6 @@ public class CommandRegister {
         Objects.requireNonNull(Politik.getInstance().getCommand("town")).setExecutor(new TownCommand());
         Objects.requireNonNull(Politik.getInstance().getCommand("list")).setExecutor(new ListCommand());
         Objects.requireNonNull(Politik.getInstance().getCommand("land")).setExecutor(new LandCommand());
+        Objects.requireNonNull(Politik.getInstance().getCommand("serverclaimtool")).setExecutor(new ServerClaimToolCommand());
     }
 }
