@@ -1,12 +1,11 @@
 package goose.politik.util.government;
 
-import goose.politik.Politik;
 import goose.politik.util.database.TownDB;
+import goose.politik.util.player.PolitikPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public class Town {

@@ -1,4 +1,4 @@
-package goose.politik.events.CustomEvents;
+package goose.politik.task;
 
 import goose.politik.Politik;
 import goose.politik.events.CustomEvents.DayCompleteEvent;
@@ -7,8 +7,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.logging.Level;
 
-public class DayListener extends BukkitRunnable {
+public class DayListener implements Runnable {
     private long lastTime;
+    private static final DayListener instance = new DayListener();
     private World worldToCheck;
     private int dayFrequency;
     private int currDay;
@@ -17,6 +18,13 @@ public class DayListener extends BukkitRunnable {
         this.worldToCheck = world;
         this.dayFrequency = dayFrequency;
         this.lastTime = world.getTime();
+    }
+
+    public DayListener() {
+    }
+
+    public static DayListener getInstance() {
+        return instance;
     }
 
     @Override

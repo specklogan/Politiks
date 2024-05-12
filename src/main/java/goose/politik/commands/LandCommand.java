@@ -1,6 +1,6 @@
 package goose.politik.commands;
 
-import goose.politik.util.government.PolitikPlayer;
+import goose.politik.util.player.PolitikPlayer;
 import goose.politik.util.landUtil.Land;
 import goose.politik.util.landUtil.LandUtil;
 import goose.politik.util.text.TextUtil;

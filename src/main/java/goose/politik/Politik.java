@@ -1,16 +1,19 @@
 package goose.politik;
 
 import goose.politik.commands.*;
+import goose.politik.compat.CompatabilityHandler;
 import goose.politik.events.*;
-import goose.politik.events.CustomEvents.DayListener;
+import goose.politik.task.DayListener;
 import goose.politik.events.LandEvents.LandLoadUnloadEvent;
 import goose.politik.events.LandEvents.LandToolInteractEvent;
+import goose.politik.task.Scheduler;
 import goose.politik.util.config.ConfigHandler;
 import goose.politik.util.database.*;
 import goose.politik.util.government.Nation;
-import goose.politik.util.government.PolitikPlayer;
+import goose.politik.util.player.PolitikPlayer;
 import goose.politik.util.government.Town;
 import goose.politik.util.landUtil.LandUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -37,7 +40,7 @@ public final class Politik extends JavaPlugin implements Listener {
     public static final String pluginVersion = "1.0";
     public static Politik plugin;
     public static Logger logger;
-
+    private Scheduler.Task task;
     public static final String lackPerms = "You lack the permissions to run this command";
 
     @Override
@@ -68,7 +71,7 @@ public final class Politik extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new LandDayEvent(), this);
 
         if (ConfigHandler.canTick()) {
-            new DayListener(getServer().getWorlds().get(0),1).runTaskTimer(this,0,  20);
+            task = Scheduler.runTimer(DayListener.getInstance(), 0, 20);
         }
     }
 

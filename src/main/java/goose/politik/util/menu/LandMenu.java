@@ -1,7 +1,7 @@
 package goose.politik.util.menu;
 
 import goose.politik.Politik;
-import goose.politik.util.government.PolitikPlayer;
+import goose.politik.util.player.PolitikPlayer;
 import goose.politik.util.landUtil.Land;
 import goose.politik.util.landUtil.LandConverter;
 import goose.politik.util.landUtil.lands.Farm;

@@ -3,7 +3,7 @@ package goose.politik.util.landUtil;
 import goose.politik.Politik;
 import goose.politik.util.config.ConfigHandler;
 import goose.politik.util.government.Nation;
-import goose.politik.util.government.PolitikPlayer;
+import goose.politik.util.player.PolitikPlayer;
 import goose.politik.util.government.Town;
 import goose.politik.util.text.TextUtil;
 import org.bson.Document;

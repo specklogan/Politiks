@@ -1,13 +1,12 @@
 package goose.politik.events.LandEvents;
 
 import goose.politik.Politik;
-import goose.politik.util.government.PolitikPlayer;
+import goose.politik.util.player.PolitikPlayer;
 import goose.politik.util.landUtil.Land;
 import goose.politik.util.landUtil.LandUtil;
 import goose.politik.util.menu.LandMenu;
 import goose.politik.util.text.TextUtil;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -21,7 +20,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Objects;
-import java.util.logging.Level;
 
 public class LandToolInteractEvent implements Listener {
 

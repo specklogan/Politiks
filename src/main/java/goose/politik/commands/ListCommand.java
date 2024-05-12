@@ -1,15 +1,13 @@
 package goose.politik.commands;
 
 import goose.politik.Politik;
-import goose.politik.util.government.PolitikPlayer;
-import goose.politik.util.landUtil.Land;
+import goose.politik.util.player.PolitikPlayer;
 import goose.politik.util.landUtil.LandUtil;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

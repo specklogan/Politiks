@@ -2,7 +2,7 @@ package goose.politik.util.landUtil.lands;
 
 import goose.politik.Politik;
 import goose.politik.util.government.Nation;
-import goose.politik.util.government.PolitikPlayer;
+import goose.politik.util.player.PolitikPlayer;
 import goose.politik.util.government.Town;
 import goose.politik.util.landUtil.LandUtil;
 import goose.politik.util.landUtil.TickableLand;
@@ -16,7 +16,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.UUID;
-import java.util.logging.Level;
 
 public class Farm extends TickableLand {
 

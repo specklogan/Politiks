@@ -1,7 +1,6 @@
 package goose.politik.commands;
 
 import goose.politik.Politik;
-import goose.politik.util.government.PolitikPlayer;
 import goose.politik.util.text.TextUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;

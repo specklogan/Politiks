@@ -2,7 +2,7 @@ package goose.politik.util.database;
 
 import goose.politik.Politik;
 import goose.politik.util.government.Nation;
-import goose.politik.util.government.PolitikPlayer;
+import goose.politik.util.player.PolitikPlayer;
 import goose.politik.util.government.Town;
 import org.bson.Document;
 import org.bukkit.Location;

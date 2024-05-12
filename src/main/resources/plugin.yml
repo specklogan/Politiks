@@ -4,7 +4,8 @@ author: gooseapple5
 version: '${project.version}'
 website: https://github.com/specklogan/Politiks
 main: goose.politik.Politik
-api-version: 1.20
+folia-supported: true
+api-version: 1.20.4
 commands:
   addmoney:
     description: Adds money to player, negative numbers subtract money
