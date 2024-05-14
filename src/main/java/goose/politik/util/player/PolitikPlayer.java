@@ -51,6 +51,16 @@ public class PolitikPlayer {
         return this.player;
     }
 
+    public static boolean playerExists(String user) {
+        for (UUID uuid : playerList.keySet()) {
+            PolitikPlayer player = playerList.get(uuid);
+            if (player.getDisplayName().equalsIgnoreCase(user)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void setPlayer(Player player) {
         this.player = player;
     }
@@ -73,6 +83,16 @@ public class PolitikPlayer {
 
     public static PolitikPlayer getPolitikPlayerFromID(UUID uuid) {
         return playerList.get(uuid);
+    }
+
+    public static PolitikPlayer getPolitikPlayerFromUser(String user) {
+        for (UUID uuid : playerList.keySet()) {
+            PolitikPlayer player = playerList.get(uuid);
+            if (player.getDisplayName().equalsIgnoreCase(user)) {
+                return player;
+            }
+        }
+        return null;
     }
     public void loadPlayer() {
         //RUN ONLY ON INITIAL PLAYER JOIN
@@ -169,6 +189,24 @@ public class PolitikPlayer {
     public boolean canPurchase(BigDecimal amount) {
         //will tell you if you're able to purchase something
         return this.money.subtract(amount).compareTo(BigDecimal.ZERO) >= 0;
+    }
+
+    public boolean hasTown() {
+        return this.town != null;
+    }
+
+    public boolean hasNation() {
+        return this.nation != null;
+    }
+
+    public boolean isMayor() {
+        if (hasTown()) {
+            if (town.getMayor() == this) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void setMoney(BigDecimal amount) {

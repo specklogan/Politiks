@@ -2,13 +2,16 @@ package goose.politik.commands;
 
 import goose.politik.util.config.ConfigHandler;
 import goose.politik.util.government.Nation;
+import goose.politik.util.player.InviteHandler;
 import goose.politik.util.player.PolitikPlayer;
 import goose.politik.util.government.Town;
 import goose.politik.util.text.TextUtil;
+import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.codehaus.plexus.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class TownCommand implements CommandExecutor {
@@ -70,13 +73,68 @@ public class TownCommand implements CommandExecutor {
                     sender.sendMessage(town.getTownName() + ": run by " + town.getMayor().getDisplayName() + " in nation " + town.getNation().getNationName());
                 }
             }
-        } else {
+        } else if (firstArg.equalsIgnoreCase("invite")) {
+            if (!player.hasTown()) {
+                player.message(TextUtil.errorMessage("You don't have a town!"));
+                return true;
+            }
+
+            if (!player.isMayor()) {
+                player.message(TextUtil.errorMessage("You can't invite players!"));
+                return true;
+            }
+
+            String playerName = args[1];
+
+            if (StringUtils.isEmpty(playerName) || !PolitikPlayer.playerExists(playerName)) {
+                player.message(TextUtil.errorMessage("Couldn't invite " + playerName + " to the town!"));
+                return true;
+            }
+
+            PolitikPlayer politikPlayer = PolitikPlayer.getPolitikPlayerFromUser(playerName);
+
+            if (InviteHandler.inviteExist(player.getTown(), politikPlayer)) {
+                player.message(TextUtil.errorMessage(playerName + " already invited to the town!"));
+                return true;
+            }
+
+            if (politikPlayer.hasNation() || politikPlayer.hasTown()) {
+                player.message(TextUtil.errorMessage(playerName + " is already in a town!"));
+                return true;
+            }
+
+            InviteHandler.invitePlayer(player.getTown(), politikPlayer);
+            player.message(TextUtil.detailMessage("Successfully invited " + playerName + " to the town."));
+            politikPlayer.message(TextUtil.detailMessage("You've been invited to join " + player.getDisplayName() + "'s town " + player.getTown().getTownName()).clickEvent(ClickEvent.runCommand("/town join " + player.getTown().getTownName())));
+
+        } else if (firstArg.equalsIgnoreCase("join")) {
+            if (player.hasTown() || player.hasNation()) {
+                player.message(TextUtil.errorMessage("You need to leave your town and nation to join another!"));
+                return true;
+            }
+            String townName = args[1];
+            Town town = Town.getTownFromName(townName);
+            if (town == null) {
+                player.message(TextUtil.errorMessage("The town " + townName + " doesn't exist!"));
+                return true;
+            }
+
+            if (!InviteHandler.inviteExist(town, player)) { //TODO Permission based joining
+                player.message(TextUtil.errorMessage(townName + " hasn't invited you!"));
+                return true;
+            }
+
+            InviteHandler.acceptInvite(town, player);
+            player.message(TextUtil.successMessage("Successfully joined " + town.getTownName()));
+            town.getMayor().message(TextUtil.detailMessage(player.getDisplayName() + " has joined your town!"));
+
+        }else {
             sender.sendMessage("---------------- Town Help ----------------");
             player.message(TextUtil.detailMessage("/town create [town-name] : takes in a town name"));
             player.message(TextUtil.detailMessage("/town list [@optional nation] : lists all towns in the map, or in a nation"));
             player.message(TextUtil.detailMessage("/town help : outputs town command help"));
-
-
+            player.message(TextUtil.detailMessage("/town invite [player-name] : invites player to town"));
+            player.message(TextUtil.detailMessage("/town leave : leave current town"));
         }
         return true;
     }

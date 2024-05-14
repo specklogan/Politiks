@@ -72,6 +72,8 @@ public class DatabaseHandler {
                 playerTownName = playerTown.getTownName();
             }
 
+            Politik.log("SAVED TOWN NAME IS: " + playerTownName + " IS IT NULL: " + player.getTown());
+
             //create blank document
             Document updatedDocument = new Document();
             updatedDocument.put("playerID", player.getUUID().toString());

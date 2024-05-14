@@ -21,7 +21,7 @@ public class Town {
     public static Town getTownFromName(String townName) {
         for (Nation nation : Nation.NATIONS) {
             for (Town town : nation.getTownList()) {
-                if (town.getTownName().equals(townName)) {
+                if (town.getTownName().equalsIgnoreCase(townName)) {
                     return town;
                 }
             }

@@ -13,6 +13,7 @@ import goose.politik.util.government.Nation;
 import goose.politik.util.player.PolitikPlayer;
 import goose.politik.util.government.Town;
 import goose.politik.util.landUtil.LandUtil;
+import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -91,8 +92,9 @@ public final class Politik extends JavaPlugin implements Listener {
         JoinLeaveHandler.playerJoin(event);
     }
 
-    @EventHandler
+    @EventHandler //TODO, Folia this does not get called, may need to implement some kind of auto save system using runnables.
     public void serverSaveEvent(WorldSaveEvent event) {
+        log(Level.SEVERE, "SAVING SERVer");
         for (UUID player: PolitikPlayer.playerList.keySet()) {
             PolitikPlayer user = PolitikPlayer.playerList.get(player);
             user.savePlayer();

@@ -41,7 +41,7 @@ commands:
   town:
     description: Returns list of valid town commands
     aliases: t
-    usage: /<command> [help,list,create]
+    usage: /<command> [help,list,create,invite]
   list:
     description: List all players
     permission: politik.command.list
