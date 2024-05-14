@@ -23,6 +23,10 @@ public class DayListener implements Runnable {
     public DayListener() {
     }
 
+    public void setWorldToCheck(World worldToCheck) {
+        this.worldToCheck = worldToCheck;
+    }
+
     public static DayListener getInstance() {
         return instance;
     }

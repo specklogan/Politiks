@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Farm extends TickableLand {
 
@@ -92,7 +93,7 @@ public class Farm extends TickableLand {
         farm.setWorld(Politik.getInstance().getServer().getWorld(document.getString("world")));
         farm.setFirstLocation(firstLocation);
         farm.setSecondLocation(secondLocation);
-        ArrayList<Chunk> chunkArrayList = LandUtil.getChunksInLand(farm);
+        CopyOnWriteArrayList<Chunk> chunkArrayList = LandUtil.getChunksInLand(farm);
         for (Chunk chunk : chunkArrayList) {
             LandUtil.addToLandMap(farm, chunk);
         }

@@ -1,8 +1,10 @@
 package goose.politik.task;
 
+import java.util.logging.Level;
 import goose.politik.Politik;
 import goose.politik.compat.CompatabilityHandler;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -14,11 +16,15 @@ public class Scheduler {
     }
 
     public static Task runTimer(Runnable runnable, long delayTicks, long periodTicks) {
-        if (CompatabilityHandler.foliaEnabled())
+        if (CompatabilityHandler.foliaEnabled()) {
+            Politik.log(Level.WARNING, "Starting FOLIA Scheduler");
             return new Task(Bukkit.getGlobalRegionScheduler()
                     .runAtFixedRate(Politik.getInstance(), t -> runnable.run(), delayTicks < 1 ? 1 : delayTicks, periodTicks));
-        else
+        }
+        else {
+            Politik.log(Level.WARNING, "Starting BUKKIT Scheduler");
             return new Task(Bukkit.getScheduler().runTaskTimer(Politik.getInstance(), runnable, delayTicks, periodTicks));
+        }
     }
 
     public static class Task {

@@ -7,6 +7,7 @@ import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Town {
     private String townName;
@@ -14,7 +15,7 @@ public class Town {
     private TextComponent enterMessage = Component.text("");
     private Location spawnLocation;
     private Nation nationOwner;
-    private ArrayList<PolitikPlayer> playerList;
+    private CopyOnWriteArrayList<PolitikPlayer> playerList = new CopyOnWriteArrayList<>();
 
     //static
     public static Town getTownFromName(String townName) {
@@ -64,18 +65,23 @@ public class Town {
         this.nationOwner = nationOwner;
     }
 
-    public ArrayList<PolitikPlayer> getPlayerList() {
+    public CopyOnWriteArrayList<PolitikPlayer> getPlayerList() {
         return playerList;
     }
 
-    public void setPlayerList(ArrayList<PolitikPlayer> playerList) {
+    public void removePlayer(PolitikPlayer player) {
+        this.playerList.remove(player);
+    }
+
+    public boolean containsPlayer(PolitikPlayer player) {
+        return this.playerList.contains(player);
+    }
+
+    public void setPlayerList(CopyOnWriteArrayList<PolitikPlayer> playerList) {
         this.playerList = playerList;
     }
 
     public void addPlayer(PolitikPlayer player) {
-        if (this.playerList == null) {
-            this.playerList = new ArrayList<>();
-        }
         this.playerList.add(player);
     }
 

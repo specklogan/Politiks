@@ -8,11 +8,12 @@ import net.kyori.adventure.text.TextComponent;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Nation {
 
     //Static stuff
-    public static final ArrayList<Nation> NATIONS = new ArrayList<>();
+    public static final CopyOnWriteArrayList<Nation> NATIONS = new CopyOnWriteArrayList<>();
 
     private TextComponent enterMessage = Component.text("");
 
@@ -63,8 +64,16 @@ public class Nation {
         return playerList;
     }
 
-    public void addToPlayerList(PolitikPlayer player) {
+    public void addPlayer(PolitikPlayer player) {
         this.playerList.add(player);
+    }
+
+    public void removePlayer(PolitikPlayer player) {
+        this.playerList.remove(player);
+    }
+
+    public boolean containsPlayer(PolitikPlayer player) {
+        return this.playerList.contains(player);
     }
 
     public TextComponent getEnterMessage() {
@@ -115,7 +124,7 @@ public class Nation {
     public Nation(String nationName, PolitikPlayer leader) {
         this.nationName = nationName;
         this.leader = leader;
-        addToPlayerList(leader);
+        addPlayer(leader);
         leader.setNation(this);
         NATIONS.add(this);
     }

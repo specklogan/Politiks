@@ -14,6 +14,7 @@ import org.bukkit.block.Block;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Land {
     //will be an instance of land
@@ -55,9 +56,9 @@ public class Land {
         return this.firstLocation.getBlock();
     }
 
-    public ArrayList<Chunk> occupiedChunks = new ArrayList<>();
+    public CopyOnWriteArrayList<Chunk> occupiedChunks = new CopyOnWriteArrayList<>();
 
-    public ArrayList<Chunk> getOccupiedChunks() {
+    public CopyOnWriteArrayList<Chunk> getOccupiedChunks() {
         return this.occupiedChunks;
     }
 
@@ -69,7 +70,7 @@ public class Land {
         this.biome = biome;
     }
 
-    public void setOccupiedChunks(ArrayList<Chunk> occupiedChunks) {
+    public void setOccupiedChunks(CopyOnWriteArrayList<Chunk> occupiedChunks) {
         this.occupiedChunks = occupiedChunks;
     }
 
@@ -219,7 +220,7 @@ public class Land {
         land.setTownOwner(Town.getTownFromName(townOwner));
         land.setNationOwner(Nation.getNationFromName(nationOwner));
 
-        ArrayList<Chunk> chunkArrayList = LandUtil.getChunksInLand(land);
+        CopyOnWriteArrayList<Chunk> chunkArrayList = LandUtil.getChunksInLand(land);
         for (Chunk chunk : chunkArrayList) {
             LandUtil.addToLandMap(land, chunk);
         }

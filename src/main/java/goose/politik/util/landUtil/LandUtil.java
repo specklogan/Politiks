@@ -10,6 +10,7 @@ import org.bukkit.block.Block;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
 public class LandUtil {
@@ -338,13 +339,13 @@ public class LandUtil {
         }
         return -1;
     }
-    public static ArrayList<Chunk> getChunksInLand(Land land) {
+    public static CopyOnWriteArrayList<Chunk> getChunksInLand(Land land) {
         Location firstLoc = land.getFirstLocation();
         Location secondLoc = land.getSecondLocation();
         Chunk firstChunk = firstLoc.getChunk();
         Chunk secondChunk = secondLoc.getChunk();
         World world = firstChunk.getWorld();
-        ArrayList<Chunk> chunkList = new ArrayList<>();
+        CopyOnWriteArrayList<Chunk> chunkList = new CopyOnWriteArrayList<>();
 
         if (firstChunk.equals(secondChunk)) {
             chunkList.add(firstLoc.getChunk());

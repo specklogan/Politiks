@@ -90,6 +90,6 @@ public class ConfigHandler {
     }
 
     public static boolean canTick() {
-        return false;
+        return config.getBoolean("politik.economy.do-production");
     }
 }

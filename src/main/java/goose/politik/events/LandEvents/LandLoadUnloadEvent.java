@@ -11,6 +11,7 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
 public class LandLoadUnloadEvent  {
@@ -21,7 +22,7 @@ public class LandLoadUnloadEvent  {
         if (lands != null) {
             Politik.log(Level.INFO, "Trying to save land: " + lands);
             for (int i = 0; i < lands.size(); i++) {
-                ArrayList<Chunk> chunkArrayList = LandUtil.getChunksInLand(lands.get(i));
+                CopyOnWriteArrayList<Chunk> chunkArrayList = LandUtil.getChunksInLand(lands.get(i));
                 if (chunkArrayList.size() == 1) {
                     LandDB.saveLand(lands.get(i));
                     LandUtil.landMap.get(chunkArrayList.get(0).getWorld().getEnvironment()).get(chunkArrayList.get(0).getChunkKey()).remove(lands.get(i));

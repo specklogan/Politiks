@@ -71,6 +71,8 @@ public final class Politik extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new LandDayEvent(), this);
 
         if (ConfigHandler.canTick()) {
+            log(Level.WARNING, "Starting Ticking for Day Cycle");
+            DayListener.getInstance().setWorldToCheck(plugin.getServer().getWorlds().get(0));
             task = Scheduler.runTimer(DayListener.getInstance(), 0, 20);
         }
     }

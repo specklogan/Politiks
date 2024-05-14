@@ -12,6 +12,7 @@ import java.math.BigInteger;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -27,7 +28,7 @@ public class PolitikPlayer {
     private String job;
     private BigDecimal money;
 
-    public static HashMap<UUID, PolitikPlayer> playerList = new HashMap<>();
+    public static ConcurrentHashMap<UUID, PolitikPlayer> playerList = new ConcurrentHashMap<>();
     //this stores every player
 
     public PolitikPlayer(Player player) {
