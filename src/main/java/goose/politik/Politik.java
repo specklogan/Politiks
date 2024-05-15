@@ -6,6 +6,7 @@ import goose.politik.events.*;
 import goose.politik.task.DayListener;
 import goose.politik.events.LandEvents.LandLoadUnloadEvent;
 import goose.politik.events.LandEvents.LandToolInteractEvent;
+import goose.politik.task.FoliaSaveListener;
 import goose.politik.task.Scheduler;
 import goose.politik.util.config.ConfigHandler;
 import goose.politik.util.database.*;
@@ -13,8 +14,6 @@ import goose.politik.util.government.Nation;
 import goose.politik.util.player.PolitikPlayer;
 import goose.politik.util.government.Town;
 import goose.politik.util.landUtil.LandUtil;
-import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -42,6 +41,7 @@ public final class Politik extends JavaPlugin implements Listener {
     public static Politik plugin;
     public static Logger logger;
     private Scheduler.Task task;
+    private Scheduler.Task foliaSaveTask;
     public static final String lackPerms = "You lack the permissions to run this command";
 
     @Override
@@ -76,6 +76,12 @@ public final class Politik extends JavaPlugin implements Listener {
             DayListener.getInstance().setWorldToCheck(plugin.getServer().getWorlds().get(0));
             task = Scheduler.runTimer(DayListener.getInstance(), 0, 20);
         }
+
+        if (CompatabilityHandler.foliaEnabled()) {
+            //Because folia does not call the 'server save event' I mimic it, every 5 minutes it will call the save method
+            foliaSaveTask = Scheduler.runTimer(FoliaSaveListener.getInstance(), 0, 6000);
+        }
+
     }
 
     public static void log(Level level, String message) {
@@ -92,9 +98,20 @@ public final class Politik extends JavaPlugin implements Listener {
         JoinLeaveHandler.playerJoin(event);
     }
 
-    @EventHandler //TODO, Folia this does not get called, may need to implement some kind of auto save system using runnables.
+    @EventHandler
     public void serverSaveEvent(WorldSaveEvent event) {
-        log(Level.SEVERE, "SAVING SERVer");
+        for (UUID player: PolitikPlayer.playerList.keySet()) {
+            PolitikPlayer user = PolitikPlayer.playerList.get(player);
+            user.savePlayer();
+        }
+        //saves the player just like when the server shuts down
+        Nation.saveNations();
+        Town.saveTowns();
+        LandUtil.saveLands();
+    }
+
+    public void saveServer() {
+        log("Saving Server");
         for (UUID player: PolitikPlayer.playerList.keySet()) {
             PolitikPlayer user = PolitikPlayer.playerList.get(player);
             user.savePlayer();
