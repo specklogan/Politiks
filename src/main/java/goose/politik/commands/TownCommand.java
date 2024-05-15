@@ -73,7 +73,37 @@ public class TownCommand implements CommandExecutor {
                     sender.sendMessage(town.getTownName() + ": run by " + town.getMayor().getDisplayName() + " in nation " + town.getNation().getNationName());
                 }
             }
-        } else if (firstArg.equalsIgnoreCase("invite")) {
+        } else if (firstArg.equalsIgnoreCase("kick")) {
+            String playerName = args[1];
+
+            if (!player.hasTown()) {
+                player.message(TextUtil.errorMessage("You aren't in a town!"));
+                return true;
+            }
+
+            if (!player.isMayor()) {
+                player.message(TextUtil.errorMessage("You can't kick people from your town!"));
+                return true;
+            }
+
+            if (StringUtils.isEmpty(playerName) || !PolitikPlayer.playerExists(playerName)) {
+                player.message(TextUtil.errorMessage("Couldn't kick " + playerName + " from the town!"));
+                return true;
+            }
+
+            PolitikPlayer playerToKick = PolitikPlayer.getPolitikPlayerFromUser(playerName);
+
+            if (playerToKick == null || !playerToKick.hasTown()) {
+                player.message(TextUtil.errorMessage("Couldn't kick " + playerName + " from the town!"));
+                return true;
+            }
+
+            if (playerToKick.getTown() == player.getTown()) {
+                player.getTown().removePlayer(playerToKick);
+                player.message(TextUtil.successMessage("Successfully kicked " + playerToKick.getDisplayName() + " from " + player.getTown().getTownName()));
+                playerToKick.message(TextUtil.errorMessage("You have been kicked from " + player.getTown().getTownName() + "!"));
+            }
+        }else if (firstArg.equalsIgnoreCase("invite")) {
             if (!player.hasTown()) {
                 player.message(TextUtil.errorMessage("You don't have a town!"));
                 return true;

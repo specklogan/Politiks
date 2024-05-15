@@ -70,7 +70,10 @@ public class Town {
     }
 
     public void removePlayer(PolitikPlayer player) {
+        this.nationOwner.removePlayer(player);
         this.playerList.remove(player);
+        player.setTown(null);
+        player.setNation(null);
     }
 
     public boolean containsPlayer(PolitikPlayer player) {
