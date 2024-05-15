@@ -1,5 +1,6 @@
 package goose.politik.events;
 
+import goose.politik.Politik;
 import goose.politik.events.CustomEvents.DayCompleteEvent;
 import goose.politik.util.landUtil.Land;
 import goose.politik.util.landUtil.LandUtil;

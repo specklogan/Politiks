@@ -11,7 +11,7 @@ public class DayListener implements Runnable {
     private long lastTime;
     private static final DayListener instance = new DayListener();
     private World worldToCheck;
-    private int dayFrequency;
+    private int dayFrequency = 1;
     private int currDay;
 
     public DayListener(World world, int dayFrequency) {
@@ -53,6 +53,8 @@ public class DayListener implements Runnable {
                     Politik.getInstance().getServer().getPluginManager().callEvent(event);
                 }
             }
+        } else {
+            lastTime = currTime;
         }
     }
 }
