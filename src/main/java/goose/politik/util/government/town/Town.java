@@ -1,12 +1,12 @@
-package goose.politik.util.government;
+package goose.politik.util.government.town;
 
 import goose.politik.util.database.TownDB;
+import goose.politik.util.government.nation.Nation;
 import goose.politik.util.player.PolitikPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 
-import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Town {
@@ -85,6 +85,7 @@ public class Town {
     }
 
     public void addPlayer(PolitikPlayer player) {
+        this.nationOwner.addPlayer(player);
         this.playerList.add(player);
     }
 

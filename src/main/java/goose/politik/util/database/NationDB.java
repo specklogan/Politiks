@@ -1,8 +1,8 @@
 package goose.politik.util.database;
 
-import goose.politik.util.government.Nation;
+import goose.politik.util.government.nation.Nation;
 import goose.politik.util.player.PolitikPlayer;
-import goose.politik.util.government.Town;
+import goose.politik.util.government.town.Town;
 import org.bson.Document;
 
 import java.math.BigDecimal;

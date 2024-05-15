@@ -1,8 +1,8 @@
 package goose.politik.util.player;
 
 import goose.politik.util.database.DatabaseHandler;
-import goose.politik.util.government.Nation;
-import goose.politik.util.government.Town;
+import goose.politik.util.government.nation.Nation;
+import goose.politik.util.government.town.Town;
 import goose.politik.util.landUtil.Land;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.entity.Player;
@@ -10,7 +10,6 @@ import org.bukkit.inventory.PlayerInventory;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 

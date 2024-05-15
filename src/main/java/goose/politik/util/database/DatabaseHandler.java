@@ -4,9 +4,9 @@ import static com.mongodb.client.model.Filters.*;
 import com.mongodb.client.*;
 import goose.politik.Politik;
 import goose.politik.util.config.ConfigHandler;
-import goose.politik.util.government.Nation;
+import goose.politik.util.government.nation.Nation;
 import goose.politik.util.player.PolitikPlayer;
-import goose.politik.util.government.Town;
+import goose.politik.util.government.town.Town;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 

@@ -1,6 +1,6 @@
 package goose.politik.util.player;
 
-import goose.politik.util.government.Town;
+import goose.politik.util.government.town.Town;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;

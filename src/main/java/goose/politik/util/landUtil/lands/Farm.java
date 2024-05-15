@@ -1,9 +1,9 @@
 package goose.politik.util.landUtil.lands;
 
 import goose.politik.Politik;
-import goose.politik.util.government.Nation;
+import goose.politik.util.government.nation.Nation;
 import goose.politik.util.player.PolitikPlayer;
-import goose.politik.util.government.Town;
+import goose.politik.util.government.town.Town;
 import goose.politik.util.landUtil.LandUtil;
 import goose.politik.util.landUtil.TickableLand;
 import org.bson.Document;
@@ -14,7 +14,6 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 

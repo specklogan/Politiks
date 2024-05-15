@@ -1,10 +1,10 @@
 package goose.politik.commands;
 
 import goose.politik.util.config.ConfigHandler;
-import goose.politik.util.government.Nation;
+import goose.politik.util.government.nation.Nation;
 import goose.politik.util.player.InviteHandler;
 import goose.politik.util.player.PolitikPlayer;
-import goose.politik.util.government.Town;
+import goose.politik.util.government.town.Town;
 import goose.politik.util.text.TextUtil;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.command.Command;
@@ -164,6 +164,7 @@ public class TownCommand implements CommandExecutor {
             player.message(TextUtil.detailMessage("/town list [@optional nation] : lists all towns in the map, or in a nation"));
             player.message(TextUtil.detailMessage("/town help : outputs town command help"));
             player.message(TextUtil.detailMessage("/town invite [player-name] : invites player to town"));
+            player.message(TextUtil.detailMessage("/town kick [player-name] : kicks player from town"));
             player.message(TextUtil.detailMessage("/town leave : leave current town"));
         }
         return true;
