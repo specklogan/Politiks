@@ -149,6 +149,9 @@ public class PolitikPlayer {
     }
 
     public void message(TextComponent component) {
+        if (this.player == null || !this.player.isOnline()) {
+            return;
+        }
         this.player.sendMessage(component);
     }
 
