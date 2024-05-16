@@ -8,11 +8,11 @@ import goose.politik.events.LandEvents.LandLoadUnloadEvent;
 import goose.politik.events.LandEvents.LandToolInteractEvent;
 import goose.politik.task.FoliaSaveListener;
 import goose.politik.task.Scheduler;
-import goose.politik.util.config.ConfigHandler;
+import goose.politik.config.ConfigHandler;
 import goose.politik.util.database.*;
-import goose.politik.util.government.nation.Nation;
-import goose.politik.util.player.PolitikPlayer;
-import goose.politik.util.government.town.Town;
+import goose.politik.government.nation.Nation;
+import goose.politik.player.PolitikPlayer;
+import goose.politik.government.town.Town;
 import goose.politik.util.landUtil.LandUtil;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -111,7 +111,6 @@ public final class Politik extends JavaPlugin implements Listener {
     }
 
     public void saveServer() {
-        log("Saving Server");
         for (UUID player: PolitikPlayer.playerList.keySet()) {
             PolitikPlayer user = PolitikPlayer.playerList.get(player);
             user.savePlayer();

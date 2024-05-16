@@ -1,7 +1,7 @@
 package goose.politik.events;
 
 import goose.politik.Politik;
-import goose.politik.util.player.PolitikPlayer;
+import goose.politik.player.PolitikPlayer;
 import goose.politik.util.text.TextUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;

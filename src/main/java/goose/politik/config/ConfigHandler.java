@@ -1,4 +1,4 @@
-package goose.politik.util.config;
+package goose.politik.config;
 
 import goose.politik.Politik;
 import org.bukkit.configuration.file.FileConfiguration;

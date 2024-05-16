@@ -1,10 +1,10 @@
 package goose.politik.util.landUtil;
 
 import goose.politik.Politik;
-import goose.politik.util.config.ConfigHandler;
-import goose.politik.util.government.nation.Nation;
-import goose.politik.util.player.PolitikPlayer;
-import goose.politik.util.government.town.Town;
+import goose.politik.config.ConfigHandler;
+import goose.politik.government.nation.Nation;
+import goose.politik.player.PolitikPlayer;
+import goose.politik.government.town.Town;
 import goose.politik.util.text.TextUtil;
 import org.bson.Document;
 import org.bukkit.*;

@@ -3,10 +3,10 @@ package goose.politik.util.database;
 import static com.mongodb.client.model.Filters.*;
 import com.mongodb.client.*;
 import goose.politik.Politik;
-import goose.politik.util.config.ConfigHandler;
-import goose.politik.util.government.nation.Nation;
-import goose.politik.util.player.PolitikPlayer;
-import goose.politik.util.government.town.Town;
+import goose.politik.config.ConfigHandler;
+import goose.politik.government.nation.Nation;
+import goose.politik.player.PolitikPlayer;
+import goose.politik.government.town.Town;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 
@@ -109,8 +109,8 @@ public class DatabaseHandler {
             updatedDocument.put("job", player.getJob());
             updatedDocument.put("money", player.getMoney().toString());
             updatedDocument.put("infamy", player.getInfamy());
-            updatedDocument.put("nation", "none");
-            updatedDocument.put("town", "none");
+            updatedDocument.put("nation", playerNationName);
+            updatedDocument.put("town", playerTownName);
             playerCollection.replaceOne(playerObject, updatedDocument);
         }
     }

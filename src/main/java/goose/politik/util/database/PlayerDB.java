@@ -1,7 +1,7 @@
 package goose.politik.util.database;
 
 import goose.politik.Politik;
-import goose.politik.util.player.PolitikPlayer;
+import goose.politik.player.PolitikPlayer;
 import org.bson.Document;
 import org.bukkit.entity.Player;
 

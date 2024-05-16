@@ -2,6 +2,10 @@ politik:
   database:
     connection-string: mongodb://localhost:27017
 
+  administration:
+    #In minutes
+    save-interval: 5
+
   economy:
     #Should land produce things? (experimental)
     do-production: false

@@ -1,6 +1,6 @@
 package goose.politik.events;
 
-import goose.politik.util.player.PolitikPlayer;
+import goose.politik.player.PolitikPlayer;
 import goose.politik.util.landUtil.Land;
 import goose.politik.util.landUtil.LandUtil;
 import org.bukkit.Sound;

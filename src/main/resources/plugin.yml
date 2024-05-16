@@ -45,6 +45,10 @@ commands:
   list:
     description: List all players
     permission: politik.command.list
+  politiksave:
+    description: Save Politik values manually
+    permission: politik.command.politiksave
+    aliases: pks
   land:
     description: Returns a list of valid land commands
     aliases: l

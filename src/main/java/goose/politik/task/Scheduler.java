@@ -17,12 +17,10 @@ public class Scheduler {
 
     public static Task runTimer(Runnable runnable, long delayTicks, long periodTicks) {
         if (CompatabilityHandler.foliaEnabled()) {
-            Politik.log(Level.WARNING, "Starting FOLIA Scheduler");
             return new Task(Bukkit.getGlobalRegionScheduler()
                     .runAtFixedRate(Politik.getInstance(), t -> runnable.run(), delayTicks < 1 ? 1 : delayTicks, periodTicks));
         }
         else {
-            Politik.log(Level.WARNING, "Starting BUKKIT Scheduler");
             return new Task(Bukkit.getScheduler().runTaskTimer(Politik.getInstance(), runnable, delayTicks, periodTicks));
         }
     }

@@ -1,8 +1,8 @@
-package goose.politik.util.government.nation;
+package goose.politik.government.nation;
 
 import goose.politik.util.database.NationDB;
-import goose.politik.util.government.town.Town;
-import goose.politik.util.player.PolitikPlayer;
+import goose.politik.government.town.Town;
+import goose.politik.player.PolitikPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 

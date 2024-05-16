@@ -1,7 +1,6 @@
-package goose.politik.util.player;
+package goose.politik.player;
 
 import com.nametagedit.plugin.NametagEdit;
-import net.kyori.adventure.text.TextComponent;
 import org.bukkit.entity.Player;
 
 public class PlayerDisplay {

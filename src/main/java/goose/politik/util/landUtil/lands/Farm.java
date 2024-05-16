@@ -1,9 +1,9 @@
 package goose.politik.util.landUtil.lands;
 
 import goose.politik.Politik;
-import goose.politik.util.government.nation.Nation;
-import goose.politik.util.player.PolitikPlayer;
-import goose.politik.util.government.town.Town;
+import goose.politik.government.nation.Nation;
+import goose.politik.player.PolitikPlayer;
+import goose.politik.government.town.Town;
 import goose.politik.util.landUtil.LandUtil;
 import goose.politik.util.landUtil.TickableLand;
 import org.bson.Document;

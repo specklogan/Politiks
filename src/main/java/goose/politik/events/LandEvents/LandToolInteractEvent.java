@@ -1,10 +1,10 @@
 package goose.politik.events.LandEvents;
 
 import goose.politik.Politik;
-import goose.politik.util.player.PolitikPlayer;
+import goose.politik.player.PolitikPlayer;
 import goose.politik.util.landUtil.Land;
 import goose.politik.util.landUtil.LandUtil;
-import goose.politik.util.menu.LandMenu;
+import goose.politik.menu.LandMenu;
 import goose.politik.util.text.TextUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
