@@ -1,5 +1,6 @@
 package goose.politik.events;
 
+import goose.politik.permissions.PermissionHandler;
 import goose.politik.player.PolitikPlayer;
 import goose.politik.util.landUtil.Land;
 import goose.politik.util.landUtil.LandUtil;
@@ -15,15 +16,19 @@ public class InteractEvent {
     public static void playerInteract(PlayerInteractEvent event) {
         PolitikPlayer player = PolitikPlayer.getPolitikPlayer(event.getPlayer());
         ItemStack handItem = player.getInventory().getItemInMainHand();
-
         Block interactedBlock =  event.getClickedBlock();
-            if (interactedBlock == null || event.getAction() == Action.LEFT_CLICK_BLOCK) {
+        if (interactedBlock == null || event.getAction() == Action.LEFT_CLICK_BLOCK) {
             return;
         }
+        Land land = LandUtil.blockInLand(interactedBlock);
         Material interactedType = interactedBlock.getType();
 
+        if (!PermissionHandler.PlayerCanInteract(player, land)) {
+            player.message(TextUtil.errorMessage("You can't interact here"));
+            return;
+        }
+
         if (interactedType.toString().contains("BUCKET") && !(interactedType == Material.BUCKET || interactedType == Material.MILK_BUCKET)) {
-            Land land = LandUtil.blockInLand(interactedBlock);
             if (land != null) {
                 if (!player.getPlayer().isOp()) {
                     if (land.getPlayerOwner() != player) {
@@ -51,7 +56,6 @@ public class InteractEvent {
         //prevent player from using doors, crafting tables, or chests
         if (interactedType.toString().contains("DOOR") || interactedType == Material.CHEST || interactedType == Material.BARREL || interactedType == Material.FURNACE || interactedType == Material.BLAST_FURNACE || interactedType == Material.SMOKER || interactedType.toString().contains("SHULKER_BOX") || interactedType.toString().contains("BUTTON") || interactedType == Material.LEVER) {
             //check if any of the special blocks are valid to be used
-            Land land = LandUtil.blockInLand(interactedBlock);
             if (land != null) {
                 if (!player.getPlayer().isOp()) {
                     if (land.getPlayerOwner() != player) {
