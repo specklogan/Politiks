@@ -5,12 +5,14 @@ import goose.politik.government.nation.Nation;
 import goose.politik.government.town.Town;
 import goose.politik.util.landUtil.Land;
 import net.kyori.adventure.text.TextComponent;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -40,6 +42,14 @@ public class PolitikPlayer {
 
     public PolitikPlayer() {
         //empty constructor when loaded from database
+    }
+
+    public void teleport(Location location) {
+        this.player.teleport(location);
+    }
+
+    public CompletableFuture<Boolean> teleportAsync(Location location) {
+        return this.player.teleportAsync(location);
     }
 
     public static PolitikPlayer getPolitikPlayer(Player player) {

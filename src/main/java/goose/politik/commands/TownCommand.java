@@ -1,5 +1,6 @@
 package goose.politik.commands;
 
+import goose.politik.compat.CompatabilityHandler;
 import goose.politik.config.ConfigHandler;
 import goose.politik.government.nation.Nation;
 import goose.politik.player.InviteHandler;
@@ -67,6 +68,29 @@ public class TownCommand implements CommandExecutor {
             }
 
 
+        } else if (firstArg.equalsIgnoreCase("spawn")) {
+            //teleport to town spawn, if it is folia it has to be async
+            if (!player.hasTown()) {
+                player.message(TextUtil.errorMessage("You aren't in a town!"));
+                return true;
+            }
+
+            String secondArg = args[1];
+
+            if (!secondArg.isEmpty()) {
+                if (secondArg.equalsIgnoreCase("set")) {
+                    if (player.isMayor()) {
+                        player.getTown().setSpawnLocation(player.getPlayer().getLocation());
+                        return true;
+                    }
+                }
+            }
+
+            if (CompatabilityHandler.foliaEnabled()) {
+                player.teleportAsync(player.getTown().getSpawnLocation());
+            } else {
+                player.teleport(player.getTown().getSpawnLocation());
+            }
         } else if (firstArg.equalsIgnoreCase("list")) {
             for (Nation nation: Nation.NATIONS) {
                 for (Town town: nation.getTownList()) {

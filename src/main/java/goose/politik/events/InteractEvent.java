@@ -32,7 +32,7 @@ public class InteractEvent {
         }
 
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            if (handItem.getType().toString().contains("EGG")) {
+            if (handItem.getType() == Material.EGG) {
                 event.setCancelled(true);
             }
         }
