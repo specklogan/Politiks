@@ -380,7 +380,6 @@ public class LandUtil {
             //returns a list of UUIDS of all lands
             Land land = landUUIDMap.get(World.Environment.NORMAL).get(uuid);
             LandDB.saveLand(land);
-            Politik.logger.log(Level.INFO, "Saving land: " + land);
         }
     }
 }

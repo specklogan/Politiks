@@ -155,6 +155,10 @@ public class PolitikPlayer {
         this.player.sendMessage(component);
     }
 
+    public boolean isOnline() {
+        return this.player == null || !this.player.isOnline();
+    }
+
     public PlayerInventory getInventory() {
         return this.player.getInventory();
     }

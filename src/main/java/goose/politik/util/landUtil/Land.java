@@ -307,6 +307,15 @@ public class Land {
         }
     }
 
+    /**
+     * Used on deletion to remove all references of it from the land array map.
+     */
+    public void clear() {
+        for (Chunk chunkClaim : getOccupiedChunks()) {
+            LandUtil.landMap.get(environment).get(chunkClaim.getChunkKey()).remove(this);
+        }
+    }
+
     public Land() {
 
     }

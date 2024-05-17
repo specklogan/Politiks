@@ -123,7 +123,7 @@ public final class Politik extends JavaPlugin implements Listener {
 
     @EventHandler
     public void chunkUnloadEvent(ChunkUnloadEvent event) {
-        LandLoadUnloadEvent.onChunkUnload(event);
+        //LandLoadUnloadEvent.onChunkUnload(event); //TODO Fix Chunk Unload Issue
     }
 
     @EventHandler

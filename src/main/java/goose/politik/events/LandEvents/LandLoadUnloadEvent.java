@@ -19,32 +19,47 @@ public class LandLoadUnloadEvent  {
         Chunk chunk = chunkUnloadEvent.getChunk();
         //check if that chunk has a land in it
         ArrayList<Land> lands = LandUtil.getLandListInChunk(chunk);
-        if (lands != null) {
-            Politik.log(Level.INFO, "Trying to save land: " + lands);
-            for (int i = 0; i < lands.size(); i++) {
-                CopyOnWriteArrayList<Chunk> chunkArrayList = LandUtil.getChunksInLand(lands.get(i));
-                if (chunkArrayList.size() == 1) {
-                    LandDB.saveLand(lands.get(i));
-                    LandUtil.landMap.get(chunkArrayList.get(0).getWorld().getEnvironment()).get(chunkArrayList.get(0).getChunkKey()).remove(lands.get(i));
-                } else {
-                    //claim spans across multiple chunks
-                    boolean anyLoaded = false;
-                    for (Chunk chunkArray : chunkArrayList) {
-                        if (chunkArray.isLoaded()) {
-                            anyLoaded = true;
-                        }
-                    }
-                    //if none of the claims chunks are loaded then we can go ahead and remove it
-                    if (!anyLoaded) {
-                        //none of chunk's claims are loaded so remove it
-                        LandDB.saveLand(lands.get(i));
-                        for (Chunk chunkClaim : lands.get(i).getOccupiedChunks()) {
-                            LandUtil.landMap.get(chunkArrayList.get(0).getWorld().getEnvironment()).get(chunkClaim.getChunkKey()).remove(lands.get(i));
-                        }
-                    }
+
+        /**
+         * If a chunk is empty, we don't need to worry about unloading anything
+         */
+        if (lands.isEmpty()) {
+            return;
+        }
+
+        for (int i = 0; i < lands.size(); i++) {
+            Land land = lands.get(i);
+            //This returns a list of all chunks that a land occupies
+            CopyOnWriteArrayList<Chunk> chunkArrayList = LandUtil.getChunksInLand(lands.get(i));
+
+            /**
+             * If a claim only spans one chunk, remove it from the world, and save it to the database.
+             */
+            if (chunkArrayList.size() == 1) {
+                LandDB.saveLand(land);
+                LandUtil.landMap.get(chunkArrayList.get(0).getWorld().getEnvironment()).get(chunkArrayList.get(0).getChunkKey()).remove(land);
+                continue;
+            }
+
+            //claim spans across multiple chunks
+            boolean anyLoaded = false;
+            for (Chunk ch : chunkArrayList) {
+                if (ch.isLoaded()) {
+                    anyLoaded = true;
                 }
             }
+
+            /**
+             * If any of the chunks in that land are still loaded, nothing is needed.
+             */
+            if (anyLoaded) {
+                continue;
+            }
+
+            LandDB.saveLand(land);
+            land.clear();
         }
+
     }
 
     public static void onChunkLoad(ChunkLoadEvent chunkLoadEvent) {

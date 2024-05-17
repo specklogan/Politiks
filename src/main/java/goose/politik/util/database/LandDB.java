@@ -66,35 +66,42 @@ public class LandDB {
         }
         cursor.close();
 
-        if (chunkClaims.size() != 0) {
-            for (Document document : chunkClaims) {
-                //We need to figure out what TYPE of document this is, and load it to it's respective
-                //claim type
-                String type = document.getString("type");
-                UUID uuid = UUID.fromString(document.getString("_id"));
-                //check the uuid to make sure no existing land is already in the world
-                ArrayList<Land> existingLand = LandUtil.getLandListInChunk(chunk);
+        if (chunkClaims.isEmpty()) {
+            return; //Nothing in that chunk
+        }
 
-                boolean alreadyExists = false;
-                if (existingLand != null) {
-                    for (Land land : existingLand) {
-                        if (land.getUUID() == uuid) {
-                            //if a land in this chunk already exists, ignore this document
-                            alreadyExists = true;
-                        }
+        for (Document document : chunkClaims) {
+            //We need to figure out what TYPE of document this is, and load it to it's respective
+            //claim type
+            String type = document.getString("type");
+            UUID uuid = UUID.fromString(document.getString("_id"));
+            //check the uuid to make sure no existing land is already in the world
+            ArrayList<Land> existingLand = LandUtil.getLandListInChunk(chunk);
+
+            /**
+             * This is due to large lands being able to occupy chunks out of render distance, if a
+             * smaller land is in a loaded chunk that is also occupied by a bigger land, this will ignore those larger chunk documents
+             * and only load the unloaded ones.
+             */
+            boolean alreadyExists = false;
+            if (existingLand != null) {
+                for (Land land : existingLand) {
+                    if (land.getUUID() == uuid) {
+                        //if a land in this chunk already exists, ignore this document
+                        alreadyExists = true;
                     }
                 }
+            }
 
-                if (alreadyExists) {
-                    continue;
-                }
+            if (alreadyExists) {
+                continue;
+            }
 
-                if (type.equalsIgnoreCase("normal")) {
-                    //load normal land
-                    Land.load(document);
-                } else if (type.equalsIgnoreCase("farm")) {
-                    Farm.load(document, new Farm());
-                }
+            if (type.equalsIgnoreCase("normal")) {
+                //load normal land
+                Land.load(document);
+            } else if (type.equalsIgnoreCase("farm")) {
+                Farm.load(document, new Farm());
             }
         }
     }
