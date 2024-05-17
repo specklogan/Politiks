@@ -15,7 +15,7 @@ import static com.mongodb.client.model.Filters.eq;
 
 public class LandDB {
     public static void saveLand(Land land) {
-        if (land.getFirstLocation().getWorld().getEnvironment() == World.Environment.NORMAL) {
+        if (land.getEnvironment() == World.Environment.NORMAL) {
             //check if land is in a database or not
             Document landDocument = DatabaseHandler.overworldLand.find(eq("_id", land.getUUID().toString())).first();
 
