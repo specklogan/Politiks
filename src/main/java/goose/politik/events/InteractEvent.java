@@ -23,28 +23,17 @@ public class InteractEvent {
         Land land = LandUtil.blockInLand(interactedBlock);
         Material interactedType = interactedBlock.getType();
 
-        if (!PermissionHandler.PlayerCanInteract(player, land)) {
-            player.message(TextUtil.errorMessage("You can't interact here"));
+        if (PermissionHandler.PlayerCanInteract(player, land)) {
             return;
         }
 
         if (interactedType.toString().contains("BUCKET") && !(interactedType == Material.BUCKET || interactedType == Material.MILK_BUCKET)) {
-            if (land != null) {
-                if (!player.getPlayer().isOp()) {
-                    if (land.getPlayerOwner() != player) {
-                        //player trying to place bucket
-                        player.message(TextUtil.errorMessage("You can't interact here"));
-                        event.setCancelled(true);
-                    }
-                }
-            }
+            event.setCancelled(true);
         }
 
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (handItem.getType().toString().contains("EGG")) {
-                if (player.getPlayer().isOp()) {
-                    return;
-                }
+                event.setCancelled(true);
             }
         }
 
@@ -53,19 +42,13 @@ public class InteractEvent {
             event.setCancelled(true);
         }
 
-        //prevent player from using doors, crafting tables, or chests
+        //prevent player from using doors, crafting tables, chests, etc
         if (interactedType.toString().contains("DOOR") || interactedType == Material.CHEST || interactedType == Material.BARREL || interactedType == Material.FURNACE || interactedType == Material.BLAST_FURNACE || interactedType == Material.SMOKER || interactedType.toString().contains("SHULKER_BOX") || interactedType.toString().contains("BUTTON") || interactedType == Material.LEVER) {
-            //check if any of the special blocks are valid to be used
-            if (land != null) {
-                if (!player.getPlayer().isOp()) {
-                    if (land.getPlayerOwner() != player) {
-                        player.message(TextUtil.errorMessage("You can't interact here"));
-                        event.setCancelled(true);
-                    }
-                }
-            }
+            event.setCancelled(true);
         }
 
-
+        if (event.isCancelled()) {
+            player.message(TextUtil.errorMessage("You can't interact here!"));
+        }
     }
 }
