@@ -13,14 +13,15 @@ import org.bukkit.event.Listener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class LandDayEvent implements Listener {
     @EventHandler
     public void onNewDayEvent(DayCompleteEvent event) {
         event.getServer().broadcast(TextUtil.detailMessage("---Production Cycles Calculated---"));
 
-        HashMap<Long, ArrayList<Land>> landArrayMap = LandUtil.landMap.get(World.Environment.NORMAL);
-        HashMap<UUID, Integer> completedLands = new HashMap<>();
+        ConcurrentHashMap<Long, ArrayList<Land>> landArrayMap = LandUtil.landMap.get(World.Environment.NORMAL);
+        ConcurrentHashMap<UUID, Integer> completedLands = new ConcurrentHashMap<>();
         for (Long chunkLong : landArrayMap.keySet()) {
             for (Land land : landArrayMap.get(chunkLong)) {
                 if (land instanceof TickableLand && completedLands.get(land.getUUID()) == null) {

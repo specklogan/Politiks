@@ -220,6 +220,7 @@ public class Land {
         land.setTownOwner(Town.getTownFromName(townOwner));
         land.setNationOwner(Nation.getNationFromName(nationOwner));
 
+        LandUtil.register(land);
         CopyOnWriteArrayList<Chunk> chunkArrayList = LandUtil.getChunksInLand(land);
         for (Chunk chunk : chunkArrayList) {
             LandUtil.addToLandMap(land, chunk);
@@ -286,6 +287,7 @@ public class Land {
             this.setEnvironment(this.world.getEnvironment());
             this.setArea(Land.calculateArea(firstPos, secondPos));
             this.setUUID(UUID.randomUUID());
+            LandUtil.landUUIDMap.get(environment).put(uuid, this);
             BigDecimal cost = ConfigHandler.getCostPerArea().multiply(BigDecimal.valueOf(area));
             //check if player has enough money to cover it
             if (player.canPurchase(cost)) {

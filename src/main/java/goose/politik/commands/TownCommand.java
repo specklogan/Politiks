@@ -75,9 +75,8 @@ public class TownCommand implements CommandExecutor {
                 return true;
             }
 
-            String secondArg = args[1];
-
-            if (!secondArg.isEmpty()) {
+            if (args.length  >= 2) {
+                String secondArg = args[1];
                 if (secondArg.equalsIgnoreCase("set")) {
                     if (player.isMayor()) {
                         player.getTown().setSpawnLocation(player.getPlayer().getLocation());

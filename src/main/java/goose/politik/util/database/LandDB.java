@@ -1,6 +1,7 @@
 package goose.politik.util.database;
 
 import com.mongodb.client.MongoCursor;
+import goose.politik.Politik;
 import goose.politik.util.landUtil.Land;
 import goose.politik.util.landUtil.LandUtil;
 import goose.politik.util.landUtil.lands.Farm;
@@ -16,6 +17,7 @@ import static com.mongodb.client.model.Filters.eq;
 public class LandDB {
     public static void saveLand(Land land) {
         if (land.getEnvironment() == World.Environment.NORMAL) {
+            Politik.log("Saving land: " + land);
             //check if land is in a database or not
             Document landDocument = DatabaseHandler.overworldLand.find(eq("_id", land.getUUID().toString())).first();
 
@@ -54,8 +56,7 @@ public class LandDB {
         return tickableLand;
     }
 
-    public static void loadChunk(Chunk chunk) {
-        //loads lands, if any, given a specific chunkKey
+    public static void loadChunk(Chunk chunk) { //TODO This is not working correctly, it is loading land even though it exsits
 
         ArrayList<Document> chunkClaims = new ArrayList<>();
         Document query = new Document("occupiedChunks", new Document("$elemMatch", new Document("$eq", ((Long)chunk.getChunkKey()).toString())));
@@ -70,35 +71,32 @@ public class LandDB {
             return; //Nothing in that chunk
         }
 
+        Politik.log("Loading chunk that contains: " + chunkClaims.size() + " claims.");
+        Politik.log("Land DB: " + LandUtil.landUUIDMap);
+
         for (Document document : chunkClaims) {
             //We need to figure out what TYPE of document this is, and load it to it's respective
             //claim type
             String type = document.getString("type");
             UUID uuid = UUID.fromString(document.getString("_id"));
             //check the uuid to make sure no existing land is already in the world
-            ArrayList<Land> existingLand = LandUtil.getLandListInChunk(chunk);
+            //ArrayList<Land> existingLand = LandUtil.getLandListInChunk(chunk); Shouldn't be needed
+            boolean landAlreadyLoaded = LandUtil.landLoaded(uuid, chunk.getWorld().getEnvironment());
+            Politik.log("Is the land ID: " + uuid + " already loaded, " + landAlreadyLoaded);
 
             /**
              * This is due to large lands being able to occupy chunks out of render distance, if a
              * smaller land is in a loaded chunk that is also occupied by a bigger land, this will ignore those larger chunk documents
              * and only load the unloaded ones.
              */
-            boolean alreadyExists = false;
-            if (existingLand != null) {
-                for (Land land : existingLand) {
-                    if (land.getUUID() == uuid) {
-                        //if a land in this chunk already exists, ignore this document
-                        alreadyExists = true;
-                    }
-                }
-            }
 
-            if (alreadyExists) {
+            if (landAlreadyLoaded) {
                 continue;
             }
 
             if (type.equalsIgnoreCase("normal")) {
                 //load normal land
+                Politik.log("Loading land: " + uuid);
                 Land.load(document);
             } else if (type.equalsIgnoreCase("farm")) {
                 Farm.load(document, new Farm());

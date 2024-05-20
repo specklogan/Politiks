@@ -15,7 +15,7 @@ public class BlockPlace {
         Block block = event.getBlock();
         Land land = LandUtil.blockInLand(block);
 
-        if (PermissionHandler.PlayerCanPlace(player, land)) {
+        if (!PermissionHandler.PlayerCanPlace(player, land)) {
             player.message(TextUtil.errorMessage("You can't place blocks here"));
             event.setCancelled(true);
         }

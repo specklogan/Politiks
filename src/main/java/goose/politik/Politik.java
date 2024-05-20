@@ -32,6 +32,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -62,7 +63,7 @@ public final class Politik extends JavaPlugin implements Listener {
 
         //Add dimensions to the land handler
         LandUtil.addDimensionToLandMap(World.Environment.NORMAL);
-        LandUtil.landUUIDMap.put(World.Environment.NORMAL, new HashMap<>());
+        LandUtil.landUUIDMap.put(World.Environment.NORMAL, new ConcurrentHashMap<>());
         PlayerDB.loadAllPlayers();
         NationDB.loadNations();
         TownDB.loadTowns();

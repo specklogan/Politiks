@@ -6,6 +6,7 @@ import org.bukkit.World;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class LandConverter {
     //intended to convert between different kinds of land
@@ -23,7 +24,7 @@ public class LandConverter {
         converted.setUUID(convertee.getUUID());
         converted.setArea(convertee.getArea());
 
-        HashMap<Long, ArrayList<Land>> landHashMap = LandUtil.landMap.get(World.Environment.NORMAL);
+        ConcurrentHashMap<Long, ArrayList<Land>> landHashMap = LandUtil.landMap.get(World.Environment.NORMAL);
         //now that we have equal lands, we need to go ahead and remove the previous land from the landmap, and add the new ones
         for (Chunk chunk : converted.getOccupiedChunks()) {
             for (int i = 0; i < landHashMap.get(chunk.getChunkKey()).size(); i++) {

@@ -23,9 +23,11 @@ public class LandLoadUnloadEvent  {
         /**
          * If a chunk is empty, we don't need to worry about unloading anything
          */
-        if (lands.isEmpty()) {
+        if (lands == null || lands.isEmpty()) {
             return;
         }
+
+        Politik.log("Unloading: " + lands);
 
         for (int i = 0; i < lands.size(); i++) {
             Land land = lands.get(i);
@@ -36,6 +38,7 @@ public class LandLoadUnloadEvent  {
              * If a claim only spans one chunk, remove it from the world, and save it to the database.
              */
             if (chunkArrayList.size() == 1) {
+                Politik.log("Unloading single-chunk land claim");
                 LandDB.saveLand(land);
                 LandUtil.landMap.get(chunkArrayList.get(0).getWorld().getEnvironment()).get(chunkArrayList.get(0).getChunkKey()).remove(land);
                 continue;
@@ -46,6 +49,7 @@ public class LandLoadUnloadEvent  {
             for (Chunk ch : chunkArrayList) {
                 if (ch.isLoaded()) {
                     anyLoaded = true;
+                    break;
                 }
             }
 
@@ -53,9 +57,11 @@ public class LandLoadUnloadEvent  {
              * If any of the chunks in that land are still loaded, nothing is needed.
              */
             if (anyLoaded) {
+                Politik.log("Chunk contained in multi-chunk claim unloaded, but more needed for it to unload");
                 continue;
             }
 
+            Politik.log("Unloading multi-chunk land");
             LandDB.saveLand(land);
             land.clear();
         }

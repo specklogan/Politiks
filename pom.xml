@@ -71,7 +71,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.4</version>
                 <configuration>
-                    <outputDirectory>F:\Paper-Server\plugins</outputDirectory>
+                    <outputDirectory>Z:\Goose-Server\plugins</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>

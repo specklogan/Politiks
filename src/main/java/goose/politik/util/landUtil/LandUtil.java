@@ -10,20 +10,25 @@ import org.bukkit.block.Block;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
-public class LandUtil {
+public class LandUtil { //TODO Something in here is loading an insane amount of objects per chunk long.
 
-    public static final HashMap<World.Environment, HashMap<Long, ArrayList<Land>>> landMap = new HashMap<>();
-    public static final HashMap<World.Environment, HashMap<UUID, Land>> landUUIDMap = new HashMap<>();
+    public static final ConcurrentHashMap<World.Environment, ConcurrentHashMap<Long, ArrayList<Land>>> landMap = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<World.Environment, ConcurrentHashMap<UUID, Land>> landUUIDMap = new ConcurrentHashMap<>();
 
     public static ArrayList<Land> getLandListInChunk(Chunk chunk) {
         return landMap.get(World.Environment.NORMAL).get(chunk.getChunkKey());
     }
 
     public static void addDimensionToLandMap(World.Environment dimension) {
-        landMap.put(dimension, new HashMap<>());
+        landMap.put(dimension, new ConcurrentHashMap<>());
+    }
+
+    public static boolean landLoaded(UUID landID, World.Environment environment) {
+        return landUUIDMap.get(environment).get(landID) != null;
     }
 
     public static Land getLandInLand(Land land, Chunk chunk) {
@@ -324,7 +329,7 @@ public class LandUtil {
         //adds a land object to the hashmap
         if (chunk.getWorld().getEnvironment() == World.Environment.NORMAL) {
             //add a chunk to the map
-            HashMap<Long, ArrayList<Land>> overworldLandMap = landMap.get(chunk.getWorld().getEnvironment());
+            ConcurrentHashMap<Long, ArrayList<Land>> overworldLandMap = landMap.get(chunk.getWorld().getEnvironment());
             ArrayList<Land> chunkList = overworldLandMap.get(chunk.getChunkKey());
             if (chunkList == null) {
                 //nothing added in land yet
@@ -376,10 +381,17 @@ public class LandUtil {
     }
 
     public static void saveLands() {
+        Politik.log("Attempting to save all lands...");
+        Politik.log("Land Map:" + landMap);
+        Politik.log("Land UUID Map: " + landUUIDMap);
         for (UUID uuid : landUUIDMap.get(World.Environment.NORMAL).keySet()) {
             //returns a list of UUIDS of all lands
             Land land = landUUIDMap.get(World.Environment.NORMAL).get(uuid);
             LandDB.saveLand(land);
         }
+    }
+
+    public static void register(Land land) {
+        landUUIDMap.get(land.getEnvironment()).put(land.getUUID(), land);
     }
 }
