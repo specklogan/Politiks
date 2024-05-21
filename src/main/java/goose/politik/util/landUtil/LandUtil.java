@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
-public class LandUtil { //TODO Something in here is loading an insane amount of objects per chunk long.
+public class LandUtil {
 
     public static final ConcurrentHashMap<World.Environment, ConcurrentHashMap<Long, ArrayList<Land>>> landMap = new ConcurrentHashMap<>();
     public static final ConcurrentHashMap<World.Environment, ConcurrentHashMap<UUID, Land>> landUUIDMap = new ConcurrentHashMap<>();
@@ -344,6 +344,12 @@ public class LandUtil { //TODO Something in here is loading an insane amount of 
         }
         return -1;
     }
+
+    /**
+     * @implNote This will load the actual chunks while it calculates the chunks.
+     * @param land
+     * @return
+     */
     public static CopyOnWriteArrayList<Chunk> getChunksInLand(Land land) {
         Location firstLoc = land.getFirstLocation();
         Location secondLoc = land.getSecondLocation();
@@ -382,8 +388,6 @@ public class LandUtil { //TODO Something in here is loading an insane amount of 
 
     public static void saveLands() {
         Politik.log("Attempting to save all lands...");
-        Politik.log("Land Map:" + landMap);
-        Politik.log("Land UUID Map: " + landUUIDMap);
         for (UUID uuid : landUUIDMap.get(World.Environment.NORMAL).keySet()) {
             //returns a list of UUIDS of all lands
             Land land = landUUIDMap.get(World.Environment.NORMAL).get(uuid);

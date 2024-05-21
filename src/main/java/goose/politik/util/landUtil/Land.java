@@ -226,7 +226,7 @@ public class Land {
             LandUtil.addToLandMap(land, chunk);
         }
         land.setOccupiedChunks(chunkArrayList);
-        LandUtil.landUUIDMap.get(World.Environment.valueOf(document.getString("environment"))).put(landIdentifier, land);
+        //LandUtil.landUUIDMap.get(World.Environment.valueOf(document.getString("environment"))).put(landIdentifier, land);
     }
 
     public Document toDocument() {

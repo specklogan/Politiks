@@ -17,7 +17,6 @@ import static com.mongodb.client.model.Filters.eq;
 public class LandDB {
     public static void saveLand(Land land) {
         if (land.getEnvironment() == World.Environment.NORMAL) {
-            Politik.log("Saving land: " + land);
             //check if land is in a database or not
             Document landDocument = DatabaseHandler.overworldLand.find(eq("_id", land.getUUID().toString())).first();
 
@@ -56,7 +55,7 @@ public class LandDB {
         return tickableLand;
     }
 
-    public static void loadChunk(Chunk chunk) { //TODO This is not working correctly, it is loading land even though it exsits
+    public static void loadChunk(Chunk chunk) {
 
         ArrayList<Document> chunkClaims = new ArrayList<>();
         Document query = new Document("occupiedChunks", new Document("$elemMatch", new Document("$eq", ((Long)chunk.getChunkKey()).toString())));
@@ -71,9 +70,6 @@ public class LandDB {
             return; //Nothing in that chunk
         }
 
-        Politik.log("Loading chunk that contains: " + chunkClaims.size() + " claims.");
-        Politik.log("Land DB: " + LandUtil.landUUIDMap);
-
         for (Document document : chunkClaims) {
             //We need to figure out what TYPE of document this is, and load it to it's respective
             //claim type
@@ -82,7 +78,6 @@ public class LandDB {
             //check the uuid to make sure no existing land is already in the world
             //ArrayList<Land> existingLand = LandUtil.getLandListInChunk(chunk); Shouldn't be needed
             boolean landAlreadyLoaded = LandUtil.landLoaded(uuid, chunk.getWorld().getEnvironment());
-            Politik.log("Is the land ID: " + uuid + " already loaded, " + landAlreadyLoaded);
 
             /**
              * This is due to large lands being able to occupy chunks out of render distance, if a
@@ -96,7 +91,6 @@ public class LandDB {
 
             if (type.equalsIgnoreCase("normal")) {
                 //load normal land
-                Politik.log("Loading land: " + uuid);
                 Land.load(document);
             } else if (type.equalsIgnoreCase("farm")) {
                 Farm.load(document, new Farm());
