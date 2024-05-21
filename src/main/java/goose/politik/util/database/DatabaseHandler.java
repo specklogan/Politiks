@@ -1,30 +1,20 @@
 package goose.politik.util.database;
 
-import com.google.gson.Gson;
-import com.mongodb.Cursor;
-import com.mongodb.MongoClient;
 import static com.mongodb.client.model.Filters.*;
-
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.*;
 import goose.politik.Politik;
-import goose.politik.util.government.Nation;
-import goose.politik.util.government.PolitikPlayer;
-import goose.politik.util.government.Town;
-import goose.politik.util.landUtil.Land;
+import goose.politik.config.ConfigHandler;
+import goose.politik.government.nation.Nation;
+import goose.politik.player.PolitikPlayer;
+import goose.politik.government.town.Town;
 import org.bson.Document;
-import org.bukkit.Chunk;
-import org.bukkit.World;
+import org.bukkit.Bukkit;
 
-import java.lang.reflect.Array;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.UUID;
 import java.util.logging.Level;
 
-public class MongoDBHandler {
+public class DatabaseHandler {
     public static MongoClient mongoClient;
     public static MongoDatabase serverDB;
     public static MongoCollection<Document> playerCollection;
@@ -36,14 +26,18 @@ public class MongoDBHandler {
 
 
 
-    public MongoDBHandler() {
+
+    public static void initializeDatabase() {
         try {
-            mongoClient = new MongoClient("localhost", 27017);
+            Politik.log(Level.INFO, "Starting MongoDB: URI="+ ConfigHandler.getURI());
+            mongoClient = MongoClients.create(ConfigHandler.getURI());
         } catch (Exception e) {
-            Politik.logger.log(Level.WARNING, "Can't find database");
+            Politik.logger.log(Level.SEVERE, "Error connecting to database. Does it exist?");
+            Bukkit.getPluginManager().disablePlugin(Politik.plugin);
             return;
         }
-        serverDB = mongoClient.getDatabase("mcserver");
+
+        serverDB = mongoClient.getDatabase("politik-db");
         playerCollection = serverDB.getCollection("players");
         nationCollection = serverDB.getCollection("nations");
         townCollection = serverDB.getCollection("towns");
@@ -65,7 +59,6 @@ public class MongoDBHandler {
         Document playerObject = playerCollection.find(eq("playerID", player.getUUID().toString())).first();
         if (playerObject == null) {
             //if a player is new, and has left or is being saved
-            Politik.logger.log(Level.INFO, "New player is being saved to database: " + player.getDisplayName());
 
             //check if they are part of a town/nation
             Nation playerNation = player.getNation();
@@ -78,6 +71,8 @@ public class MongoDBHandler {
             if (playerTown != null) {
                 playerTownName = playerTown.getTownName();
             }
+
+            Politik.log("SAVED TOWN NAME IS: " + playerTownName + " IS IT NULL: " + player.getTown());
 
             //create blank document
             Document updatedDocument = new Document();
@@ -114,8 +109,8 @@ public class MongoDBHandler {
             updatedDocument.put("job", player.getJob());
             updatedDocument.put("money", player.getMoney().toString());
             updatedDocument.put("infamy", player.getInfamy());
-            updatedDocument.put("nation", "none");
-            updatedDocument.put("town", "none");
+            updatedDocument.put("nation", playerNationName);
+            updatedDocument.put("town", playerTownName);
             playerCollection.replaceOne(playerObject, updatedDocument);
         }
     }

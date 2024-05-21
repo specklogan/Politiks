@@ -1,7 +1,8 @@
 package goose.politik.commands;
 
 import goose.politik.Politik;
-import goose.politik.util.government.PolitikPlayer;
+import goose.politik.player.PolitikPlayer;
+import goose.politik.util.text.TextUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -18,7 +19,7 @@ public class SetJobCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(Politik.errorMessage("A server can't get a job."));
+            sender.sendMessage(TextUtil.errorMessage("A server can't get a job."));
             return true;
         }
         PolitikPlayer player = PolitikPlayer.getPolitikPlayer((Player) sender);
@@ -34,16 +35,16 @@ public class SetJobCommand implements CommandExecutor {
                         //valid job
                         if (player.getJob().equalsIgnoreCase(job)) {
                             //already has this job, don't let them change
-                            sender.sendMessage(Politik.errorMessage("You already have the job " + job));
+                            sender.sendMessage(TextUtil.errorMessage("You already have the job " + job));
                         } else {
                             //player has different job, let them change
                             player.setJob(job);
-                            sender.sendMessage(Politik.successMessage("Successfully changed job to " + job));
+                            sender.sendMessage(TextUtil.successMessage("Successfully changed job to " + job));
                         }
                     }
                 }
             } else {
-                sender.sendMessage(Politik.errorMessage("Too many arguments provided"));
+                sender.sendMessage(TextUtil.errorMessage("Too many arguments provided"));
             }
         }
         return true;

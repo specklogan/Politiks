@@ -1,10 +1,9 @@
 package goose.politik.events;
 
-import goose.politik.Politik;
-import goose.politik.util.government.PolitikPlayer;
+import goose.politik.player.PolitikPlayer;
 import goose.politik.util.landUtil.Land;
 import goose.politik.util.landUtil.LandUtil;
-import net.kyori.adventure.chat.ChatType;
+import goose.politik.util.text.TextUtil;
 import org.bukkit.block.Block;
 import org.bukkit.event.player.PlayerMoveEvent;
 
@@ -24,9 +23,9 @@ public class MoveEvent {
                     }
                 }
                 player.setLastEnteredLand(collidedLand);
-                event.getPlayer().sendActionBar(Politik.eventMessage("Entering Town " + collidedLand.getTownOwner().getTownName()));
+                event.getPlayer().sendActionBar(TextUtil.eventMessage("Entering Town " + collidedLand.getTownOwner().getTownName()));
             } else if (collidedLand == null && !(player.getLastEnteredLand() == null)) {
-                event.getPlayer().sendActionBar(Politik.eventMessage("Leaving Town " + player.getLastEnteredLand().getTownOwner().getTownName()));
+                event.getPlayer().sendActionBar(TextUtil.eventMessage("Leaving Town " + player.getLastEnteredLand().getTownOwner().getTownName()));
                 player.setLastEnteredLand(null);
             }
         }

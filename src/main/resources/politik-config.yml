@@ -1,0 +1,29 @@
+politik:
+  database:
+    connection-string: mongodb://localhost:27017
+
+  administration:
+    #In minutes
+    save-interval: 5
+
+  economy:
+    #Should land produce things? (experimental)
+    do-production: false
+    #In minecraft days, how often should production be calculated? (1, ...)
+    production-cycle: 1
+
+  nation:
+    cost: 1000
+  town:
+    cost: 250
+
+  land:
+    #Area size in blocks
+    max-size: 8192
+    min-size: 16
+    #Per block cost
+    cost: 0.25
+
+    #Claim tool cost
+    claim-tool-cost: 100
+

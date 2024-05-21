@@ -1,6 +1,6 @@
 package goose.politik.events;
 
-import goose.politik.util.government.PolitikPlayer;
+import goose.politik.player.PolitikPlayer;
 import goose.politik.util.landUtil.Land;
 import goose.politik.util.landUtil.LandUtil;
 import org.bukkit.Sound;
@@ -19,6 +19,7 @@ public class JobEvent {
             if (land != null) {
                 if (land.getPlayerOwner() != player) {
                     event.setCancelled(true);
+                    return;
                 }
             }
             //they can gain money from shearing

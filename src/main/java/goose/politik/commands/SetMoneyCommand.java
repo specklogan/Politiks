@@ -2,7 +2,8 @@ package goose.politik.commands;
 
 import goose.politik.Politik;
 import goose.politik.util.economy.MoneyHandler;
-import goose.politik.util.government.PolitikPlayer;
+import goose.politik.player.PolitikPlayer;
+import goose.politik.util.text.TextUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -21,9 +22,9 @@ public class SetMoneyCommand implements CommandExecutor {
             //sender is valid sender
             //then validate all text
             if (args.length > 2) {
-                sender.sendMessage(Politik.errorMessage("Too many arguments!"));
+                sender.sendMessage(TextUtil.errorMessage("Too many arguments!"));
             } else if (args.length < 1) {
-                sender.sendMessage(Politik.errorMessage("Too few arguments!"));
+                sender.sendMessage(TextUtil.errorMessage("Too few arguments!"));
             } else {
                 BigDecimal value;
 
@@ -32,7 +33,7 @@ public class SetMoneyCommand implements CommandExecutor {
                     //setting money for self
                     if (!(sender instanceof Player)) {
                         //server cant set own money
-                        sender.sendMessage(Politik.errorMessage("Server can't set its' own money"));
+                        sender.sendMessage(TextUtil.errorMessage("Server can't set its' own money"));
                         return true;
                     }
                     //player who is setting their own money
@@ -41,7 +42,7 @@ public class SetMoneyCommand implements CommandExecutor {
                         value = new BigDecimal(amount);
                         value = MoneyHandler.moneyRound(value);
                     } catch (Exception e) {
-                        sender.sendMessage(Politik.errorMessage("First argument was not a number!"));
+                        sender.sendMessage(TextUtil.errorMessage("First argument was not a number!"));
                         return true;
                     }
 
@@ -52,7 +53,7 @@ public class SetMoneyCommand implements CommandExecutor {
                         }
                     }
                     if (target != null) {
-                        target.message(Politik.successMessage("Successfully set " + target.getDisplayName() + "'s money to $" + value));
+                        target.message(TextUtil.successMessage("Successfully set " + target.getDisplayName() + "'s money to $" + value));
                         target.setMoney(value);
                     } else {
                         Politik.logger.log(Level.WARNING, "Error, player was null");
@@ -65,7 +66,7 @@ public class SetMoneyCommand implements CommandExecutor {
                         value = new BigDecimal(amount);
                         value = MoneyHandler.moneyRound(value);
                     } catch (Exception e) {
-                        sender.sendMessage(Politik.errorMessage("Second argument was not a number!"));
+                        sender.sendMessage(TextUtil.errorMessage("Second argument was not a number!"));
                         return true;
                     }
 
@@ -82,14 +83,14 @@ public class SetMoneyCommand implements CommandExecutor {
                         //successful, player does exist
                         Politik.logger.log(Level.INFO, value + " amount set");
                         target.setMoney(value);
-                        sender.sendMessage(Politik.successMessage("Successfully set " + target.getDisplayName() + "'s money to $" + value));
+                        sender.sendMessage(TextUtil.successMessage("Successfully set " + target.getDisplayName() + "'s money to $" + value));
                     } else {
-                        sender.sendMessage(Politik.errorMessage(player + " does not exist"));
+                        sender.sendMessage(TextUtil.errorMessage(player + " does not exist"));
                     }
                 }
             }
         } else {
-            sender.sendMessage(Politik.errorMessage(Politik.lackPerms));
+            sender.sendMessage(TextUtil.errorMessage(Politik.lackPerms));
         }
         return true;
     }

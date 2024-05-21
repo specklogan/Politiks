@@ -1,13 +1,13 @@
-package goose.politik.util.government;
+package goose.politik.government.town;
 
-import goose.politik.Politik;
+import goose.politik.government.nation.Nation;
 import goose.politik.util.database.TownDB;
+import goose.politik.player.PolitikPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Town {
     private String townName;
@@ -15,14 +15,13 @@ public class Town {
     private TextComponent enterMessage = Component.text("");
     private Location spawnLocation;
     private Nation nationOwner;
-    public static final BigDecimal TOWNCOST = new BigDecimal("250");
-    private ArrayList<PolitikPlayer> playerList;
+    private CopyOnWriteArrayList<PolitikPlayer> playerList = new CopyOnWriteArrayList<>();
 
     //static
     public static Town getTownFromName(String townName) {
         for (Nation nation : Nation.NATIONS) {
             for (Town town : nation.getTownList()) {
-                if (town.getTownName().equals(townName)) {
+                if (town.getTownName().equalsIgnoreCase(townName)) {
                     return town;
                 }
             }
@@ -66,18 +65,27 @@ public class Town {
         this.nationOwner = nationOwner;
     }
 
-    public ArrayList<PolitikPlayer> getPlayerList() {
+    public CopyOnWriteArrayList<PolitikPlayer> getPlayerList() {
         return playerList;
     }
 
-    public void setPlayerList(ArrayList<PolitikPlayer> playerList) {
+    public void removePlayer(PolitikPlayer player) {
+        this.nationOwner.removePlayer(player);
+        this.playerList.remove(player);
+        player.setTown(null);
+        player.setNation(null);
+    }
+
+    public boolean containsPlayer(PolitikPlayer player) {
+        return this.playerList.contains(player);
+    }
+
+    public void setPlayerList(CopyOnWriteArrayList<PolitikPlayer> playerList) {
         this.playerList = playerList;
     }
 
     public void addPlayer(PolitikPlayer player) {
-        if (this.playerList == null) {
-            this.playerList = new ArrayList<>();
-        }
+        this.nationOwner.addPlayer(player);
         this.playerList.add(player);
     }
 
@@ -101,5 +109,9 @@ public class Town {
         this.townName = townName;
         this.mayor = mayor;
         this.nationOwner = owner;
+    }
+
+    public Town() {
+
     }
 }

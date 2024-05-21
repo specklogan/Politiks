@@ -1,12 +1,7 @@
 package goose.politik.util.economy;
 
-import goose.politik.Politik;
-import goose.politik.util.government.PolitikPlayer;
-import org.bukkit.entity.Player;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.logging.Level;
 
 public class MoneyHandler {
     public static BigDecimal moneyRound(BigDecimal money) {

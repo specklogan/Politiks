@@ -1,16 +1,19 @@
-package goose.politik.util.government;
+package goose.politik.player;
 
-import goose.politik.Politik;
-import goose.politik.util.database.MongoDBHandler;
+import goose.politik.util.database.DatabaseHandler;
+import goose.politik.government.nation.Nation;
+import goose.politik.government.town.Town;
 import goose.politik.util.landUtil.Land;
 import net.kyori.adventure.text.TextComponent;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -26,7 +29,7 @@ public class PolitikPlayer {
     private String job;
     private BigDecimal money;
 
-    public static HashMap<UUID, PolitikPlayer> playerList = new HashMap<>();
+    public static ConcurrentHashMap<UUID, PolitikPlayer> playerList = new ConcurrentHashMap<>();
     //this stores every player
 
     public PolitikPlayer(Player player) {
@@ -41,12 +44,30 @@ public class PolitikPlayer {
         //empty constructor when loaded from database
     }
 
+    public void teleport(Location location) {
+        this.player.teleport(location);
+    }
+
+    public CompletableFuture<Boolean> teleportAsync(Location location) {
+        return this.player.teleportAsync(location);
+    }
+
     public static PolitikPlayer getPolitikPlayer(Player player) {
         return playerList.get(player.getUniqueId());
     }
 
     public Player getPlayer() {
         return this.player;
+    }
+
+    public static boolean playerExists(String user) {
+        for (UUID uuid : playerList.keySet()) {
+            PolitikPlayer player = playerList.get(uuid);
+            if (player.getDisplayName().equalsIgnoreCase(user)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void setPlayer(Player player) {
@@ -72,6 +93,16 @@ public class PolitikPlayer {
     public static PolitikPlayer getPolitikPlayerFromID(UUID uuid) {
         return playerList.get(uuid);
     }
+
+    public static PolitikPlayer getPolitikPlayerFromUser(String user) {
+        for (UUID uuid : playerList.keySet()) {
+            PolitikPlayer player = playerList.get(uuid);
+            if (player.getDisplayName().equalsIgnoreCase(user)) {
+                return player;
+            }
+        }
+        return null;
+    }
     public void loadPlayer() {
         //RUN ONLY ON INITIAL PLAYER JOIN
         this.joinDate = new BigInteger(String.valueOf(Instant.now().getEpochSecond()));
@@ -81,7 +112,7 @@ public class PolitikPlayer {
 
     public void savePlayer() {
         //save to database, can be called without actually kicking the player
-        MongoDBHandler.savePlayerToDatabase(this);
+        DatabaseHandler.savePlayerToDatabase(this);
     }
 
     public void leave() {
@@ -128,7 +159,14 @@ public class PolitikPlayer {
     }
 
     public void message(TextComponent component) {
+        if (this.player == null || !this.player.isOnline()) {
+            return;
+        }
         this.player.sendMessage(component);
+    }
+
+    public boolean isOnline() {
+        return this.player == null || !this.player.isOnline();
     }
 
     public PlayerInventory getInventory() {
@@ -167,6 +205,24 @@ public class PolitikPlayer {
     public boolean canPurchase(BigDecimal amount) {
         //will tell you if you're able to purchase something
         return this.money.subtract(amount).compareTo(BigDecimal.ZERO) >= 0;
+    }
+
+    public boolean hasTown() {
+        return this.town != null;
+    }
+
+    public boolean hasNation() {
+        return this.nation != null;
+    }
+
+    public boolean isMayor() {
+        if (hasTown()) {
+            if (town.getMayor() == this) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void setMoney(BigDecimal amount) {

@@ -9,18 +9,26 @@ import org.bukkit.block.Block;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
 public class LandUtil {
 
-    public static final HashMap<World.Environment, HashMap<Long, ArrayList<Land>>> landMap = new HashMap<>();
+    public static final ConcurrentHashMap<World.Environment, ConcurrentHashMap<Long, ArrayList<Land>>> landMap = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<World.Environment, ConcurrentHashMap<UUID, Land>> landUUIDMap = new ConcurrentHashMap<>();
 
     public static ArrayList<Land> getLandListInChunk(Chunk chunk) {
         return landMap.get(World.Environment.NORMAL).get(chunk.getChunkKey());
     }
 
     public static void addDimensionToLandMap(World.Environment dimension) {
-        landMap.put(dimension, new HashMap<>());
+        landMap.put(dimension, new ConcurrentHashMap<>());
+    }
+
+    public static boolean landLoaded(UUID landID, World.Environment environment) {
+        return landUUIDMap.get(environment).get(landID) != null;
     }
 
     public static Land getLandInLand(Land land, Chunk chunk) {
@@ -321,7 +329,7 @@ public class LandUtil {
         //adds a land object to the hashmap
         if (chunk.getWorld().getEnvironment() == World.Environment.NORMAL) {
             //add a chunk to the map
-            HashMap<Long, ArrayList<Land>> overworldLandMap = landMap.get(chunk.getWorld().getEnvironment());
+            ConcurrentHashMap<Long, ArrayList<Land>> overworldLandMap = landMap.get(chunk.getWorld().getEnvironment());
             ArrayList<Land> chunkList = overworldLandMap.get(chunk.getChunkKey());
             if (chunkList == null) {
                 //nothing added in land yet
@@ -336,13 +344,19 @@ public class LandUtil {
         }
         return -1;
     }
-    public static ArrayList<Chunk> getChunksInLand(Land land) {
+
+    /**
+     * @implNote This will load the actual chunks while it calculates the chunks.
+     * @param land
+     * @return
+     */
+    public static CopyOnWriteArrayList<Chunk> getChunksInLand(Land land) {
         Location firstLoc = land.getFirstLocation();
         Location secondLoc = land.getSecondLocation();
         Chunk firstChunk = firstLoc.getChunk();
         Chunk secondChunk = secondLoc.getChunk();
         World world = firstChunk.getWorld();
-        ArrayList<Chunk> chunkList = new ArrayList<>();
+        CopyOnWriteArrayList<Chunk> chunkList = new CopyOnWriteArrayList<>();
 
         if (firstChunk.equals(secondChunk)) {
             chunkList.add(firstLoc.getChunk());
@@ -373,12 +387,15 @@ public class LandUtil {
     }
 
     public static void saveLands() {
-        for (Long chunkKey : landMap.get(World.Environment.NORMAL).keySet()) {
-            //returns a list of all lands saved
-            //Politik.logger.log(Level.INFO, "Saving chunk: " + chunkKey);
-            for (Land land : landMap.get(World.Environment.NORMAL).get(chunkKey)) {
-                LandDB.saveLand(land);
-            }
+        Politik.log("Attempting to save all lands...");
+        for (UUID uuid : landUUIDMap.get(World.Environment.NORMAL).keySet()) {
+            //returns a list of UUIDS of all lands
+            Land land = landUUIDMap.get(World.Environment.NORMAL).get(uuid);
+            LandDB.saveLand(land);
         }
+    }
+
+    public static void register(Land land) {
+        landUUIDMap.get(land.getEnvironment()).put(land.getUUID(), land);
     }
 }

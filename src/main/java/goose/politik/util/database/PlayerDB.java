@@ -1,7 +1,7 @@
 package goose.politik.util.database;
 
 import goose.politik.Politik;
-import goose.politik.util.government.PolitikPlayer;
+import goose.politik.player.PolitikPlayer;
 import org.bson.Document;
 import org.bukkit.entity.Player;
 
@@ -14,7 +14,7 @@ public class PlayerDB {
         //the goal for this is to allow players to have their money manipulated while offline, as they
         //are stored in java objects on server loading and unloading
 
-        for (Document document : MongoDBHandler.playerCollection.find()) {
+        for (Document document : DatabaseHandler.playerCollection.find()) {
             PolitikPlayer player = new PolitikPlayer();
             //empty player, load every value from the database, when a player joins, just assign a 'message' to it
             String money = document.getString("money");
@@ -28,7 +28,11 @@ public class PlayerDB {
             player.setMoney(new BigDecimal(money));
             player.setUUID(uuid);
             player.setDisplayName(document.getString("playerName"));
-            player.setJob(document.getString("job"));
+            String job = document.getString("job");
+            if (job == null) {
+                job = "none";
+            }
+            player.setJob(job);
             player.setJoinDate(new BigInteger(document.getString("joinDate")));
             player.setInfamy(document.getInteger("infamy"));
             PolitikPlayer.playerList.put(uuid, player);
