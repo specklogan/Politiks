@@ -314,7 +314,11 @@ public class Land {
      */
     public void clear() {
         for (Chunk chunkClaim : getOccupiedChunks()) {
-            LandUtil.landMap.get(environment).get(chunkClaim.getChunkKey()).remove(this);
+            ArrayList<Land> list = LandUtil.landMap.get(environment).get(chunkClaim.getChunkKey());
+            list.remove(this);
+            if (list.isEmpty()) {
+                LandUtil.landMap.get(environment).remove(chunkClaim.getChunkKey());
+            }
         }
         LandUtil.landUUIDMap.get(environment).remove(uuid);
     }
