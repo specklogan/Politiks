@@ -4,7 +4,6 @@ import goose.politik.Politik;
 import goose.politik.player.PolitikPlayer;
 import goose.politik.util.landUtil.Land;
 import goose.politik.util.landUtil.LandUtil;
-import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,13 +13,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
-public class ListCommand implements CommandExecutor, TabExecutor {
+public class DeprListCommand implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (args[0].equalsIgnoreCase("players")) {
