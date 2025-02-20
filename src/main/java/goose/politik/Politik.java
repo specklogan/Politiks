@@ -30,7 +30,6 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -43,7 +42,6 @@ public final class Politik extends JavaPlugin implements Listener {
     public static Logger logger;
     private Scheduler.Task task;
     private Scheduler.Task foliaSaveTask;
-    public static final String lackPerms = "You lack the permissions to run this command";
 
     @Override
     public void onEnable() {

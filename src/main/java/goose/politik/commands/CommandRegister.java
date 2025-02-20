@@ -1,7 +1,7 @@
 package goose.politik.commands;
 
 import goose.politik.Politik;
-import goose.politik.commands.multicommands.ListCommand;
+import goose.politik.commands.listcommand.ListCommand;
 
 import java.util.Objects;
 

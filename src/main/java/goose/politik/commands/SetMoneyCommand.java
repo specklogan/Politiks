@@ -1,6 +1,7 @@
 package goose.politik.commands;
 
 import goose.politik.Politik;
+import goose.politik.permissions.PermissionUtil;
 import goose.politik.util.economy.MoneyHandler;
 import goose.politik.player.PolitikPlayer;
 import goose.politik.util.text.TextUtil;
@@ -90,7 +91,7 @@ public class SetMoneyCommand implements CommandExecutor {
                 }
             }
         } else {
-            sender.sendMessage(TextUtil.errorMessage(Politik.lackPerms));
+            sender.sendMessage(TextUtil.errorMessage(PermissionUtil.COMMAND_LACK_PERMS));
         }
         return true;
     }

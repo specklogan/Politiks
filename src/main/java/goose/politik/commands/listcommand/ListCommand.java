@@ -1,4 +1,4 @@
-package goose.politik.commands.multicommands;
+package goose.politik.commands.listcommand;
 
 import goose.politik.commands.commandutil.CommandManager;
 import goose.politik.commands.commandutil.ICommand;
@@ -16,6 +16,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListCommand extends CommandManager {
+    ArrayList<String> options = new ArrayList<>();
+    public ListCommand() {
+        options.add("lands");
+        options.add("players");
+        options.add("towns");
+        options.add("nations");
+    }
+
+    @Override
+    public boolean execute(ArrayList<String> args, CommandSender sender) {
+        return false;
+    }
+
     @Override
     public String getCommandString() {
         return null;
@@ -37,14 +50,12 @@ public class ListCommand extends CommandManager {
             return true;
         }
 
-        Player player = (Player) sender;
 
-        player.sendMessage(getDescription());
         return true;
     }
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        return null;
+        return options;
     }
 }
