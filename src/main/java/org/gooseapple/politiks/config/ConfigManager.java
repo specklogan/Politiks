@@ -2,6 +2,7 @@ package org.gooseapple.politiks.config;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.gooseapple.politiks.Politiks;
+import org.gooseapple.politiks.util.Constants;
 
 import java.io.File;
 import java.io.InputStreamReader;
@@ -34,8 +35,19 @@ public class ConfigManager {
         return config;
     }
 
-    public static String getURI() {
+    public static String getMongoURI() {
         return getConfig().getString("politiks.database.connection-string");
+    }
+
+    public static Constants.DatabaseType getDatabaseType() {
+        String type = getConfig().getString("politiks.database.database-type");
+        if (type == null) {
+            return Constants.DatabaseType.MONGO;
+        }
+        if (type.toUpperCase() == "SQLITE") {
+            return Constants.DatabaseType.SQLITE;
+        }
+        return Constants.DatabaseType.MONGO;
     }
 
     private static void checkIfConfigLatest() {

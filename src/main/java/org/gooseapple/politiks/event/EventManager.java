@@ -1,4 +1,9 @@
 package org.gooseapple.politiks.event;
 
-public class EventManager {
+import org.bukkit.event.Listener;
+
+public class EventManager implements Listener {
+    public static void registerEvents() {
+
+    }
 }

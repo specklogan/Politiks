@@ -1,7 +1,10 @@
 package org.gooseapple.politiks;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import org.gooseapple.politiks.command.CommandManager;
 import org.gooseapple.politiks.config.ConfigManager;
+import org.gooseapple.politiks.database.DatabaseManager;
+import org.gooseapple.politiks.event.EventManager;
 
 import java.util.logging.Logger;
 
@@ -18,11 +21,14 @@ public final class Politiks extends JavaPlugin {
         //Load Config
         ConfigManager.loadConfig();
 
+        //Start Database
+        DatabaseManager.loadDatabase();
+
         //Register Listeners
+        EventManager.registerEvents();
 
         //Register Commands
-
-        //Start Database
+        CommandManager.registerCommands();
     }
 
     @Override
