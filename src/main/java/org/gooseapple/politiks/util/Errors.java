@@ -8,4 +8,8 @@ public class Errors {
     public static void LogError(String error) {
         Politiks.logger.log(Level.SEVERE, error);
     }
+
+    public static void LogWarning(String warning) {
+        Politiks.logger.log(Level.WARNING, warning);
+    }
 }

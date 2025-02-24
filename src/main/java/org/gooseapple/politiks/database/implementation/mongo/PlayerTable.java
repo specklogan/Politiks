@@ -9,6 +9,7 @@ import org.gooseapple.politiks.Politiks;
 import org.gooseapple.politiks.core.player.PolitikPlayer;
 import org.gooseapple.politiks.database.IPlayerTable;
 import org.gooseapple.politiks.util.Constants;
+import org.gooseapple.politiks.util.Errors;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

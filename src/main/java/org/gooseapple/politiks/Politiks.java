@@ -28,7 +28,7 @@ public final class Politiks extends JavaPlugin {
         EventManager.registerListeners();
 
         //Register Commands
-        CommandManager.registerCommands();
+        CommandManager.registerCommands(plugin.getLifecycleManager());
     }
 
     @Override
