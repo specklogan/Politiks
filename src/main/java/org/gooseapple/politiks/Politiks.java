@@ -25,7 +25,7 @@ public final class Politiks extends JavaPlugin {
         DatabaseManager.loadDatabase();
 
         //Register Listeners
-        EventManager.registerEvents();
+        EventManager.registerListeners();
 
         //Register Commands
         CommandManager.registerCommands();
@@ -33,7 +33,7 @@ public final class Politiks extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        EventManager.handleShutdown();
     }
 
     public static Politiks getInstance() {

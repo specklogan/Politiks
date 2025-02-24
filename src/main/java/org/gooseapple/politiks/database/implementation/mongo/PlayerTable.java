@@ -2,7 +2,7 @@ package org.gooseapple.politiks.database.implementation.mongo;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Indexes;
+import com.mongodb.client.model.*;
 import org.bson.Document;
 import org.bukkit.entity.Player;
 import org.gooseapple.politiks.Politiks;
@@ -12,6 +12,10 @@ import org.gooseapple.politiks.util.Constants;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -34,19 +38,22 @@ public class PlayerTable implements IPlayerTable {
     }
 
     @Override
-    public PolitikPlayer LoadPlayer(Player p) {
+    public PolitikPlayer CreatePlayer(Player p) {
         PolitikPlayer player = new PolitikPlayer();
         player.setDisplayName(p.getName());
         player.setPlayer(p);
         player.setMoney(BigDecimal.ZERO);
         player.setUUID(p.getUniqueId());
+        Date currentDate = new Date();
+        player.setJoinDate(BigInteger.valueOf(currentDate.getTime()));
         players.put(p.getUniqueId(), player);
         return player;
     }
 
     @Override
     public boolean SavePlayer(PolitikPlayer player) {
-        return false;
+        player.setPlayer(null); //Set their player to null to mark they are an offline player
+        return true;
     }
 
     @Override
@@ -55,7 +62,7 @@ public class PlayerTable implements IPlayerTable {
             PolitikPlayer player = new PolitikPlayer();
             //empty player, load every value from the database, when a player joins, just assign a 'message' to it
             String money = document.getString("money");
-            UUID uuid = UUID.fromString(document.getString("playerID"));
+            UUID uuid = UUID.fromString(document.getString(Constants.UUID));
 
             Player onlinePlayer = Politiks.getInstance().getServer().getPlayer(uuid);
             if (onlinePlayer != null) {
@@ -76,14 +83,41 @@ public class PlayerTable implements IPlayerTable {
         }
     }
 
+    private Document PlayerToDocument(PolitikPlayer player) {
+        Document document = new Document();
+        document.put(Constants.UUID, player.getUUID().toString());
+        document.put("playerName", player.getDisplayName());
+        document.put("joinDate", player.getJoinDate().toString());
+        document.put("lastOnline", Instant.now().getEpochSecond());
+        document.put("job", player.getJob());
+        document.put("money", player.getMoney().toString());
+        document.put("infamy", player.getInfamy());
+        document.put("nation", "");
+        document.put("town", "");
+        return document;
+    }   
+
     @Override
     public void SaveAllPlayers() {
+        List<WriteModel<Document>> operation = new ArrayList<>();
+        for (UUID id : players.keySet()) {
+            PolitikPlayer player = players.get(id);
+            Document playerDocument = PlayerToDocument(player);
+            Document filter = new Document(Constants.UUID, player.getUUID().toString());
 
+            ReplaceOneModel<Document> replaceOneModel = new ReplaceOneModel<>(
+                    filter,
+                    playerDocument,
+                    new ReplaceOptions().upsert(true)
+            );
+            operation.add(replaceOneModel);
+        }
+        table.bulkWrite(operation);
     }
 
     @Override
     public PolitikPlayer GetPlayer(Player player) {
-        if (players.contains(player.getUniqueId())) {
+        if (players.containsKey(player.getUniqueId())) {
             return players.get(player.getUniqueId());
         }
         return null;
@@ -103,5 +137,18 @@ public class PlayerTable implements IPlayerTable {
     @Override
     public PolitikPlayer GetPlayer(UUID id) {
         return players.get(id);
+    }
+
+    @Override
+    public boolean PlayerExists(Player player) {
+        return players.containsKey(player.getUniqueId());
+    }
+
+    @Override
+    public void SetPlayerOnline(Player player) {
+        PolitikPlayer p = players.get(player.getUniqueId());
+        if (p != null) {
+            p.setPlayer(player);
+        }
     }
 }

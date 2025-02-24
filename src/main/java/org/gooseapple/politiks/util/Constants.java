@@ -1,9 +1,38 @@
 package org.gooseapple.politiks.util;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+
 public class Constants {
     public static String UUID = "UUID";
     public static enum DatabaseType {
         MONGO,
         SQLITE //Not supported yet
+    }
+
+    public static TextComponent ErrorMessage(String text) {
+        return Component.text(text).color(TextColor.color(255, 0, 0));
+    }
+
+    public static TextComponent WarningMessage(String text) {
+        return Component.text(text).color(TextColor.color(255, 130, 17)).decorate(TextDecoration.ITALIC);
+    }
+
+    public static TextComponent EventMessage(String text) {
+        return Component.text(text).color(TextColor.color(255, 255, 0));
+    }
+
+    public static TextComponent SuccessMessage(String text) {
+        return Component.text(text).color(TextColor.color(62, 255, 54));
+    }
+
+    public static TextComponent DetailMessage(String text) {
+        return Component.text(text).color(TextColor.color(84, 200, 255));
+    }
+
+    public static TextComponent InfoMessage(String text) {
+        return Component.text(text).color(TextColor.color(255, 255, 255));
     }
 }

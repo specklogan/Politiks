@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'com.gradleup.shadow' version '9.0.0-beta8'
 }
 
 group = 'org.gooseapple'
@@ -25,7 +26,7 @@ dependencies {
     implementation 'org.mongodb:mongodb-driver-sync:5.3.0'
     compileOnly('xyz.jpenilla:squaremap-api:1.3.4')
     compileOnly('dev.folia:folia-api:1.21.4-R0.1-SNAPSHOT')
-    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+    //compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
 }
 
 def targetJavaVersion = 21
@@ -46,6 +47,12 @@ tasks.withType(JavaCompile).configureEach {
     }
 }
 
+shadowJar {
+    archiveClassifier.set('') // Remove the '-all' suffix from the JAR file
+    relocate 'com.mongodb', 'org.gooseapple.libs.mongodb' // Optional: Relocate MongoDB classes to avoid conflicts
+    relocate 'org.bson', 'org.gooseapple.libs.bson' // Optional: Relocate BSON classes
+}
+
 processResources {
     def props = [version: version]
     inputs.properties props
@@ -53,4 +60,25 @@ processResources {
     filesMatching('plugin.yml') {
         expand props
     }
+}
+
+tasks.named('build') {
+    dependsOn tasks.named('shadowJar')
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.newDataInputStream())
+}
+
+def serverPluginsDir = localProperties.getProperty('server.plugins.dir', layout.buildDirectory.dir('libs').get().asFile.path)
+
+tasks.register('copyJarToServer', Copy) {
+    from tasks.named('shadowJar')
+    into serverPluginsDir
+}
+
+tasks.named('shadowJar') {
+    finalizedBy 'copyJarToServer'
 }

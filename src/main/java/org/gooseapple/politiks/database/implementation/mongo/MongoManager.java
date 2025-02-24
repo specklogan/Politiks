@@ -10,6 +10,7 @@ import org.gooseapple.politiks.database.IPlayerTable;
 public class MongoManager implements IDatabase {
     private String connectionString;
     private MongoDatabase database;
+    private MongoClient client;
 
     /*
         Database Tables
@@ -22,12 +23,15 @@ public class MongoManager implements IDatabase {
 
     @Override
     public boolean Initialize() {
-        try (MongoClient mongoClient = MongoClients.create(connectionString)) {
-            database = mongoClient.getDatabase(Politiks.plugin.getName());
+        try {
+            MongoClient mongoClient = MongoClients.create(connectionString);
+            client = mongoClient;
+            database = mongoClient.getDatabase(Politiks.getInstance().getName());
 
             playerTable = new PlayerTable(database);
             playerTable.create();
 
+            playerTable.LoadAllPlayers();
         } catch (Exception ex) {
             LogError("Unable to initialize mongo client using connection string: " + connectionString);
             return false;

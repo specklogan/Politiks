@@ -11,7 +11,7 @@ public interface IPlayerTable extends ITable {
      * @param player
      * @return
      */
-    public PolitikPlayer LoadPlayer(Player player);
+    public PolitikPlayer CreatePlayer(Player player);
     public boolean SavePlayer(PolitikPlayer player);
     public void LoadAllPlayers();
     public void SaveAllPlayers();
@@ -29,4 +29,6 @@ public interface IPlayerTable extends ITable {
      * @return Null if not found, PolitikPlayer otherwise
      */
     public PolitikPlayer GetPlayer(UUID id);
+    public boolean PlayerExists(Player player);
+    public void SetPlayerOnline(Player player);
 }
