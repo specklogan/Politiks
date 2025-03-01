@@ -30,7 +30,7 @@ public class PlayerTable implements IPlayerTable {
     }
 
     @Override
-    public boolean create() {
+    public boolean CreateTable() {
         table = database.getCollection(PlayerTable.class.getName());
 
         //Use the player UUID as the index
@@ -43,11 +43,13 @@ public class PlayerTable implements IPlayerTable {
         PolitikPlayer player = new PolitikPlayer();
         player.setDisplayName(p.getName());
         player.setPlayer(p);
-        player.setMoney(BigDecimal.ZERO);
         player.setUUID(p.getUniqueId());
         Date currentDate = new Date();
         player.setJoinDate(BigInteger.valueOf(currentDate.getTime()));
         players.put(p.getUniqueId(), player);
+
+        //Handle the currency generation
+
         return player;
     }
 
@@ -70,7 +72,6 @@ public class PlayerTable implements IPlayerTable {
                 player.setPlayer(onlinePlayer);
             }
 
-            player.setMoney(new BigDecimal(money));
             player.setUUID(uuid);
             player.setDisplayName(document.getString("playerName"));
             String job = document.getString("job");
@@ -91,7 +92,7 @@ public class PlayerTable implements IPlayerTable {
         document.put("joinDate", player.getJoinDate().toString());
         document.put("lastOnline", Instant.now().getEpochSecond());
         document.put("job", player.getJob());
-        document.put("money", player.getMoney().toString());
+        document.put("account", player.GetAccount().toString());
         document.put("infamy", player.getInfamy());
         document.put("nation", "");
         document.put("town", "");

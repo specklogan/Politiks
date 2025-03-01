@@ -1,14 +1,17 @@
 package org.gooseapple.politiks.core.currency;
 
+import org.bson.types.ObjectId;
 import org.gooseapple.politiks.core.player.PolitikPlayer;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * Used to store currency, can be attached to a holder
  */
 public class Account {
     private BigDecimal amount;
+    private long id;
     private IAccountHolder holder;
     private AccountType accountType;
 
@@ -21,10 +24,19 @@ public class Account {
     public Account() {
         //default constructor
         amount = new BigDecimal(0);
+        amount = amount.setScale(2, RoundingMode.HALF_EVEN);
     }
 
     public Account(BigDecimal amount) {
-        this.amount = amount;
+        this.amount = amount.setScale(2, RoundingMode.HALF_EVEN);
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public IAccountHolder getHolder() {
@@ -38,8 +50,16 @@ public class Account {
         }
     }
 
-    public BigDecimal getAmount() {
+    public AccountType getAccountType() {
+        return this.accountType;
+    }
+
+    public BigDecimal getBalance() {
         return this.amount;
+    }
+
+    public String getBalanceFormatted() {
+        return "$" + amount.toString();
     }
 
     public void setAmount(BigDecimal amount) {
@@ -47,7 +67,7 @@ public class Account {
     }
 
     public void setAmount(double amount) {
-        this.amount = new BigDecimal(amount);
+        this.amount = new BigDecimal(amount).setScale(2, RoundingMode.HALF_EVEN);
     }
 
     public boolean canWithdraw(double amount) {
@@ -58,6 +78,15 @@ public class Account {
     public boolean canWithdraw(BigDecimal amount) {
         var result = this.amount.compareTo(amount);
         return result >= 0;
+    }
+
+    public void deposit(double amount) {
+        BigDecimal depositAmount = new BigDecimal(amount);
+        deposit(depositAmount);
+    }
+
+    public void deposit(BigDecimal amount) {
+        this.amount = this.amount.add(amount);
     }
 
     /**

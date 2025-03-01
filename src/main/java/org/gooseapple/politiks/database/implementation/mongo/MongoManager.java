@@ -16,6 +16,7 @@ public class MongoManager implements IDatabase {
         Database Tables
      */
     private PlayerTable playerTable;
+    private AccountTable accountTable;
 
     public MongoManager(String connectionString) {
         this.connectionString = connectionString;
@@ -29,7 +30,9 @@ public class MongoManager implements IDatabase {
             database = mongoClient.getDatabase(Politiks.getInstance().getName());
 
             playerTable = new PlayerTable(database);
-            playerTable.create();
+            playerTable.CreateTable();
+
+            accountTable = new AccountTable(database);
 
             playerTable.LoadAllPlayers();
         } catch (Exception ex) {

@@ -25,7 +25,6 @@ public class PolitikPlayer implements IAccountHolder {
     private BigInteger joinDate;
     private Player player;
     private String job;
-    private BigDecimal money;
     private Account account;
 
     public void teleport(Location location) {
@@ -88,10 +87,6 @@ public class PolitikPlayer implements IAccountHolder {
 //        this.town = town;
 //    }
 
-    public BigDecimal getMoney() {
-        return this.money;
-    }
-
     public BigInteger getJoinDate() {
         return this.joinDate;
     }
@@ -127,24 +122,6 @@ public class PolitikPlayer implements IAccountHolder {
 //        return this.lastEnteredLand;
 //    }
 
-    public void changeMoney(BigDecimal amount) {
-        BigDecimal currentPlayerMoney = getMoney();
-        if (!currentPlayerMoney.equals(new BigDecimal("-1"))) {
-            BigDecimal result = currentPlayerMoney.add(amount);
-            if (result.compareTo(BigDecimal.ZERO) < 0) {
-                //less than zero
-                setMoney(BigDecimal.ZERO);
-            } else {
-                setMoney(result);
-            }
-        }
-    }
-
-    public boolean canPurchase(BigDecimal amount) {
-        //will tell you if you're able to purchase something
-        return this.money.subtract(amount).compareTo(BigDecimal.ZERO) >= 0;
-    }
-
 //    public boolean hasTown() {
 //        return this.town != null;
 //    }
@@ -162,10 +139,6 @@ public class PolitikPlayer implements IAccountHolder {
 //
 //        return false;
 //    }
-
-    public void setMoney(BigDecimal amount) {
-        this.money = amount;
-    }
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
