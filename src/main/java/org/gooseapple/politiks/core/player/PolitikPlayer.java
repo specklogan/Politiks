@@ -4,6 +4,8 @@ import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
+import org.gooseapple.politiks.core.currency.Account;
+import org.gooseapple.politiks.core.currency.IAccountHolder;
 import org.gooseapple.politiks.database.DatabaseManager;
 
 import java.math.BigDecimal;
@@ -13,7 +15,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class PolitikPlayer {
+public class PolitikPlayer implements IAccountHolder {
     private String displayName;
     private UUID uuid;
     private int infamy;
@@ -24,6 +26,7 @@ public class PolitikPlayer {
     private Player player;
     private String job;
     private BigDecimal money;
+    private Account account;
 
     public void teleport(Location location) {
         this.player.teleport(location);
@@ -166,5 +169,15 @@ public class PolitikPlayer {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    @Override
+    public Account GetAccount() {
+        return this.account;
+    }
+
+    @Override
+    public void SetAccount(Account account) {
+        this.account = account;
     }
 }

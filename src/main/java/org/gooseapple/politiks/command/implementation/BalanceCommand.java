@@ -27,18 +27,30 @@ public class BalanceCommand implements ICommand {
     @Override
     public LiteralCommandNode<CommandSourceStack> build() {
         return Commands.literal("balance")
-                .executes(this::execute)
+                .executes(this::balance)
                 .then(Commands.argument("player", ArgumentTypes.player())
-                .executes(this::target)).build();
+                        .requires(sender -> sender.getSender().isOp())
+                        .executes(this::balanceOfPlayer)).build();
     }
 
-    private int target(CommandContext<CommandSourceStack> commandSourceStackCommandContext) {
-        Errors.LogError("Test1");
+    private int balanceOfPlayer(CommandContext<CommandSourceStack> commandSourceStackCommandContext) {
+        try {
+            var playerResolver = commandSourceStackCommandContext.getArgument("player", PlayerSelectorArgumentResolver.class);
+            var targetPlayer = playerResolver.resolve(commandSourceStackCommandContext.getSource()).getFirst();
+            if (targetPlayer != null) {
+                PolitikPlayer p = players.GetPlayer(targetPlayer.getUniqueId());
+                if (p != null) {
+
+                }
+            }
+        } catch (Exception ex) {
+            return 0;
+        }
         return Command.SINGLE_SUCCESS;
     }
 
-    private int execute(CommandContext<CommandSourceStack> commandSourceStackCommandContext) {
-        Errors.LogError("Test2");
+    private int balance(CommandContext<CommandSourceStack> commandSourceStackCommandContext) {
+
         return Command.SINGLE_SUCCESS;
     }
 }
