@@ -6,6 +6,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 import org.gooseapple.politiks.core.currency.Account;
 import org.gooseapple.politiks.core.currency.IAccountHolder;
+import org.gooseapple.politiks.core.nation.Nation;
+import org.gooseapple.politiks.core.town.Town;
 import org.gooseapple.politiks.database.DatabaseManager;
 
 import java.math.BigDecimal;
@@ -19,9 +21,9 @@ public class PolitikPlayer implements IAccountHolder {
     private String displayName;
     private UUID uuid;
     private int infamy;
-//    private Nation nation;
-//    private Town town;
-//    private Land lastEnteredLand;
+    private Nation nation;
+    private Town town;
+//   private Land lastEnteredLand;
     private BigInteger joinDate;
     private Player player;
     private String job;
@@ -70,21 +72,21 @@ public class PolitikPlayer implements IAccountHolder {
         return this.uuid;
     }
 
-//    public Nation getNation() {
-//        return this.nation;
-//    }
-//
-//    public Town getTown() {
-//        return this.town;
-//    }
-//
-//    public void setNation(Nation nation) {
-//        this.nation = nation;
-//    }
-//
-//    public void setTown(Town town) {
-//        this.town = town;
-//    }
+    public Nation getNation() {
+        return this.nation;
+    }
+
+    public Town getTown() {
+        return this.town;
+    }
+
+    public void setNation(Nation nation) {
+        this.nation = nation;
+    }
+
+    public void setTown(Town town) {
+        this.town = town;
+    }
 
     public BigInteger getJoinDate() {
         return this.joinDate;
@@ -121,23 +123,23 @@ public class PolitikPlayer implements IAccountHolder {
 //        return this.lastEnteredLand;
 //    }
 
-//    public boolean hasTown() {
-//        return this.town != null;
-//    }
-//
-//    public boolean hasNation() {
-//        return this.nation != null;
-//    }
-//
-//    public boolean isMayor() {
-//        if (hasTown()) {
-//            if (town.getMayor() == this) {
-//                return true;
-//            }
-//        }
-//
-//        return false;
-//    }
+    public boolean hasTown() {
+        return this.town != null;
+    }
+
+    public boolean hasNation() {
+        return this.nation != null;
+    }
+
+    public boolean isMayor() {
+        if (hasTown()) {
+            if (town.getMayor() == this) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
