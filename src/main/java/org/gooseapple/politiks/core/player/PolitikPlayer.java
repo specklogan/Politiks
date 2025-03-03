@@ -25,7 +25,6 @@ public class PolitikPlayer implements IAccountHolder {
     private BigInteger joinDate;
     private Player player;
     private String job;
-    private Account account;
 
     public void teleport(Location location) {
         this.player.teleport(location);
@@ -146,11 +145,16 @@ public class PolitikPlayer implements IAccountHolder {
 
     @Override
     public Account GetAccount() {
-        return this.account;
+        return DatabaseManager.getDatabase().getAccountTable().GetPlayerAccount(this);
     }
 
     @Override
-    public void SetAccount(Account account) {
-        this.account = account;
+    public void AddAccount(Account account) {
+        //DatabaseManager.getDatabase().getAccountTable()
+    }
+
+    @Override
+    public UUID GetAccountHolderUUID() {
+        return this.uuid;
     }
 }

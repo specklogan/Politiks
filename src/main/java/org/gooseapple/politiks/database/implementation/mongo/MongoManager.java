@@ -4,6 +4,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import org.gooseapple.politiks.Politiks;
+import org.gooseapple.politiks.database.IAccountTable;
 import org.gooseapple.politiks.database.IDatabase;
 import org.gooseapple.politiks.database.IPlayerTable;
 
@@ -33,8 +34,10 @@ public class MongoManager implements IDatabase {
             playerTable.CreateTable();
 
             accountTable = new AccountTable(database);
+            accountTable.CreateTable();
 
             playerTable.LoadAllPlayers();
+            accountTable.LoadAllAccounts();
         } catch (Exception ex) {
             LogError("Unable to initialize mongo client using connection string: " + connectionString);
             return false;
@@ -46,6 +49,11 @@ public class MongoManager implements IDatabase {
     @Override
     public IPlayerTable getPlayerTable() {
         return playerTable;
+    }
+
+    @Override
+    public IAccountTable getAccountTable() {
+        return accountTable;
     }
 
     public String getConnectionString() {

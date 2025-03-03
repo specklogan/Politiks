@@ -21,7 +21,7 @@ public class Account {
         BANK
     }
 
-    public Account() {
+    public Account(AccountType type) {
         //default constructor
         amount = new BigDecimal(0);
         amount = amount.setScale(2, RoundingMode.HALF_EVEN);

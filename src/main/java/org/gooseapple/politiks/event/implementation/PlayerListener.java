@@ -37,6 +37,7 @@ public class PlayerListener implements Listener {
         PolitikPlayer player = playerTable.GetPlayer(event.getPlayer());
         if (player != null) {
             playerTable.SavePlayer(player);
+            player.setPlayer(null);
         }
     }
 }

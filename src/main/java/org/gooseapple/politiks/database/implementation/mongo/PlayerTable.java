@@ -6,7 +6,9 @@ import com.mongodb.client.model.*;
 import org.bson.Document;
 import org.bukkit.entity.Player;
 import org.gooseapple.politiks.Politiks;
+import org.gooseapple.politiks.core.currency.Account;
 import org.gooseapple.politiks.core.player.PolitikPlayer;
+import org.gooseapple.politiks.database.DatabaseManager;
 import org.gooseapple.politiks.database.IPlayerTable;
 import org.gooseapple.politiks.util.Constants;
 import org.gooseapple.politiks.util.Errors;
@@ -31,7 +33,7 @@ public class PlayerTable implements IPlayerTable {
 
     @Override
     public boolean CreateTable() {
-        table = database.getCollection(PlayerTable.class.getName());
+        table = database.getCollection(PlayerTable.class.getSimpleName());
 
         //Use the player UUID as the index
         table.createIndex(Indexes.text(Constants.UUID));
@@ -49,13 +51,18 @@ public class PlayerTable implements IPlayerTable {
         players.put(p.getUniqueId(), player);
 
         //Handle the currency generation
+        Account account = DatabaseManager.getDatabase().getAccountTable().CreateNewAccount(Account.AccountType.PERSONAL, player);
+
 
         return player;
     }
 
     @Override
     public boolean SavePlayer(PolitikPlayer player) {
-        player.setPlayer(null); //Set their player to null to mark they are an offline player
+        Document document = PlayerToDocument(player);
+        Document filter = new Document(Constants.UUID, player.getUUID().toString());
+        ReplaceOptions options = new ReplaceOptions().upsert(true);
+        table.replaceOne(filter, document, options);
         return true;
     }
 
@@ -64,7 +71,6 @@ public class PlayerTable implements IPlayerTable {
         for (Document document : table.find()) {
             PolitikPlayer player = new PolitikPlayer();
             //empty player, load every value from the database, when a player joins, just assign a 'message' to it
-            String money = document.getString("money");
             UUID uuid = UUID.fromString(document.getString(Constants.UUID));
 
             Player onlinePlayer = Politiks.getInstance().getServer().getPlayer(uuid);
@@ -92,7 +98,6 @@ public class PlayerTable implements IPlayerTable {
         document.put("joinDate", player.getJoinDate().toString());
         document.put("lastOnline", Instant.now().getEpochSecond());
         document.put("job", player.getJob());
-        document.put("account", player.GetAccount().toString());
         document.put("infamy", player.getInfamy());
         document.put("nation", "");
         document.put("town", "");

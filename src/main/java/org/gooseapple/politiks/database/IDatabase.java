@@ -8,4 +8,5 @@ public interface IDatabase {
      */
     public boolean Initialize();
     public IPlayerTable getPlayerTable();
+    public IAccountTable getAccountTable();
 }
