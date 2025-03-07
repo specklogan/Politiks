@@ -30,6 +30,9 @@ public class AccountTable implements IAccountTable {
 
     //This stores the accounts tied to a player for quicker access
     private ConcurrentHashMap<UUID, ArrayList<Account>> playerAccountMap = new ConcurrentHashMap<>();
+    //Stores town, land, and nation accounts
+    private ConcurrentHashMap<UUID, ArrayList<Account>> otherAccountMap = new ConcurrentHashMap<>();
+
 
     @Override
     public boolean CreateTable() {
@@ -86,7 +89,7 @@ public class AccountTable implements IAccountTable {
     public void LoadAllAccounts() {
         for (Document document : table.find()) {
             long id = document.getLong(Constants.AccountID);
-            Account.AccountType type = Account.AccountType.PERSONAL;
+            Account.AccountType type = Account.AccountType.valueOf(document.getString("AccountType"));
             Account account = new Account(type);
             account.setId(id);
             account.setAmount(new BigDecimal(document.getString("Balance")));
@@ -96,6 +99,8 @@ public class AccountTable implements IAccountTable {
 
                 PolitikPlayer p = DatabaseManager.getDatabase().getPlayerTable().GetPlayer(holderUUID);
                 AddExistingAccountToPlayer(account, p);
+            } else {
+                
             }
         }
     }
@@ -112,7 +117,6 @@ public class AccountTable implements IAccountTable {
 
     @Override
     public void SaveAllAccounts() {
-        //TODO: This only saves player accounts, when implementing bank, rewrite to use the 'main' uuid map
         List<WriteModel<Document>> operation = new ArrayList<>();
         for (UUID id : playerAccountMap.keySet()) {
 
@@ -127,6 +131,24 @@ public class AccountTable implements IAccountTable {
                 );
                 operation.add(replaceOneModel);
             }
+        }
+
+        for (UUID id : otherAccountMap.keySet()) {
+            for (Account account : otherAccountMap.get(id)) {
+                Document accountDocument = AccountToDocument(account);
+                Document filter = new Document(Constants.AccountID, account.getId());
+
+                ReplaceOneModel<Document> replaceOneModel = new ReplaceOneModel<>(
+                        filter,
+                        accountDocument,
+                        new ReplaceOptions().upsert(true)
+                );
+                operation.add(replaceOneModel);
+            }
+        }
+
+        if (operation.isEmpty()) {
+            return;
         }
         table.bulkWrite(operation);
     }
@@ -146,5 +168,14 @@ public class AccountTable implements IAccountTable {
         Document filter = new Document(Constants.AccountID, account.getId());
         UpdateOptions options = new UpdateOptions().upsert(true);
         table.updateOne(filter, document, options);
+    }
+
+    @Override
+    public Account GetOtherAccount(UUID id) {
+        var accounts = otherAccountMap.get(id);
+        if (accounts == null || accounts.isEmpty()) {
+            return null;
+        }
+        return accounts.getFirst();
     }
 }

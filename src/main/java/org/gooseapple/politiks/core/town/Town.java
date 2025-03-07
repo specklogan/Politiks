@@ -3,38 +3,31 @@ package org.gooseapple.politiks.core.town;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
+import org.gooseapple.politiks.core.currency.Account;
+import org.gooseapple.politiks.core.currency.IAccountHolder;
 import org.gooseapple.politiks.core.nation.Nation;
 import org.gooseapple.politiks.core.player.PolitikPlayer;
+import org.gooseapple.politiks.database.DatabaseManager;
 
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class Town {
+public class Town implements IAccountHolder {
     private String townName;
     private PolitikPlayer mayor;
     private TextComponent enterMessage = Component.text("");
     private Location spawnLocation;
     private Nation nationOwner;
+    private UUID id;
     private CopyOnWriteArrayList<PolitikPlayer> playerList = new CopyOnWriteArrayList<>();
 
-    //static
-//    public static Town getTownFromName(String townName) {
-//        for (Nation nation : Nation.NATIONS) {
-//            for (Town town : nation.getTownList()) {
-//                if (town.getTownName().equalsIgnoreCase(townName)) {
-//                    return town;
-//                }
-//            }
-//        }
-//        return null;
-//    }
-//
-//    public static void saveTowns() {
-//        for (Nation nation : Nation.NATIONS) {
-//            for (Town town : nation.getTownList()) {
-//                TownDB.saveTown(town);
-//            }
-//        }
-//    }
+    public Town(UUID id) {
+        this.id = id;
+    }
+
+    public UUID getId() {
+        return id;
+    }
 
     public String getTownName() {
         return this.townName;
@@ -102,5 +95,20 @@ public class Town {
 
     public Location getSpawnLocation() {
         return this.spawnLocation;
+    }
+
+    @Override
+    public Account GetAccount() {
+        return null;
+    }
+
+    @Override
+    public void AddAccount(Account account) {
+
+    }
+
+    @Override
+    public UUID GetAccountHolderUUID() {
+        return this.id;
     }
 }

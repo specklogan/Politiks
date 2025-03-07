@@ -119,6 +119,9 @@ public class PlayerTable implements IPlayerTable {
             );
             operation.add(replaceOneModel);
         }
+        if (operation.isEmpty()) {
+            return;
+        }
         table.bulkWrite(operation);
     }
 

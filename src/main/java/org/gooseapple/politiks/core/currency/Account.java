@@ -18,6 +18,8 @@ public class Account {
     public enum AccountType {
         PERSONAL,
         BUILDING,
+        TOWN,
+        NATION,
         BANK
     }
 
