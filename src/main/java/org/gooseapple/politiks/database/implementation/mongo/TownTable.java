@@ -88,10 +88,11 @@ public class TownTable implements ITownTable {
     }
 
     @Override
-    public Town CreateTown(PolitikPlayer mayor) {
+    public Town CreateTown(PolitikPlayer mayor, String name) {
         UUID id = UUID.randomUUID();
         Town town = new Town(id);
         town.setMayor(mayor);
+        town.setTownName(name);
         town.addPlayer(mayor);
 
         towns.put(id, town);

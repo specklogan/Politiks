@@ -4,16 +4,20 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.gooseapple.politiks.core.player.PolitikPlayer;
 import org.gooseapple.politiks.core.town.Town;
+import org.gooseapple.politiks.database.DatabaseManager;
 
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Nation {
     private TextComponent enterMessage = Component.text("");
     private String nationName;
     private PolitikPlayer leader;
     private UUID id;
-    private final ArrayList<PolitikPlayer> playerList = new ArrayList<>();
+    public Nation(UUID id) {
+        this.id = id;
+    }
 
     //Political stuff
     private Town capitol;
@@ -24,22 +28,6 @@ public class Nation {
 
     public String getNationName() {
         return this.nationName;
-    }
-
-    public ArrayList<PolitikPlayer> getPlayerList() {
-        return playerList;
-    }
-
-    public void addPlayer(PolitikPlayer player) {
-        this.playerList.add(player);
-    }
-
-    public void removePlayer(PolitikPlayer player) {
-        this.playerList.remove(player);
-    }
-
-    public boolean containsPlayer(PolitikPlayer player) {
-        return this.playerList.contains(player);
     }
 
     public TextComponent getEnterMessage() {
@@ -57,8 +45,15 @@ public class Nation {
     public Town getCapitol() {
         return this.capitol;
     }
+    public CopyOnWriteArrayList<PolitikPlayer> getPlayers() {
+        return DatabaseManager.getDatabase().getNationTable().GetNationPlayers(this);
+    }
 
     public UUID getId() {
         return this.id;
+    }
+
+    public void setLeader(PolitikPlayer p) {
+        this.leader = p;
     }
 }

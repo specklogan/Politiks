@@ -12,6 +12,6 @@ public interface ITownTable extends ITable{
      * @param mayor
      * @return
      */
-    public Town CreateTown(PolitikPlayer mayor);
+    public Town CreateTown(PolitikPlayer mayor, String name);
     public void SaveAllTowns();
 }

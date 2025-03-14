@@ -9,9 +9,8 @@ import com.mongodb.client.MongoClientFactory;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import org.gooseapple.politiks.Politiks;
-import org.gooseapple.politiks.database.IAccountTable;
-import org.gooseapple.politiks.database.IDatabase;
-import org.gooseapple.politiks.database.IPlayerTable;
+import org.gooseapple.politiks.core.nation.Nation;
+import org.gooseapple.politiks.database.*;
 
 public class MongoManager implements IDatabase {
     private String connectionString;
@@ -24,6 +23,7 @@ public class MongoManager implements IDatabase {
     private PlayerTable playerTable;
     private AccountTable accountTable;
     private TownTable townTable;
+    private NationTable nationTable;
 
     public MongoManager(String connectionString) {
         this.connectionString = connectionString;
@@ -47,8 +47,12 @@ public class MongoManager implements IDatabase {
             townTable = new TownTable(database);
             townTable.CreateTable();
 
+            nationTable = new NationTable(database);
+            nationTable.CreateTable();
+
             playerTable.LoadAllPlayers();
             townTable.LoadAllTowns();
+            nationTable.LoadAllNations();
             accountTable.LoadAllAccounts();
         } catch (Exception ex) {
             LogError("Unable to initialize mongo client using connection string: " + connectionString);
@@ -73,6 +77,16 @@ public class MongoManager implements IDatabase {
         playerTable.SaveAllPlayers();
         accountTable.SaveAllAccounts();
         townTable.SaveAllTowns();
+    }
+
+    @Override
+    public ITownTable getTownTable() {
+        return townTable;
+    }
+
+    @Override
+    public INationTable getNationTable() {
+        return nationTable;
     }
 
     public String getConnectionString() {
