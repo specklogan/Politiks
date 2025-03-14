@@ -26,4 +26,8 @@ public class DatabaseManager {
     public static IDatabase getDatabase() {
         return database;
     }
+
+    public static void Save() {
+        database.Save();
+    }
 }

@@ -18,6 +18,7 @@ public class MongoManager implements IDatabase {
      */
     private PlayerTable playerTable;
     private AccountTable accountTable;
+    private TownTable townTable;
 
     public MongoManager(String connectionString) {
         this.connectionString = connectionString;
@@ -36,7 +37,11 @@ public class MongoManager implements IDatabase {
             accountTable = new AccountTable(database);
             accountTable.CreateTable();
 
+            townTable = new TownTable(database);
+            townTable.CreateTable();
+
             playerTable.LoadAllPlayers();
+            townTable.LoadAllTowns();
             accountTable.LoadAllAccounts();
         } catch (Exception ex) {
             LogError("Unable to initialize mongo client using connection string: " + connectionString);
@@ -54,6 +59,13 @@ public class MongoManager implements IDatabase {
     @Override
     public IAccountTable getAccountTable() {
         return accountTable;
+    }
+
+    @Override
+    public void Save() {
+        playerTable.SaveAllPlayers();
+        accountTable.SaveAllAccounts();
+        townTable.SaveAllTowns();
     }
 
     public String getConnectionString() {

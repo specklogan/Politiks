@@ -6,11 +6,13 @@ import org.gooseapple.politiks.core.player.PolitikPlayer;
 import org.gooseapple.politiks.core.town.Town;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class Nation {
     private TextComponent enterMessage = Component.text("");
     private String nationName;
     private PolitikPlayer leader;
+    private UUID id;
     private final ArrayList<PolitikPlayer> playerList = new ArrayList<>();
 
     //Political stuff
@@ -54,5 +56,9 @@ public class Nation {
 
     public Town getCapitol() {
         return this.capitol;
+    }
+
+    public UUID getId() {
+        return this.id;
     }
 }

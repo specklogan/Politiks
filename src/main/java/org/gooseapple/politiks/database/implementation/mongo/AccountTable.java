@@ -172,7 +172,7 @@ public class AccountTable implements IAccountTable {
 
     @Override
     public Account GetOtherAccount(UUID id) {
-        var accounts = otherAccountMap.get(id);
+        ArrayList<Account> accounts = otherAccountMap.get(id);
         if (accounts == null || accounts.isEmpty()) {
             return null;
         }

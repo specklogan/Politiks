@@ -10,24 +10,18 @@ import org.gooseapple.politiks.database.IAccountTable;
 import org.gooseapple.politiks.database.IPlayerTable;
 
 public class ServerListener implements Listener {
-    IPlayerTable playerTable;
-    IAccountTable accountTable;
 
     public ServerListener() {
         Politiks.getInstance().getServer().getPluginManager().registerEvents(this, Politiks.getInstance());
-        playerTable = DatabaseManager.getDatabase().getPlayerTable();
-        accountTable = DatabaseManager.getDatabase().getAccountTable();
     }
 
     @EventHandler
     public void WorldSaveEvent(WorldSaveEvent event) {
-        playerTable.SaveAllPlayers();
-        accountTable.SaveAllAccounts();
+        DatabaseManager.Save();
     }
 
 
     public void HandleShutdown() {
-        playerTable.SaveAllPlayers();
-        accountTable.SaveAllAccounts();
+        DatabaseManager.Save();
     }
 }
