@@ -1,6 +1,11 @@
 package org.gooseapple.politiks.database.implementation.mongo;
 import static org.gooseapple.politiks.util.Errors.LogError;
+
+import com.mongodb.ConnectionString;
+import com.mongodb.LoggerSettings;
+import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClientFactory;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import org.gooseapple.politiks.Politiks;
@@ -27,7 +32,9 @@ public class MongoManager implements IDatabase {
     @Override
     public boolean Initialize() {
         try {
-            MongoClient mongoClient = MongoClients.create(connectionString);
+            ConnectionString cString = new ConnectionString(connectionString);
+            MongoClient mongoClient = MongoClients.create(MongoClientSettings.builder()
+                    .applyConnectionString(cString).build());
             client = mongoClient;
             database = mongoClient.getDatabase(Politiks.getInstance().getName());
 

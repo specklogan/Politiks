@@ -7,13 +7,17 @@ import com.mongodb.client.model.ReplaceOneModel;
 import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.client.model.WriteModel;
 import org.bson.Document;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.gooseapple.politiks.Politiks;
 import org.gooseapple.politiks.core.currency.Account;
 import org.gooseapple.politiks.core.player.PolitikPlayer;
 import org.gooseapple.politiks.core.town.Town;
+import org.gooseapple.politiks.database.DatabaseManager;
+import org.gooseapple.politiks.database.IPlayerTable;
 import org.gooseapple.politiks.database.ITownTable;
 import org.gooseapple.politiks.util.Constants;
+import org.gooseapple.politiks.util.LocationUtil;
 
 import java.math.BigInteger;
 import java.time.Instant;
@@ -21,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class TownTable implements ITownTable {
     private MongoDatabase database;
@@ -42,12 +47,28 @@ public class TownTable implements ITownTable {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void LoadAllTowns() {
+        IPlayerTable playerTable = DatabaseManager.getDatabase().getPlayerTable();
         for (Document document : table.find()) {
             UUID uuid = UUID.fromString(document.getString(Constants.UUID));
             Town t = new Town(uuid);
+            t.setTownName(document.getString("Name"));
+            PolitikPlayer mayor = playerTable.GetPlayer(UUID.fromString(document.getString(Constants.UUID)));
+            t.setMayor(mayor);
+            t.setSpawnLocation(LocationUtil.Deserialize(document.getString("Spawn_Location")));
 
+            CopyOnWriteArrayList<PolitikPlayer> players = new CopyOnWriteArrayList<>();
+            ArrayList<String> dbPlayers = (ArrayList<String>) document.get("Player_IDs");
+            for (String s : dbPlayers) {
+                PolitikPlayer p = playerTable.GetPlayer(UUID.fromString(s));
+                players.add(p);
+            }
+
+            //TODO: Set nation owner once implemented
+
+            t.setPlayerList(players);
         }
     }
 
@@ -56,7 +77,7 @@ public class TownTable implements ITownTable {
         document.put(Constants.UUID, t.getId().toString());
         document.put("Name", t.getTownName());
         document.put("Mayor_ID", t.getMayor().getUUID());
-        document.put("Spawn_Location", t.getSpawnLocation().serialize());
+        document.put("Spawn_Location", LocationUtil.Serialize(t.getSpawnLocation()));
         document.put("Nation_ID", t.getNation().getId().toString());
         ArrayList<String> players = new ArrayList<>();
         for (PolitikPlayer p : t.getPlayerList()) {

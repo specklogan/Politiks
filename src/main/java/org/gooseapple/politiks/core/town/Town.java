@@ -18,7 +18,7 @@ public class Town implements IAccountHolder {
     private TextComponent enterMessage = Component.text("");
     private Location spawnLocation;
     private Nation nationOwner;
-    private UUID id;
+    private final UUID id;
     private CopyOnWriteArrayList<PolitikPlayer> playerList = new CopyOnWriteArrayList<>();
 
     public Town(UUID id) {
