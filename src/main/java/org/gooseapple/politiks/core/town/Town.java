@@ -8,6 +8,7 @@ import org.gooseapple.politiks.core.currency.IAccountHolder;
 import org.gooseapple.politiks.core.nation.Nation;
 import org.gooseapple.politiks.core.player.PolitikPlayer;
 import org.gooseapple.politiks.database.DatabaseManager;
+import org.gooseapple.politiks.database.INationTable;
 
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -15,9 +16,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Town implements IAccountHolder {
     private String townName;
     private PolitikPlayer mayor;
-    private TextComponent enterMessage = Component.text("");
     private Location spawnLocation;
-    private Nation nationOwner;
+    private UUID nationId;
+    public TownConfig config;
     private final UUID id;
     private CopyOnWriteArrayList<PolitikPlayer> playerList = new CopyOnWriteArrayList<>();
 
@@ -41,20 +42,12 @@ public class Town implements IAccountHolder {
         this.mayor = mayor;
     }
 
-    public TextComponent getEnterMessage() {
-        return enterMessage;
+    public void setNationId(UUID nationId) {
+        this.nationId = nationId;
     }
 
-    public void setEnterMessage(TextComponent enterMessage) {
-        this.enterMessage = enterMessage;
-    }
-
-    public Nation getNationOwner() {
-        return nationOwner;
-    }
-
-    public void setNationOwner(Nation nationOwner) {
-        this.nationOwner = nationOwner;
+    private static INationTable GetTable() {
+        return DatabaseManager.getDatabase().getNationTable();
     }
 
     public CopyOnWriteArrayList<PolitikPlayer> getPlayerList() {
@@ -62,7 +55,6 @@ public class Town implements IAccountHolder {
     }
 
     public void removePlayer(PolitikPlayer player) {
-        this.nationOwner.removePlayer(player);
         this.playerList.remove(player);
         player.setTown(null);
         player.setNation(null);
@@ -77,7 +69,6 @@ public class Town implements IAccountHolder {
     }
 
     public void addPlayer(PolitikPlayer player) {
-        this.nationOwner.addPlayer(player);
         this.playerList.add(player);
     }
 
@@ -86,7 +77,11 @@ public class Town implements IAccountHolder {
     }
 
     public Nation getNation() {
-        return this.nationOwner;
+        return GetTable().GetNation(this.getNationId());
+    }
+
+    public UUID getNationId() {
+        return this.nationId;
     }
 
     public void setSpawnLocation(Location location) {

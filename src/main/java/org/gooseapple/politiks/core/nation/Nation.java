@@ -14,7 +14,7 @@ public class Nation {
     private TextComponent enterMessage = Component.text("");
     private String nationName;
     private PolitikPlayer leader;
-    private UUID id;
+    private final UUID id;
     public Nation(UUID id) {
         this.id = id;
     }
@@ -55,5 +55,9 @@ public class Nation {
 
     public void setLeader(PolitikPlayer p) {
         this.leader = p;
+    }
+
+    public void setName(String string) {
+        this.nationName = string;
     }
 }

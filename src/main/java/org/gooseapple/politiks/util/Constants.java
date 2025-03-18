@@ -8,6 +8,10 @@ import net.kyori.adventure.text.format.TextDecoration;
 public class Constants {
     public static String UUID = "UUID";
     public static String AccountID = "AccountID";
+    public static String Name = "Name";
+    public static String Leader = "Leader";
+    public static String Mayor = "Mayor";
+    public static String Capitol = "Capitol";
     public static enum DatabaseType {
         MONGO,
         SQLITE //Not supported yet

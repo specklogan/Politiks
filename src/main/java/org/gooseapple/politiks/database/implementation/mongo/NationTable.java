@@ -3,12 +3,20 @@ package org.gooseapple.politiks.database.implementation.mongo;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Indexes;
+import com.mongodb.client.model.ReplaceOneModel;
+import com.mongodb.client.model.ReplaceOptions;
+import com.mongodb.client.model.WriteModel;
 import org.bson.Document;
+import org.checkerframework.checker.units.qual.N;
 import org.gooseapple.politiks.core.nation.Nation;
 import org.gooseapple.politiks.core.player.PolitikPlayer;
+import org.gooseapple.politiks.core.town.Town;
+import org.gooseapple.politiks.database.DatabaseManager;
 import org.gooseapple.politiks.database.INationTable;
 import org.gooseapple.politiks.util.Constants;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -34,12 +42,57 @@ public class NationTable implements INationTable {
 
     @Override
     public void LoadAllNations() {
-
+        for (Document d : table.find()) {
+            Nation n = NationFromDocument(d);
+            nations.put(n.getId(), n);
+        }
     }
 
     @Override
     public void SaveAllNations() {
+        List<WriteModel<Document>> operation = new ArrayList<>();
 
+        for (UUID id : nations.keySet()) {
+            Document nationDoc = NationToDocument(nations.get(id));
+
+            Document filter = new Document(Constants.UUID, nations.get(id).getId().toString());
+
+            ReplaceOneModel<Document> replaceOneModel = new ReplaceOneModel<>(
+                    filter,
+                    nationDoc,
+                    new ReplaceOptions().upsert(true)
+            );
+            operation.add(replaceOneModel);
+        }
+
+        if (operation.isEmpty()) {
+            return;
+        }
+        table.bulkWrite(operation);
+    }
+
+    private Document NationToDocument(Nation n) {
+        Document d = new Document();
+        d.put(Constants.UUID, n.getId().toString());
+        d.put(Constants.Name, n.getNationName());
+        d.put(Constants.Leader, n.getLeader().getUUID().toString());
+        d.put(Constants.Capitol, n.getCapitol().getId().toString());
+        return d;
+    }
+
+    private Nation NationFromDocument(Document d) {
+        UUID id = UUID.fromString(d.getString(Constants.UUID));
+
+        Nation n = new Nation(id);
+        n.setName(d.getString(Constants.Name));
+        PolitikPlayer p = DatabaseManager.getDatabase().getPlayerTable().GetPlayer(UUID.fromString(d.getString(Constants.Leader)));
+        n.setLeader(p);
+
+        Town t = DatabaseManager.getDatabase().getTownTable().GetTown(UUID.fromString(d.getString(Constants.Capitol)));
+
+        n.setCapitol(t);
+
+        return n;
     }
 
     @Override
@@ -51,6 +104,11 @@ public class NationTable implements INationTable {
             }
         }
         return null;
+    }
+
+    @Override
+    public Nation GetNation(UUID id) {
+        return nations.get(id);
     }
 
     @Override

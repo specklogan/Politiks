@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.gooseapple.politiks.Politiks;
 import org.gooseapple.politiks.core.currency.Account;
+import org.gooseapple.politiks.core.nation.Nation;
 import org.gooseapple.politiks.core.player.PolitikPlayer;
 import org.gooseapple.politiks.core.town.Town;
 import org.gooseapple.politiks.database.DatabaseManager;
@@ -47,6 +48,27 @@ public class TownTable implements ITownTable {
         return null;
     }
 
+    @Override
+    public Town GetTown(UUID id) {
+        return towns.get(id);
+    }
+
+    @Override
+    public boolean TownNameExists(String name) {
+        for (UUID id : towns.keySet()) {
+            Town t = towns.get(id);
+            if (t.getTownName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Nation GetNationFromTown(Town t) {
+        return DatabaseManager.getDatabase().getNationTable().GetNation(t.getNationId());
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public void LoadAllTowns() {
@@ -66,10 +88,20 @@ public class TownTable implements ITownTable {
                 players.add(p);
             }
 
-            //TODO: Set nation owner once implemented
+            t.setNationId(UUID.fromString(document.getString("Nation_ID")));
 
             t.setPlayerList(players);
         }
+    }
+
+    @Override
+    public CopyOnWriteArrayList<Town> GetAllTowns() {
+        CopyOnWriteArrayList<Town> list = new CopyOnWriteArrayList<>();
+
+        for (UUID id : towns.keySet()) {
+            list.add(towns.get(id));
+        }
+        return list;
     }
 
     private Document TownToDocument(Town t) {
@@ -107,7 +139,7 @@ public class TownTable implements ITownTable {
         for (UUID id : towns.keySet()) {
             Town t = towns.get(id);
             Document townDocument = TownToDocument(t);
-            Document filter = new Document(Constants.UUID, t.getId());
+            Document filter = new Document(Constants.UUID, t.getId().toString());
 
             ReplaceOneModel<Document> replaceOneModel = new ReplaceOneModel<>(
                     filter,
