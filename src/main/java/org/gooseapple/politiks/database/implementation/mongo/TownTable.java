@@ -79,18 +79,27 @@ public class TownTable implements ITownTable {
             t.setTownName(document.getString("Name"));
             PolitikPlayer mayor = playerTable.GetPlayer(UUID.fromString(document.getString(Constants.UUID)));
             t.setMayor(mayor);
-            t.setSpawnLocation(LocationUtil.Deserialize(document.getString("Spawn_Location")));
+            String spawnStr = document.getString("Spawn_Location");
+            if (spawnStr != null && !spawnStr.isEmpty()) {
+                t.setSpawnLocation(LocationUtil.Deserialize(spawnStr));
+            }
 
             CopyOnWriteArrayList<PolitikPlayer> players = new CopyOnWriteArrayList<>();
             ArrayList<String> dbPlayers = (ArrayList<String>) document.get("Player_IDs");
             for (String s : dbPlayers) {
                 PolitikPlayer p = playerTable.GetPlayer(UUID.fromString(s));
                 players.add(p);
+                p.setTown(t);
             }
 
-            t.setNationId(UUID.fromString(document.getString("Nation_ID")));
+            String nationStr = document.getString("Nation_ID");
+            if (nationStr != null) {
+                t.setNationId(UUID.fromString(nationStr));
+            }
 
             t.setPlayerList(players);
+
+            towns.put(t.getId(), t);
         }
     }
 
@@ -108,9 +117,13 @@ public class TownTable implements ITownTable {
         Document document = new Document();
         document.put(Constants.UUID, t.getId().toString());
         document.put("Name", t.getTownName());
-        document.put("Mayor_ID", t.getMayor().getUUID());
-        document.put("Spawn_Location", LocationUtil.Serialize(t.getSpawnLocation()));
-        document.put("Nation_ID", t.getNation().getId().toString());
+        document.put("Mayor_ID", t.getMayor().getUUID().toString());
+        if (t.getSpawnLocation() != null) {
+            document.put("Spawn_Location", LocationUtil.Serialize(t.getSpawnLocation()));
+        }
+        if (t.getNation() != null) {
+            document.put("Nation_ID", t.getNation().getId().toString());
+        }
         ArrayList<String> players = new ArrayList<>();
         for (PolitikPlayer p : t.getPlayerList()) {
             players.add(p.getUUID().toString());
@@ -126,6 +139,7 @@ public class TownTable implements ITownTable {
         town.setMayor(mayor);
         town.setTownName(name);
         town.addPlayer(mayor);
+        mayor.setTown(town);
 
         towns.put(id, town);
 

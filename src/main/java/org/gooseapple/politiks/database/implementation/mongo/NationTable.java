@@ -108,6 +108,12 @@ public class NationTable implements INationTable {
 
     @Override
     public Nation GetNation(UUID id) {
+        if (id == null) {
+            return null;
+        }
+        if (!nations.containsKey(id)) {
+            return null;
+        }
         return nations.get(id);
     }
 
