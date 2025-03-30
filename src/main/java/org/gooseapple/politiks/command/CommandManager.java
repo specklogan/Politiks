@@ -4,6 +4,7 @@ import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.plugin.Plugin;
 import org.gooseapple.politiks.command.implementation.BalanceCommand;
+import org.gooseapple.politiks.command.implementation.LandCommand;
 import org.gooseapple.politiks.command.implementation.SetBalanceCommand;
 import org.gooseapple.politiks.command.implementation.TownCommand;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +19,7 @@ public class CommandManager {
             c.add(new BalanceCommand());
             c.add(new SetBalanceCommand());
             c.add(new TownCommand());
+            c.add(new LandCommand());
 
             for (ICommand command : c) {
                 commands.registrar().register(command.build());

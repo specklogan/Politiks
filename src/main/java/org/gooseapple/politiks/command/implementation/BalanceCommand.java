@@ -20,7 +20,7 @@ import org.gooseapple.politiks.util.Constants;
 import org.gooseapple.politiks.util.Errors;
 
 public class BalanceCommand implements ICommand {
-    private IPlayerTable players;
+    private final IPlayerTable players;
 
     public BalanceCommand() {
         players = DatabaseManager.getDatabase().getPlayerTable();

@@ -3,6 +3,7 @@ package org.gooseapple.politiks.core.player;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
 import org.gooseapple.politiks.core.currency.Account;
 import org.gooseapple.politiks.core.currency.IAccountHolder;

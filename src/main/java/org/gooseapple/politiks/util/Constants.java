@@ -12,9 +12,24 @@ public class Constants {
     public static String Leader = "Leader";
     public static String Mayor = "Mayor";
     public static String Capitol = "Capitol";
+    public static String FirstPosition = "PositionOne";
+    public static String SecondPosition = "PositionTwo";
+    public static String CustomItem = "CustomItem";
+    public static String LandClaimTool = "LandClaimTool";
+
     public static enum DatabaseType {
         MONGO,
         SQLITE //Not supported yet
+    }
+
+    public static enum LandType {
+        DEFAULT,
+        TICKABLE
+    }
+
+    public static enum ClaimGeometry {
+        RECTANGLE,
+        CIRCLE
     }
 
     public static TextComponent ErrorMessage(String text) {

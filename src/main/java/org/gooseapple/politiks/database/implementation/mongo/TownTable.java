@@ -77,7 +77,7 @@ public class TownTable implements ITownTable {
             UUID uuid = UUID.fromString(document.getString(Constants.UUID));
             Town t = new Town(uuid);
             t.setTownName(document.getString("Name"));
-            PolitikPlayer mayor = playerTable.GetPlayer(UUID.fromString(document.getString(Constants.UUID)));
+            PolitikPlayer mayor = playerTable.GetPlayer(UUID.fromString(document.getString("Mayor_ID")));
             t.setMayor(mayor);
             String spawnStr = document.getString("Spawn_Location");
             if (spawnStr != null && !spawnStr.isEmpty()) {
