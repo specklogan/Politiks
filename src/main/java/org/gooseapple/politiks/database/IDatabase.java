@@ -13,4 +13,6 @@ public interface IDatabase {
     void Save();
     public ITownTable getTownTable();
     public INationTable getNationTable();
+
+    public ILandTable getLandTable();
 }

@@ -8,7 +8,6 @@ public class LocationUtil {
     public static Location Deserialize(String input) {
         String[] args = input.split(" ");
         World world = Politiks.getInstance().getServer().getWorld(args[0]);
-
         int x = Integer.parseInt(args[1]);
         int y = Integer.parseInt(args[2]);
         int z = Integer.parseInt(args[3]);

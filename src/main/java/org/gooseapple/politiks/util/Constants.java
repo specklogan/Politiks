@@ -32,6 +32,10 @@ public class Constants {
         CIRCLE
     }
 
+    public static TextComponent GreenMessage(String text) {
+        return Component.text(text).color(TextColor.color(15, 120, 21));
+    }
+
     public static TextComponent ErrorMessage(String text) {
         return Component.text(text).color(TextColor.color(255, 0, 0));
     }

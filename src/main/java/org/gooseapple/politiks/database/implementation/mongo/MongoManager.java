@@ -24,6 +24,7 @@ public class MongoManager implements IDatabase {
     private AccountTable accountTable;
     private TownTable townTable;
     private NationTable nationTable;
+    private LandTable landTable;
 
     public MongoManager(String connectionString) {
         this.connectionString = connectionString;
@@ -49,6 +50,9 @@ public class MongoManager implements IDatabase {
 
             nationTable = new NationTable(database);
             nationTable.CreateTable();
+
+            landTable = new LandTable(database);
+            landTable.CreateTable();
 
             playerTable.LoadAllPlayers();
             townTable.LoadAllTowns();
@@ -87,6 +91,11 @@ public class MongoManager implements IDatabase {
     @Override
     public INationTable getNationTable() {
         return nationTable;
+    }
+
+    @Override
+    public ILandTable getLandTable() {
+        return landTable;
     }
 
     public String getConnectionString() {

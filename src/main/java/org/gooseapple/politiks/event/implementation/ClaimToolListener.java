@@ -1,9 +1,6 @@
 package org.gooseapple.politiks.event.implementation;
 
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,10 +12,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.gooseapple.politiks.Politiks;
 import org.gooseapple.politiks.config.ConfigManager;
+import org.gooseapple.politiks.core.land.ILand;
 import org.gooseapple.politiks.core.land.geometry.ClaimRectangle;
 import org.gooseapple.politiks.core.land.types.Land;
 import org.gooseapple.politiks.core.player.PolitikPlayer;
 import org.gooseapple.politiks.database.DatabaseManager;
+import org.gooseapple.politiks.database.ILandTable;
 import org.gooseapple.politiks.database.IPlayerTable;
 import org.gooseapple.politiks.ui.LandUI;
 import org.gooseapple.politiks.util.Constants;
@@ -28,8 +27,10 @@ import java.math.BigDecimal;
 
 public class ClaimToolListener implements Listener {
     private IPlayerTable players;
+    private ILandTable lands;
     public ClaimToolListener() {
         players = DatabaseManager.getDatabase().getPlayerTable();
+        lands = DatabaseManager.getDatabase().getLandTable();
         Politiks.getInstance().getServer().getPluginManager().registerEvents(this, Politiks.getInstance());
     }
 
@@ -43,8 +44,13 @@ public class ClaimToolListener implements Listener {
         return Constants.LandClaimTool.equalsIgnoreCase(name);
     }
 
-    private void DisplayLeftClickStats(PlayerInteractEvent event, PolitikPlayer player) {
-
+    private void HandleLeftClick(PlayerInteractEvent event, PolitikPlayer player) {
+        event.setCancelled(true);
+        if (event.getClickedBlock() == null) {
+            return;
+        }
+        ILand land = lands.GetLandFromLocation(event.getClickedBlock().getLocation());
+        player.message(Constants.DetailMessage("You are currently in a claim owned by " + land.GetPlayerOwner().getDisplayName()));
     }
 
     private void OpenLandGUI(PolitikPlayer p) {
@@ -63,6 +69,8 @@ public class ClaimToolListener implements Listener {
 
         ClaimRectangle claim = new ClaimRectangle(firstLoc, secondLoc);
 
+        player.message(Constants.DetailMessage(claim.GetContainingChunks().toString()));
+
         //Check player balance
         BigDecimal cost = ConfigManager.getCostPerArea().multiply(new BigDecimal(claim.GetArea()));
 
@@ -74,6 +82,20 @@ public class ClaimToolListener implements Listener {
         //Check that the claim size meets the minimum block requirements set by the config
         if (claim.GetArea() >= ConfigManager.getMinLandSize() && claim.GetArea() <= ConfigManager.getMaxLandSize()) {
             Land land = new Land(Constants.LandType.DEFAULT, claim);
+            land.SetOwner(player);
+            land.SetTownOwner(player.getTown());
+            //Check if the land exists in another claim
+            boolean overlaps = lands.IsLandOverlapping(land);
+
+            if (overlaps) {
+                player.message(Constants.ErrorMessage("Your claim is overlapping an existing claim!"));
+                return;
+            }
+
+            lands.InsertNewLand(land);
+            player.message(Constants.SuccessMessage("Land claim successful, " + player.getTown().getTownName() + " grows stronger."));
+
+
         } else {
             player.message(Constants.ErrorMessage("The claim is too big/small, the minimum size is " + ConfigManager.getMinLandSize() + " blocks, and the maximum size is " + ConfigManager.getMaxLandSize() + " blocks"));
         }
@@ -94,7 +116,7 @@ public class ClaimToolListener implements Listener {
         }
 
         if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-            DisplayLeftClickStats(event, player);
+            HandleLeftClick(event, player);
             return;
         }
 
@@ -106,7 +128,6 @@ public class ClaimToolListener implements Listener {
         if (clickedBlock == null) {
             return;
         }
-
         String firstPositionString = handItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Politiks.getInstance(), Constants.FirstPosition), PersistentDataType.STRING);
 
         Location blockLocation = clickedBlock.getLocation();

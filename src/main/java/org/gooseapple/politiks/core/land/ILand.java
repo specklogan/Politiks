@@ -1,5 +1,6 @@
 package org.gooseapple.politiks.core.land;
 
+import org.bukkit.World;
 import org.gooseapple.politiks.core.land.geometry.IClaim;
 import org.gooseapple.politiks.core.player.PolitikPlayer;
 import org.gooseapple.politiks.core.town.Town;
@@ -12,6 +13,8 @@ public interface ILand {
     public Constants.LandType GetLandType();
     public void SetLandType(Constants.LandType type);
     public IClaim GetClaim();
+    public PolitikPlayer GetPlayerOwner();
+    public Town GetTownOwner();
     public void SetClaim(IClaim claim);
     public void SetOwner(PolitikPlayer player);
     public void SetTownOwner(Town town);

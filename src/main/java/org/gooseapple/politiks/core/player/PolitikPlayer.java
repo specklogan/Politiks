@@ -7,6 +7,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
 import org.gooseapple.politiks.core.currency.Account;
 import org.gooseapple.politiks.core.currency.IAccountHolder;
+import org.gooseapple.politiks.core.land.ILand;
 import org.gooseapple.politiks.core.nation.Nation;
 import org.gooseapple.politiks.core.town.Town;
 import org.gooseapple.politiks.database.DatabaseManager;
@@ -24,7 +25,7 @@ public class PolitikPlayer implements IAccountHolder {
     private int infamy;
     private Nation nation;
     private Town town;
-//   private Land lastEnteredLand;
+    private ILand lastEnteredLand;
     private BigInteger joinDate;
     private Player player;
     private String job;
@@ -116,13 +117,13 @@ public class PolitikPlayer implements IAccountHolder {
         this.job = job;
     }
 
-//    public void setLastEnteredLand(Land land) {
-//        this.lastEnteredLand = land;
-//    }
-//
-//    public Land getLastEnteredLand() {
-//        return this.lastEnteredLand;
-//    }
+    public void setLastEnteredLand(ILand land) {
+        this.lastEnteredLand = land;
+    }
+
+    public ILand getLastEnteredLand() {
+        return this.lastEnteredLand;
+    }
 
     public boolean hasTown() {
         return this.town != null;

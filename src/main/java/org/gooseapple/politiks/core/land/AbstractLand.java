@@ -21,6 +21,16 @@ public abstract class AbstractLand implements ILand {
     }
 
     @Override
+    public Town GetTownOwner() {
+        return this.townOwner;
+    }
+
+    @Override
+    public PolitikPlayer GetPlayerOwner() {
+        return this.owner;
+    }
+
+    @Override
     public UUID GetID() {
         return id;
     }
