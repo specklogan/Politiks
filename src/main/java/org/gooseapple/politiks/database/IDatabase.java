@@ -15,4 +15,5 @@ public interface IDatabase {
     public INationTable getNationTable();
 
     public ILandTable getLandTable();
+    public IClaimTable getClaimTable();
 }

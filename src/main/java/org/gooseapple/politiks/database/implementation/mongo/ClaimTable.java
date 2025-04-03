@@ -57,6 +57,11 @@ public class ClaimTable implements IClaimTable {
         return claims;
     }
 
+    @Override
+    public void SaveAllClaims() {
+
+    }
+
     private IClaim DocumentToClaim(Document document) {
         String type = document.getString(Constants.Type);
         Location firstLocation = LocationUtil.Deserialize(document.getString(Constants.FirstPosition));

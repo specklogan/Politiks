@@ -85,6 +85,8 @@ public class MongoManager implements IDatabase {
         playerTable.SaveAllPlayers();
         accountTable.SaveAllAccounts();
         townTable.SaveAllTowns();
+        claimTable.SaveAllClaims();
+        landTable.SaveAllLand();
     }
 
     @Override
@@ -100,6 +102,11 @@ public class MongoManager implements IDatabase {
     @Override
     public ILandTable getLandTable() {
         return landTable;
+    }
+
+    @Override
+    public IClaimTable getClaimTable() {
+        return claimTable;
     }
 
     public String getConnectionString() {

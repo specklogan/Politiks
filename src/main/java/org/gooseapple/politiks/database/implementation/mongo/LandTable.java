@@ -3,6 +3,9 @@ package org.gooseapple.politiks.database.implementation.mongo;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Indexes;
+import com.mongodb.client.model.ReplaceOneModel;
+import com.mongodb.client.model.ReplaceOptions;
+import com.mongodb.client.model.WriteModel;
 import org.bson.Document;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -10,13 +13,18 @@ import org.gooseapple.politiks.Politiks;
 import org.gooseapple.politiks.core.land.ILand;
 import org.gooseapple.politiks.core.land.geometry.IClaim;
 import org.gooseapple.politiks.core.land.types.Land;
+import org.gooseapple.politiks.database.DatabaseManager;
 import org.gooseapple.politiks.database.ILandTable;
+import org.gooseapple.politiks.database.IPlayerTable;
+import org.gooseapple.politiks.database.ITownTable;
 import org.gooseapple.politiks.util.Constants;
 
 import javax.annotation.Nullable;
 import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -25,11 +33,15 @@ import static com.mongodb.client.model.Filters.eq;
 public class LandTable implements ILandTable {
     private MongoDatabase database;
     private MongoCollection<Document> table;
+    private IPlayerTable playerTable;
+    private ITownTable townTable;
 
     private final ConcurrentHashMap<Integer, ConcurrentHashMap<Long, CopyOnWriteArrayList<ILand>>> worldLandHashmap = new ConcurrentHashMap<>();
 
     public LandTable(MongoDatabase database) {
         this.database = database;
+        this.playerTable = DatabaseManager.getDatabase().getPlayerTable();
+        this.townTable = DatabaseManager.getDatabase().getTownTable();
     }
 
     @Override
@@ -58,6 +70,30 @@ public class LandTable implements ILandTable {
         return null;
     }
 
+    @Override
+    public void SaveAllLand() {
+        List<WriteModel<Document>> operation = new ArrayList<>();
+        for (var dimension : worldLandHashmap.keySet()) {
+            for (var chunkKey : worldLandHashmap.get(dimension).keySet()) {
+                for (var claim : worldLandHashmap.get(dimension).get(chunkKey)) {
+                    Document document = LandToDocument(claim);
+                    Document filter = new Document(Constants.UUID, claim.GetID().toString());
+
+                    ReplaceOneModel<Document> replaceOneModel = new ReplaceOneModel<>(
+                            filter,
+                            document,
+                            new ReplaceOptions().upsert(true)
+                    );
+                    operation.add(replaceOneModel);
+                }
+            }
+        }
+        if (operation.isEmpty()) {
+            return;
+        }
+        table.bulkWrite(operation);
+    }
+
     @Nullable
     @Override
     public ILand GetOrLoadLand(IClaim claim) {
@@ -77,19 +113,34 @@ public class LandTable implements ILandTable {
         //If it gets to this point, we need to check the database and load the land
         var document = table.find(eq(Constants.UUID, claim.GetLandID())).first();
 
-
-        return null;
+        return DocumentToLand(document);
     }
 
     private Document LandToDocument(ILand land) {
         Document document = new Document();
+
+        document.put(Constants.UUID, land.GetID().toString());
+        document.put(Constants.LandType.class.getSimpleName(), land.GetLandType().toString());
+
+        if (land.GetTownOwner() != null) {
+            document.put(Constants.TownID, land.GetTownOwner().getId().toString());
+        } else {
+            document.put(Constants.TownID, "");
+        }
+
+        document.put(Constants.OwnerID, land.GetPlayerOwner().getUUID().toString());
 
         return document;
     }
 
     private ILand DocumentToLand(Document document) {
         //TODO: When you implement more than 1 type of land, change this to load the respective land
-        Land land = new Land();
+        UUID id = UUID.fromString(document.getString(Constants.UUID));
+        Land land = new Land(id);
+
+        land.SetLandType(Constants.LandType.valueOf(document.getString(Constants.LandType.class.getSimpleName())));
+        land.SetOwner(playerTable.GetPlayer(UUID.fromString(document.getString(Constants.OwnerID))));
+        land.SetTownOwner(townTable.GetTown(UUID.fromString(document.getString(Constants.TownID))));
 
         return land;
     }

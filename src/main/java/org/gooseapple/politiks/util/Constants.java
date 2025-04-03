@@ -19,6 +19,9 @@ public class Constants {
     public static String Land = "LandID";
     public static String Chunks = "Chunks";
     public static String Type = "Type";
+    public static String TownID = "TownID";
+    public static String NationID = "NationID";
+    public static String OwnerID = "OwnerID";
 
     public static enum DatabaseType {
         MONGO,

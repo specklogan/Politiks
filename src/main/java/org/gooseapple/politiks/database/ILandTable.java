@@ -18,6 +18,8 @@ public interface ILandTable extends ITable {
      */
     public ILand GetLandFromLocation(Location location);
 
+    public void SaveAllLand();
+
     public ILand GetOrLoadLand(IClaim claim);
 
     /**

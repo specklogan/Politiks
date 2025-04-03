@@ -11,4 +11,5 @@ public interface IClaimTable extends ITable {
     public IClaim GetClaimForLand(ILand land);
     public void SaveClaim(IClaim claim);
     public ArrayList<IClaim> GetClaimsInChunk(Chunk chunk);
+    public void SaveAllClaims();
 }

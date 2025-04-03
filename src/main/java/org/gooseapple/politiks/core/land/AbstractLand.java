@@ -20,6 +20,11 @@ public abstract class AbstractLand implements ILand {
         this.id = UUID.randomUUID();
     }
 
+    public AbstractLand(UUID id) {
+        this.id = id;
+        SetLandType(Constants.LandType.DEFAULT);
+    }
+
     @Override
     public Town GetTownOwner() {
         return this.townOwner;
