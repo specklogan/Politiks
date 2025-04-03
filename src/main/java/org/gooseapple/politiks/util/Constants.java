@@ -16,6 +16,9 @@ public class Constants {
     public static String SecondPosition = "PositionTwo";
     public static String CustomItem = "CustomItem";
     public static String LandClaimTool = "LandClaimTool";
+    public static String Land = "LandID";
+    public static String Chunks = "Chunks";
+    public static String Type = "Type";
 
     public static enum DatabaseType {
         MONGO,

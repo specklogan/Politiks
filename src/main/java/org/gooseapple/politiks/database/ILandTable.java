@@ -3,6 +3,7 @@ package org.gooseapple.politiks.database;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.gooseapple.politiks.core.land.ILand;
+import org.gooseapple.politiks.core.land.geometry.IClaim;
 import org.gooseapple.politiks.core.land.types.Land;
 
 import java.util.ArrayList;
@@ -16,6 +17,8 @@ public interface ILandTable extends ITable {
      * @return Null if not found
      */
     public ILand GetLandFromLocation(Location location);
+
+    public ILand GetOrLoadLand(IClaim claim);
 
     /**
      * Used to check if a new land will overlap a preexisting one, before it will be added to the landmap

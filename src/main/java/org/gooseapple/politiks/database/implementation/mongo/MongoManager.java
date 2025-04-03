@@ -25,6 +25,7 @@ public class MongoManager implements IDatabase {
     private TownTable townTable;
     private NationTable nationTable;
     private LandTable landTable;
+    private ClaimTable claimTable;
 
     public MongoManager(String connectionString) {
         this.connectionString = connectionString;
@@ -53,6 +54,9 @@ public class MongoManager implements IDatabase {
 
             landTable = new LandTable(database);
             landTable.CreateTable();
+
+            claimTable = new ClaimTable(database, landTable);
+            claimTable.CreateTable();
 
             playerTable.LoadAllPlayers();
             townTable.LoadAllTowns();

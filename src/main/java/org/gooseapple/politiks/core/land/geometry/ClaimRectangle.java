@@ -3,21 +3,38 @@ package org.gooseapple.politiks.core.land.geometry;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.gooseapple.politiks.core.land.ILand;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class ClaimRectangle implements IClaim {
     private Location firstLocation;
     private Location secondLocation;
+    private UUID id;
+    private ILand land;
+    private UUID landID;
 
     public ClaimRectangle(Location location, Location location2) {
         this.firstLocation = location;
         this.secondLocation = location2;
+        id = UUID.randomUUID();
+    }
+
+    public ClaimRectangle(Location location, Location location2, UUID id) {
+        this.firstLocation = location;
+        this.secondLocation = location2;
+        this.id = id;
     }
 
     @Override
     public int GetEnvironmentID() {
         return this.firstLocation.getWorld().getEnvironment().getId();
+    }
+
+    @Override
+    public UUID getId() {
+        return id;
     }
 
     @Override
@@ -30,6 +47,26 @@ public class ClaimRectangle implements IClaim {
         int width = Math.abs(firstX - secondX) + 1;
         int height = Math.abs(firstZ - secondZ) + 1;
         return width * height;
+    }
+
+    @Override
+    public ILand GetLand() {
+        return land;
+    }
+
+    @Override
+    public void SetLand(ILand land) {
+        this.land = land;
+    }
+
+    @Override
+    public void SetLandID(UUID id) {
+        this.landID = id;
+    }
+
+    @Override
+    public UUID GetLandID() {
+        return this.landID;
     }
 
     @Override

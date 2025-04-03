@@ -14,10 +14,13 @@ import org.gooseapple.politiks.database.ILandTable;
 import org.gooseapple.politiks.util.Constants;
 
 import javax.annotation.Nullable;
+import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import static com.mongodb.client.model.Filters.eq;
 
 public class LandTable implements ILandTable {
     private MongoDatabase database;
@@ -53,6 +56,42 @@ public class LandTable implements ILandTable {
         }
 
         return null;
+    }
+
+    @Nullable
+    @Override
+    public ILand GetOrLoadLand(IClaim claim) {
+        if (!worldLandHashmap.containsKey(claim.GetEnvironmentID())) {
+            worldLandHashmap.put(claim.GetEnvironmentID(), new ConcurrentHashMap<>());
+        }
+        var dimensionLands = worldLandHashmap.get(claim.GetEnvironmentID());
+        if (dimensionLands.containsKey(claim.GetContainingChunks().getFirst())) {
+            //Since a chunk can contain multiple lands, return the first one that has the same ID as the claim.land id
+            for (ILand land : dimensionLands.get(claim.GetContainingChunks().getFirst())) {
+                if (land.GetID().equals(claim.GetLandID())) {
+                    return land;
+                }
+            }
+        }
+
+        //If it gets to this point, we need to check the database and load the land
+        var document = table.find(eq(Constants.UUID, claim.GetLandID())).first();
+
+
+        return null;
+    }
+
+    private Document LandToDocument(ILand land) {
+        Document document = new Document();
+
+        return document;
+    }
+
+    private ILand DocumentToLand(Document document) {
+        //TODO: When you implement more than 1 type of land, change this to load the respective land
+        Land land = new Land();
+
+        return land;
     }
 
     @Override

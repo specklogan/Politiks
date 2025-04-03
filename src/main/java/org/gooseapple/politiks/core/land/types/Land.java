@@ -9,4 +9,8 @@ public class Land extends AbstractLand {
     public Land(Constants.LandType type, IClaim claim) {
         super(type, claim);
     }
+
+    public Land() {
+        super();
+    }
 }
